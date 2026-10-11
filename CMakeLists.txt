@@ -84,6 +84,13 @@ target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
 
 target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")
 target_link_libraries(RockStarAteMyHamsterRecomp PRIVATE SDL2 opengl32)
+# libc++ e libunwind dentro l'eseguibile: niente DLL del compilatore da
+# distribuire (resta solo SDL2.dll)
+if(MINGW OR CMAKE_CXX_COMPILER_TARGET MATCHES "mingw" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    target_link_options(RockStarAteMyHamsterRecomp PRIVATE -static-libstdc++ -static-libgcc
+                        "-Wl,-Bstatic" -lc++ -lunwind "-Wl,-Bdynamic"
+                        $<$<CONFIG:Release>:-s>)   # senza simboli: piu' leggero
+endif()
 # il C generato e' grande e ripetitivo: niente avvisi da li'
 set_source_files_properties(${GEN_FILES} PROPERTIES COMPILE_OPTIONS "-w")
 

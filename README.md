@@ -94,12 +94,13 @@ lingua e parte.
 
 Nelle impostazioni del launcher ci sono anche:
 
-- **Screen model**: *Sharp* (pixel netti, 5:4; con *Linear filtering*
-  ammorbiditi), *Commodore 1084S* (il monitor dell'Amiga: curvatura, fascio,
-  fosfori RGB), *CRT Easymode* (CRT piatto alla maniera di crt-easymode:
-  Lanczos, fascio gaussiano, maschera leggera), *CRT Aperture* (griglia
-  Trinitron), *Scanlines*. I CRT sono in 4:3. In gioco Shift+F12 passa al
-  modello successivo;
+- **Screen model**: *Sharp* (pixel netti; con *Linear filtering*
+  ammorbiditi), *Commodore 1084S* (il monitor dell'Amiga: fascio gaussiano,
+  maschera a fessure, alone, leggera curvatura), *CRT Easymode* (CRT piatto
+  alla maniera di crt-easymode: Lanczos, fascio gaussiano, maschera leggera),
+  *Scanlines*. In gioco Shift+F12 passa al modello successivo;
+- **Aspect ratio**: *PAL (4:3)* (il predefinito: i pixel larghi come su un
+  monitor PAL) o *Square pixels*;
 - **Integer scaling** (scala intera, attiva di partenza): pixel perfetti, il
   fattore intero piu' grande che entra; spenta, l'immagine riempie lo schermo.
   In tutti e due i casi si mostrano solo le righe che il gioco usa (320x200

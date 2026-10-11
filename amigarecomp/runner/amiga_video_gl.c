@@ -1,23 +1,21 @@
 /* amiga_video_gl.c - presentazione in OpenGL: pixel netti o filtri CRT.
  *
  * Modelli di schermo, scelti a runtime con amiga_video_gl_modo():
- *   nitido     pixel netti, rapporto 5:4 del quadro 320x256; col filtro
- *              lineare (amiga_video_gl_filtro) ammorbiditi
- *   1084S      il monitor dell'Amiga: leggera curvatura, scanline che si
- *              allargano sui colori chiari (il fascio), maschera RGB dei
- *              fosfori, un po' di bagliore, vignettatura, rapporto 4:3
- *   Easymode   CRT piatto alla maniera di crt-easymode: pixel ricostruiti in
- *              orizzontale con un filtro di Lanczos, fascio gaussiano che si
- *              allarga sui colori chiari, maschera a punti leggera, piu' luce
- *   Aperture   tubo Trinitron: griglia di apertura (strisce RGB verticali)
- *              piena, scanline sottili, bagliore
+ *   nitido     pixel netti; col filtro lineare (amiga_video_gl_filtro)
+ *              ammorbiditi
+ *   1084S      il monitor dell'Amiga: pixel ricostruiti in orizzontale
+ *              (Lanczos), fascio gaussiano che si allarga sui colori chiari,
+ *              maschera a fessure (slot mask) dei fosfori, un po' di alone,
+ *              leggera curvatura e vignettatura
+ *   Easymode   CRT piatto alla maniera di crt-easymode: Lanczos, fascio
+ *              gaussiano, maschera a punti leggera, piu' luce
  *   Scanline   pixel netti con le righe vuote fra una riga e l'altra
  * Si mostrano solo le righe che il gioco usa (la finestra video,
  * amiga_hw_altezza_visibile: 200 su 256 per Rock Star), il piu' grandi
- * possibile: pixel quadrati per il nitido, la forma del pixel PAL su un 4:3
- * (AMIGA_PAR) per i CRT. Con la scala intera (predefinita) il fattore e'
- * intero, in verticale per i CRT, cosi' pixel e scanline restano tutti
- * uguali; senza, l'immagine riempie la finestra.
+ * possibile, con la forma del pixel scelta (amiga_video_gl_aspetto): PAL,
+ * cioe' come su un monitor 4:3 (AMIGA_PAR), o quadrata. Con la scala intera
+ * (predefinita) il fattore verticale e' intero, cosi' pixel e scanline
+ * restano tutti uguali; senza, l'immagine riempie la finestra.
  * OpenGL 2.1 / GLSL 1.20: le funzioni degli shader si caricano con
  * SDL_GL_GetProcAddress, cosi' basta opengl32 senza altre librerie.
  * Se qualcosa non va, amiga_video_gl_init() restituisce 0 e il runner usa il
@@ -51,13 +49,14 @@ static GLuint s_tex, s_prog;
 static GLint u_modo, u_src, u_out;
 static int s_modo, s_lineare;
 static int s_righe = AMIGA_ALTEZZA;          /* righe della texture */
-static int s_intera = 1;
+static int s_intera = 1, s_pal = 1;
 
 void amiga_video_gl_scala_intera(int si) { s_intera = si != 0; }
+void amiga_video_gl_aspetto(int pal) { s_pal = pal != 0; }
 
 const char *amiga_video_gl_nome(int modo) {
     static const char *const nomi[AMIGA_SCHERMI] = { "nitido", "Commodore 1084S", "CRT Easymode",
-                                                     "CRT Aperture", "Scanline" };
+                                                     "Scanline" };
     return modo >= 0 && modo < AMIGA_SCHERMI ? nomi[modo] : nomi[0];
 }
 
@@ -71,18 +70,11 @@ static const char *FS =
     "#version 120\n"
     "uniform sampler2D tex;\n"
     "uniform int modo;\n"
-    "uniform vec2 src;\n"       /* 320x256 */
+    "uniform vec2 src;\n"       /* 320 x righe usate */
     "uniform vec2 dst;\n"       /* pixel del rettangolo d'uscita */
     "varying vec2 uv;\n"
-    "vec3 lin(vec3 c) { return pow(c, vec3(2.2)); }\n"
-    "vec3 riga(vec2 u) {\n"     /* colore della riga, un po' morbido in orizzontale come il fascio */
-    "    float y = (floor(u.y * src.y) + 0.5) / src.y;\n"
-    "    float dx = 0.6 / src.x;\n"
-    "    return lin(texture2D(tex, vec2(u.x, y)).rgb) * 0.5\n"
-    "         + lin(texture2D(tex, vec2(u.x - dx, y)).rgb) * 0.25\n"
-    "         + lin(texture2D(tex, vec2(u.x + dx, y)).rgb) * 0.25;\n"
-    "}\n"
-    /* Easymode: una riga (centro yc, in texel) ricostruita in x con Lanczos a 4 punti */
+    "vec3 lin(vec3 c) { return pow(c, vec3(2.4)); }\n"
+    /* una riga (centro yc, in texel) ricostruita in x con Lanczos a 4 punti */
     "float lanczos(float x) {\n"
     "    x = abs(x);\n"
     "    if (x < 0.0001) return 1.0;\n"
@@ -91,11 +83,12 @@ static const char *FS =
     "    return 2.0 * sin(p) * sin(p * 0.5) / (p * p);\n"
     "}\n"
     "vec3 riga_lanczos(float yc, float x) {\n"
+    "    yc = clamp(yc, 0.5, src.y - 0.5);\n"
     "    float xc = floor(x - 0.5) + 0.5, f = x - xc;\n"
     "    vec3 s = vec3(0.0); float w = 0.0;\n"
     "    for (int k = -1; k <= 2; k++) {\n"
     "        float wk = lanczos(f - float(k));\n"
-    "        s += wk * pow(texture2D(tex, vec2(xc + float(k), yc) / src).rgb, vec3(2.4));\n"
+    "        s += wk * lin(texture2D(tex, vec2(xc + float(k), yc) / src).rgb);\n"
     "        w += wk;\n"
     "    }\n"
     "    return max(s / w, vec3(0.0));\n"
@@ -111,59 +104,44 @@ static const char *FS =
     "    if (m < 1.0) k.r = 1.0; else if (m < 2.0) k.g = 1.0; else k.b = 1.0;\n"
     "    return k;\n"
     "}\n"
+    "vec3 fessure(float forza) {\n"                                  /* slot mask: triadi RGB sfalsate */
+    "    float t = floor(gl_FragCoord.x / 3.0);\n"
+    "    float r = mod(floor(gl_FragCoord.y) + mod(t, 2.0) * 2.0, 4.0);\n"
+    "    return maschera(forza) * (r < 1.0 ? 0.80 : 1.0);\n"
+    "}\n"
+    "vec3 crt(vec2 p, float stretto, float largo) {\n"               /* le due righe vicine, col fascio */
+    "    float y0 = floor(p.y - 0.5) + 0.5, fy = p.y - y0;\n"
+    "    vec3 a = riga_lanczos(y0, p.x), b = riga_lanczos(y0 + 1.0, p.x);\n"
+    "    return a * fascio(fy, a, stretto, largo) + b * fascio(1.0 - fy, b, stretto, largo);\n"
+    "}\n"
     "void main() {\n"
     "    if (modo == 0) { gl_FragColor = texture2D(tex, uv); return; }\n"
-    "    vec2 p = uv * src;\n"
-    "    if (modo == 2 || modo == 3) {\n"
-    "        float y0 = floor(p.y - 0.5) + 0.5, fy = p.y - y0;\n"       /* fra la riga y0 e la successiva */
-    "        vec3 a, b;\n"
-    "        if (modo == 2) { a = riga_lanczos(y0, p.x); b = riga_lanczos(y0 + 1.0, p.x); }\n"
-    "        else {\n"
-    "            a = pow(texture2D(tex, vec2(p.x, y0) / src).rgb, vec3(2.4));\n"
-    "            b = pow(texture2D(tex, vec2(p.x, y0 + 1.0) / src).rgb, vec3(2.4));\n"
-    "        }\n"
-    "        vec3 col;\n"
-    "        if (modo == 2) {\n"
-    "            col = a * fascio(fy, a, 0.27, 0.40) + b * fascio(1.0 - fy, b, 0.27, 0.40);\n"
-    "            col *= maschera(0.30) * 1.40;\n"
-    "        } else {\n"
-    "            col = a * fascio(fy, a, 0.22, 0.32) + b * fascio(1.0 - fy, b, 0.22, 0.32);\n"
-    "            vec3 glow = pow(texture2D(tex, uv + vec2(2.0, 0.0) / src).rgb, vec3(2.4))\n"
-    "                      + pow(texture2D(tex, uv - vec2(2.0, 0.0) / src).rgb, vec3(2.4));\n"
-    "            col += glow * 0.05;\n"
-    "            col *= maschera(0.75) * 2.1;\n"
-    "        }\n"
-    "        gl_FragColor = vec4(pow(col, vec3(1.0 / 2.2)), 1.0);\n"
-    "        return;\n"
-    "    }\n"
-    "    if (modo == 4) {\n"                                       /* pixel netti, righe vuote in mezzo */
+    "    if (modo == 3) {\n"                                       /* pixel netti, righe vuote in mezzo */
+    "        vec2 p = uv * src;\n"
     "        vec3 c = texture2D(tex, (floor(p) + 0.5) / src).rgb;\n"
-    "        float f = fract(p.y);\n"
-    "        float w = 1.0 - 0.6 * smoothstep(0.55, 0.9, f);\n"
+    "        float w = 1.0 - 0.6 * smoothstep(0.55, 0.9, fract(p.y));\n"
     "        gl_FragColor = vec4(c * w * 1.12, 1.0);\n"
     "        return;\n"
     "    }\n"
-    "    vec2 c = uv * 2.0 - 1.0;\n"                         /* curvatura del tubo */
-    "    c *= 1.0 + 0.035 * dot(c.yx, c.yx);\n"
+    "    if (modo == 2) {\n"                                       /* Easymode */
+    "        vec3 col = crt(uv * src, 0.27, 0.40) * maschera(0.30) * 1.40;\n"
+    "        gl_FragColor = vec4(pow(col, vec3(1.0 / 2.2)), 1.0);\n"
+    "        return;\n"
+    "    }\n"
+    /* Commodore 1084S */
+    "    vec2 c = uv * 2.0 - 1.0;\n"                         /* curvatura leggera del tubo */
+    "    c *= 1.0 + 0.018 * dot(c.yx, c.yx);\n"
     "    vec2 u = c * 0.5 + 0.5;\n"
     "    if (u.x < 0.0 || u.x > 1.0 || u.y < 0.0 || u.y > 1.0) { gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); return; }\n"
-    "    float y = u.y * src.y;\n"
-    "    float d = fract(y) - 0.5;\n"                        /* distanza dal centro della riga */
-    "    vec3 a = riga(u);\n"
-    "    vec3 b = riga(u + vec2(0.0, (d > 0.0 ? 1.0 : -1.0) / src.y));\n"
-    "    float la = dot(a, vec3(0.3, 0.6, 0.1)), lb = dot(b, vec3(0.3, 0.6, 0.1));\n"
-    "    float wa = exp(-d * d / (0.05 + 0.07 * la));\n"    /* le righe chiare sono piu' larghe */
-    "    float e = 1.0 - abs(d);\n"
-    "    float wb = exp(-e * e / (0.05 + 0.07 * lb)) * 0.6;\n"
-    "    vec3 col = a * wa + b * wb;\n"
-    "    vec3 glow = riga(u + vec2(1.5 / src.x, 0.0)) + riga(u - vec2(1.5 / src.x, 0.0));\n"
-    "    col += glow * 0.06;\n"
-    "    float m = mod(floor(gl_FragCoord.x), 3.0);\n"       /* maschera dei fosfori RGB */
-    "    vec3 mask = vec3(0.78);\n"
-    "    if (m < 1.0) mask.r = 1.0; else if (m < 2.0) mask.g = 1.0; else mask.b = 1.0;\n"
-    "    col *= mask * 1.45;\n"
-    "    float v = length(c * vec2(0.9, 1.0));\n"            /* vignettatura */
-    "    col *= 1.0 - 0.22 * pow(v, 3.0);\n"
+    "    vec2 p = u * src;\n"
+    "    vec3 col = crt(p, 0.30, 0.44);\n"
+    "    vec3 alone = crt(p + vec2(1.5, 0.0), 0.5, 0.6) + crt(p - vec2(1.5, 0.0), 0.5, 0.6)\n"
+    "               + crt(p + vec2(0.0, 1.0), 0.5, 0.6) + crt(p - vec2(0.0, 1.0), 0.5, 0.6);\n"
+    "    col = col + alone * 0.035;\n"
+    "    col *= fessure(0.35) * 1.45;\n"
+    "    vec2 bordo = smoothstep(vec2(0.0), vec2(0.012, 0.016), u) * smoothstep(vec2(0.0), vec2(0.012, 0.016), 1.0 - u);\n"
+    "    col *= bordo.x * bordo.y;\n"                         /* angoli arrotondati dal vetro */
+    "    col *= 1.0 - 0.12 * pow(length(c * vec2(0.8, 1.0)), 3.0);\n"   /* vignettatura */
     "    gl_FragColor = vec4(pow(col, vec3(1.0 / 2.2)), 1.0);\n"
     "}\n";
 
@@ -251,15 +229,16 @@ void amiga_video_gl_filtro(int lineare) {
 int amiga_video_gl_modo_attuale(void) { return s_modo; }
 
 /* il rettangolo d'uscita per righe x 320 pixel in una finestra w x h */
-void amiga_video_gl_rettangolo(int modo, int righe, int intera, int w, int h, int *vw, int *vh) {
-    double par = modo != SCHERMO_NITIDO ? AMIGA_PAR : 1.0;     /* larghezza di un pixel / altezza */
+void amiga_video_gl_rettangolo(int modo, int righe, int intera, int pal, int w, int h, int *vw, int *vh) {
+    double par = pal ? AMIGA_PAR : 1.0;                         /* larghezza di un pixel / altezza */
+    (void)modo;
     double rapporto = AMIGA_LARGHEZZA * par / righe;
     int k = intera ? h / righe : 0;                             /* fattore intero in verticale */
-    if (modo == SCHERMO_NITIDO && w / AMIGA_LARGHEZZA < k) k = w / AMIGA_LARGHEZZA;
+    if (!pal && w / AMIGA_LARGHEZZA < k) k = w / AMIGA_LARGHEZZA;
     while (k >= 1 && (int)(righe * k * rapporto + 0.5) > w) k--;
     if (k >= 1) {
         *vh = righe * k;
-        *vw = modo == SCHERMO_NITIDO ? AMIGA_LARGHEZZA * k : (int)(*vh * rapporto + 0.5);
+        *vw = !pal ? AMIGA_LARGHEZZA * k : (int)(*vh * rapporto + 0.5);
     } else {                                    /* senza scala intera, o finestra piu' piccola */
         *vw = w; *vh = (int)(w / rapporto);
         if (*vh > h) { *vh = h; *vw = (int)(h * rapporto); }
@@ -270,7 +249,7 @@ void amiga_video_gl_presenta(const uint32_t *pixel) {
     int w, h, vw, vh;
     SDL_GL_GetDrawableSize(s_win, &w, &h);
     int righe = amiga_hw_altezza_visibile();
-    amiga_video_gl_rettangolo(s_modo, righe, s_intera, w, h, &vw, &vh);
+    amiga_video_gl_rettangolo(s_modo, righe, s_intera, s_pal, w, h, &vw, &vh);
     glViewport(0, 0, w, h);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);

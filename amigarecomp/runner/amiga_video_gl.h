@@ -4,7 +4,7 @@
 #include <SDL.h>
 
 /* modelli di schermo, nell'ordine del launcher (amiga_profile.h) */
-enum { SCHERMO_NITIDO, SCHERMO_1084S, SCHERMO_EASYMODE, SCHERMO_APERTURE, SCHERMO_SCANLINE, AMIGA_SCHERMI };
+enum { SCHERMO_NITIDO, SCHERMO_1084S, SCHERMO_EASYMODE, SCHERMO_SCANLINE, AMIGA_SCHERMI };
 const char *amiga_video_gl_nome(int modo);
 
 int  amiga_video_gl_init(SDL_Window *win, int modo);   /* 0 = non disponibile: usare SDL_Renderer */
@@ -12,8 +12,9 @@ void amiga_video_gl_modo(int modo);                    /* SCHERMO_* */
 int  amiga_video_gl_modo_attuale(void);
 void amiga_video_gl_filtro(int lineare);               /* pixel netti ammorbiditi (filtro lineare) */
 void amiga_video_gl_scala_intera(int si);              /* 1 pixel perfetti, 0 il piu' grande possibile */
+void amiga_video_gl_aspetto(int pal);                  /* 1 pixel PAL (come su un 4:3), 0 quadrati */
 void amiga_video_gl_presenta(const uint32_t *pixel);   /* quadro 320x256 ARGB */
-/* dove va il quadro (righe x 320) in una finestra w x h: pixel quadrati per
- * il nitido, PAL 4:3 per i CRT; con intera il fattore di scala e' intero
- * (il piu' grande possibile), senza riempie la finestra */
-void amiga_video_gl_rettangolo(int modo, int righe, int intera, int w, int h, int *vw, int *vh);
+/* dove va il quadro (righe x 320) in una finestra w x h: pixel PAL (come su
+ * un 4:3) o quadrati; con intera il fattore verticale e' intero (il piu'
+ * grande possibile), senza riempie la finestra */
+void amiga_video_gl_rettangolo(int modo, int righe, int intera, int pal, int w, int h, int *vw, int *vh);

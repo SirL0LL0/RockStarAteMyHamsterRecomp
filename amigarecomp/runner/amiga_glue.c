@@ -97,6 +97,7 @@ typedef struct {
     int crt;                         /* modello di schermo: SCHERMO_* (amiga_video_gl.h) */
     int cpu;                         /* 0 A500 (68000), 1 A4000 (piu' fluido) */
     int intera;                      /* scala intera (pixel perfetti), 1 di partenza */
+    int pal;                         /* pixel PAL (come su un 4:3), 1 di partenza; 0 quadrati */
     amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
     int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
     int lingua;                      /* LINGUA_ITALIANO / LINGUA_INGLESE */
@@ -116,6 +117,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
     s->sorgente = 1;
     s->cpu = 1;
     s->intera = 1;
+    s->pal = 1;
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
     char riga[600]; int v, n;
@@ -140,7 +142,13 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "sensibilita_mouse")) s->sensibilita_mouse = v;
         else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
-        else if (!strcmp(k, "crt")) s->crt = v >= 0 && v < AMIGA_SCHERMI ? v : 0;
+        else if (!strcmp(k, "schermo")) s->crt = v >= 0 && v < AMIGA_SCHERMI ? v : 0;
+        else if (!strcmp(k, "crt")) {               /* versioni fino alla 1.2: 3 era CRT Aperture, 4 Scanline */
+            static const int vecchi[] = { SCHERMO_NITIDO, SCHERMO_1084S, SCHERMO_EASYMODE,
+                                          SCHERMO_EASYMODE, SCHERMO_SCANLINE };
+            s->crt = v >= 0 && v < 5 ? vecchi[v] : SCHERMO_NITIDO;
+        }
+        else if (!strcmp(k, "aspetto_pal")) s->pal = v ? 1 : 0;
         else if (!strcmp(k, "cpu")) s->cpu = v ? 1 : 0;
         else if (!strcmp(k, "scala_intera")) s->intera = v ? 1 : 0;
         else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
@@ -155,10 +163,10 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
     FILE *f = fopen("impostazioni.ini", "w");
     if (!f) return;
     fprintf(f, "scala=%d\nschermo_intero=%d\nfiltro=%d\nvolume=%d\naudio=%d\n"
-               "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
+               "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\nschermo=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
             s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
-    fprintf(f, "scala_intera=%d\n", s->intera);
+    fprintf(f, "scala_intera=%d\naspetto_pal=%d\n", s->intera, s->pal);
     fprintf(f, "cpu=%d\nsorgente=%d\nlingua=%d\ndisco=%s\n", s->cpu, s->sorgente, s->lingua, s->disco);
     for (int i = 0; i < AZ_NUMERO; i++)
         fprintf(f, "tasto%d=%d\npad%d=%d\n", i, s->ass.tasto[i], i, s->ass.pad[i]);
@@ -479,21 +487,21 @@ static void fine_quadro(void) {
 
 /* larghezza della finestra per il modello di schermo: pixel quadrati per il
  * nitido, pixel PAL (piu' larghi) per i CRT; alta AMIGA_ALTEZZA_GIOCO * scala */
-static int larghezza_finestra(int modo, int scala) {
-    return modo != SCHERMO_NITIDO ? (int)(AMIGA_LARGHEZZA * AMIGA_PAR * scala + 0.5) : AMIGA_LARGHEZZA * scala;
+static int larghezza_finestra(int pal, int scala) {
+    return pal ? (int)(AMIGA_LARGHEZZA * AMIGA_PAR * scala + 0.5) : AMIGA_LARGHEZZA * scala;
 }
 
 /* cambiato il modello: in finestra, la finestra prende le sue proporzioni */
 static void adatta_finestra(void) {
     if (!s_win || (SDL_GetWindowFlags(s_win) & SDL_WINDOW_FULLSCREEN)) return;
-    SDL_SetWindowSize(s_win, larghezza_finestra(s_imp.crt, s_scala), AMIGA_ALTEZZA_GIOCO * s_scala);
+    SDL_SetWindowSize(s_win, larghezza_finestra(s_imp.pal, s_scala), AMIGA_ALTEZZA_GIOCO * s_scala);
 }
 
 /* renderer SDL (senza OpenGL): le righe usate, scala intera */
 static void copia_sdl(void) {
     int righe = amiga_hw_altezza_visibile();
     SDL_Rect r = { 0, 0, AMIGA_LARGHEZZA, righe };
-    SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, righe);
+    SDL_RenderSetLogicalSize(s_ren, larghezza_finestra(s_imp.pal, 1), righe);
     SDL_RenderCopy(s_ren, s_tex, &r, NULL);
 }
 
@@ -543,6 +551,14 @@ static void a_intera(int verso) {
     else if (s_ren) SDL_RenderSetIntegerScale(s_ren, s_imp.intera ? SDL_TRUE : SDL_FALSE);
     scrivi_impostazioni(&s_imp);
 }
+static void v_pal(char *b, size_t n) { snprintf(b, n, "Pixel: %s", s_imp.pal ? "PAL (4:3)" : "quadrati"); }
+static void a_pal(int verso) {
+    (void)verso;
+    s_imp.pal = !s_imp.pal;
+    if (s_gl) amiga_video_gl_aspetto(s_imp.pal);
+    adatta_finestra();
+    scrivi_impostazioni(&s_imp);
+}
 static void v_riprendi(char *b, size_t n) { snprintf(b, n, "Torna al gioco"); }
 static void a_riprendi(int verso) { (void)verso; amiga_menu_chiudi(); }
 static void v_esci(char *b, size_t n) { snprintf(b, n, "Esci"); }
@@ -552,6 +568,7 @@ static const amiga_voce_menu_t s_voci_runner[] = {
     { v_schermo, a_schermo, ok_schermo },
     { v_intero, a_intero, NULL },
     { v_intera, a_intera, NULL },
+    { v_pal, a_pal, NULL },
     { v_volume, a_volume, NULL },
     { v_cpu, a_cpu, NULL },
     { v_riprendi, a_riprendi, NULL },
@@ -712,12 +729,14 @@ int main(int argc, char **argv) {
         io.player_src[0] = imp.sorgente;
         io.host_option[0] = imp.cpu;
         io.integer_scale = imp.intera;
+        io.aspect_index = imp.pal ? 0 : 1;
         predef = io;
         predef.player_src[0] = 1;
         predef.host_option[0] = 1;                   /* A4000 */
         predef.screen_kind = 0;
         predef.linear_filter = 0;
         predef.integer_scale = 1;
+        predef.aspect_index = 0;                     /* PAL */
         for (int i = 0; i < AZ_NUMERO; i++) {
             io.player_key_bind[0][i] = imp.ass.tasto[i];
             io.player_pad_bind[0][i] = imp.ass.pad[i];
@@ -756,6 +775,10 @@ int main(int argc, char **argv) {
         /* la copertina, quando il disco e' riconosciuto */
         gi.boxart_path = "assets/img/copertina.jpg";
         gi.boxart_only_verified = 1;
+        /* forma del pixel: PAL (come su un monitor 4:3) o quadrata */
+        static const char *const aspetti[] = { "PAL (4:3)", "Square pixels" };
+        gi.aspect_labels = aspetti;
+        gi.num_aspect_labels = 2;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
@@ -772,6 +795,7 @@ int main(int argc, char **argv) {
         imp.crt = io.screen_kind >= 0 && io.screen_kind < AMIGA_SCHERMI ? io.screen_kind : 0;
         imp.cpu = io.host_option[0] ? 1 : 0;
         imp.intera = io.integer_scale ? 1 : 0;
+        imp.pal = io.aspect_index == 0;
         imp.sorgente = io.player_src[0] == 2 ? 2 : 1;
         for (int i = 0; i < AZ_NUMERO; i++) {
             imp.ass.tasto[i] = io.player_key_bind[0][i];
@@ -832,7 +856,7 @@ int main(int argc, char **argv) {
     if (!s_senza_finestra) {
         const char *titolo = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         s_win = SDL_CreateWindow(titolo, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                 larghezza_finestra(imp.crt, scala), AMIGA_ALTEZZA_GIOCO * scala,
+                                 larghezza_finestra(imp.pal, scala), AMIGA_ALTEZZA_GIOCO * scala,
                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL |
                                  (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -841,7 +865,11 @@ int main(int argc, char **argv) {
         if (imp.cattura_mouse)
             SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
         s_gl = amiga_video_gl_init(s_win, imp.crt);  /* filtro CRT; senza OpenGL, renderer SDL */
-        if (s_gl) { amiga_video_gl_filtro(lineare); amiga_video_gl_scala_intera(imp.intera); }
+        if (s_gl) {
+            amiga_video_gl_filtro(lineare);
+            amiga_video_gl_scala_intera(imp.intera);
+            amiga_video_gl_aspetto(imp.pal);
+        }
         if (!s_gl) {
             s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
             SDL_RenderSetIntegerScale(s_ren, imp.intera ? SDL_TRUE : SDL_FALSE);   /* pixel perfetti anche qui */

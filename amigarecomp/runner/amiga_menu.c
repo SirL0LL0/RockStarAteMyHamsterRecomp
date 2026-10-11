@@ -131,22 +131,43 @@ void amiga_menu_disegna(uint32_t *q, int L, int A) {
     const uint32_t bianco = 0xFFFFFFFFu, grigio = 0xFF707888u, arancio = 0xFFFF8800u,
                    blu = 0xFF0055AAu, giallo = 0xFFFFDD55u;
     const int riga = FONT_DEBUG_A + 1;
-    int h = (s_n + 4) * riga + 8, y0 = (A - h) / 2;
+    /* posizione di ogni voce nella lista (i gruppi separati da mezza riga) */
+    static int pos[64];
+    int lista = 0;
+    for (int i = 0; i < s_n && i < 64; i++) {
+        if (i > 0 && s_gruppo[i] != s_gruppo[i - 1]) lista += riga / 2;
+        pos[i] = lista;
+        lista += riga;
+    }
+    /* il riquadro sta nelle righe che si vedono (200 per Rock Star): se la
+     * lista e' piu' lunga scorre, con la voce scelta sempre in vista */
+    const int testa = riga + 8, piede = riga + 6;          /* titolo; riga dell'avviso */
+    int spazio = A - 8 - testa - piede;
+    if (spazio > lista) spazio = lista;
+    int h = testa + spazio + piede, y0 = (A - h) / 2;
     if (y0 < 0) y0 = 0;
+    int scorri = 0;
+    if (lista > spazio && s_scelta >= 0 && s_scelta < s_n) {
+        scorri = pos[s_scelta] + riga / 2 - spazio / 2;
+        if (scorri > lista - spazio) scorri = lista - spazio;
+        if (scorri < 0) scorri = 0;
+    }
     rettangolo(q, L, A, 0, 0, L, A, 0, 1);                          /* il gioco in penombra */
     rettangolo(q, L, A, 16, y0, L - 16, y0 + h, blu, 0);            /* colori del Workbench 1.3 */
     rettangolo(q, L, A, 16, y0, L - 16, y0 + riga + 2, arancio, 0);
     testo(q, L, A, 24, y0 + 2, bianco, "ROCK STAR ATE MY HAMSTER - PAUSA");
-    int y = y0 + riga + 8;
+    int alto = y0 + testa, basso = alto + spazio;
     for (int i = 0; i < s_n; i++) {
-        if (i > 0 && s_gruppo[i] != s_gruppo[i - 1]) y += riga / 2;
+        int y = alto + pos[i] - scorri;
+        if (y < alto || y + riga > basso + 1) continue;             /* fuori dalla finestra della lista */
         char t[64] = "";
         s_voci[i]->etichetta(t, sizeof t);
         int on = attiva(i);
         if (i == s_scelta && on) rettangolo(q, L, A, 20, y - 1, L - 20, y + riga - 1, 0xFF002244u, 0);
         testo(q, L, A, 28, y, !s_voci[i]->azione ? giallo : on ? (i == s_scelta ? arancio : bianco) : grigio, t);
-        y += riga;
     }
+    if (scorri > 0) testo(q, L, A, L - 32, alto, giallo, "^");      /* altre voci sopra / sotto */
+    if (scorri < lista - spazio) testo(q, L, A, L - 32, basso - riga, giallo, "v");
     if (s_avviso[0] && SDL_GetTicks() < s_avviso_fino)
-        testo(q, L, A, 28, y + 4, giallo, s_avviso);
+        testo(q, L, A, 28, basso + 4, giallo, s_avviso);
 }
