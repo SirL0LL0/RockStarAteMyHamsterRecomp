@@ -1,7 +1,8 @@
 /* rockstar_menu.c - salvataggi e trucchi nel menu in gioco (amiga_menu.c).
  *
  * COME SALVA IL GIOCO
- * Nel menu principale l'opzione DISCO ($8EEA) chiede SALVA / CARICA /
+ * Nel menu principale l'opzione SALVATAGGI (SAVE/LOAD nell'originale; $8EEA)
+ * chiede SALVA / CARICA /
  * ANNULLA. SALVA copia i 300 byte a $11D0B (classifiche) e i 3217 a $123CA
  * (soldi, band, canzoni, settimana: tutta la partita) in un buffer a $76E56 e
  * mette 1 in $8F86; CARICA li ricopia indietro e ridisegna il pannello
@@ -10,7 +11,7 @@
  *
  * QUI
  * - La partita salvata col gioco viene scritta anche in salvataggi/partita.sav
- *   e rimessa nel buffer alla partenza: DISCO -> CARICA funziona anche il
+ *   e rimessa nel buffer alla partenza: SALVATAGGI -> CARICA funziona anche il
  *   giorno dopo.
  * - Quattro slot nel menu in gioco (F1): salvano e caricano gli stessi due
  *   blocchi. Si possono usare solo quando il gioco e' fermo nel menu

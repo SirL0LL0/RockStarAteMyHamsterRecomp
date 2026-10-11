@@ -25,6 +25,54 @@ Basato sugli strumenti della [Retro Porting Toolkit](https://retroportingtoolkit
 | `external/` | sottomoduli del toolkit |
 | `tools/` | script di build e di prova |
 
+## Il gioco
+
+*Rock Star Ate My Hamster* (Codemasters, 1989; anche per Atari ST, C64,
+Amstrad CPC e ZX Spectrum). Ideato e programmato da Colin Jones, grafica di
+Brian Hartley e Chris Graham, musica di Allister Brimble, Colin Jones, Gavin
+Raeburn e Paul Hiley. Il titolo prende in giro il celebre titolo di giornale
+del 1986 su Freddie Starr; nella confezione c'era *The Stun*, un finto
+tabloid (oroscopi, fumetti, pettegolezzi sulle star parodiate dal gioco).
+
+Sei il manager di una band: parti dalle 50.000 sterline lasciate dalla zia
+Mabel, scegli le rock star alle audizioni, le fai provare, le porti in tour,
+incidi e pubblichi singoli e album. Si vince conquistando **4 dischi
+d'argento** entro un anno; si perde andando in rovina o restando senza star.
+
+Il menu principale: **PROVE**, **CONCERTO** (tour: locali, prezzo dei
+biglietti, numero di serate; e' la fonte principale di guadagno),
+**STAMPA** (trovate pubblicitarie: alzano la fama, ma possono finire male),
+**REGALI** (per tenere contente le star), **INCIDI** / **LANCIA DISCO**
+(studio, titoli, singoli, album, video), **SALVATAGGI** (salva o carica la
+partita), **ESCI**. Strada facendo arrivano concerti di beneficenza, sponsor,
+case discografiche, pirati e il fisco.
+
+Consigli dalla *Cecil Pitt Guide to Rock Management* del manuale:
+
+- piu' star hai, piu' sei popolare; quelle che costano poco di solito sono
+  meno brave, meno amate e piu' permalose (ma non sempre);
+- fai provare la band prima di cercare un contratto: le case discografiche
+  vogliono gruppi che hanno gia' dei fan;
+- scegli bene locali e prezzi: un gruppo alle prime armi non riempie uno
+  stadio a 20 sterline a biglietto;
+- non spremere la band: falle riposare e falle regali, o le star fanno
+  storie, pretendono il controllo artistico o se ne vanno;
+- valuta le offerte dei discografici ma non fare troppo il difficile: quando
+  la popolarita' cala, le offerte spariscono;
+- usa lo studio migliore che ti puoi permettere; i singoli di successo fanno
+  vendere l'album; fai un video quando puoi, scegliendo con cura regista,
+  luogo e contenuto.
+
+**Trucco originale**: durante la partita scrivi `COLBOPS`, poi F7 aggiunge
+soldi (in questa versione un milione di sterline, le guide dicono 100.000),
+F8 fa suonare la band al massimo, F9 porta il pubblico al massimo. Si attiva
+anche dal menu Mods del launcher o dal menu in gioco.
+
+Fonti: il manuale originale, il manuale su
+[Games Database](https://www.gamesdatabase.org/Media/SYSTEM/Commodore_Amiga//Manual/formated/Rock_Star_Ate_my_Hamster_-_1989_-_Codemasters.htm),
+[The Codemasters Archive](https://thecodemastersarchive.co.uk/games/rock-star-ate-my-hamster/),
+[Lemon Amiga](https://www.lemonamiga.com/doc/rock-star-ate-my-hamster/1372).
+
 ## Giocare
 
 Il programma vuole uno dei due dischi supportati, riconosciuti dal CRC32 del
@@ -75,8 +123,10 @@ finale. `AMIGA_INGRESSI="f:300,k44:500"` simula fuoco e tasti.
 
 ## Comandi
 
-Il gioco si gioca col mouse: il pulsante sinistro sceglie e fa avanzare i
-fumetti. Il primo clic nella finestra cattura il puntatore (senza scegliere
+Come sull'Amiga, si sceglie in tre modi: mouse (su e giu' per indicare,
+pulsante sinistro per scegliere), joystick in porta 2 (su e giu', fuoco),
+tastiera (frecce su e giu', Spazio). Lo stesso salta l'introduzione e fa
+avanzare i fumetti. Il primo clic nella finestra cattura il puntatore (senza scegliere
 nulla); il pulsante centrale o F12 lo liberano.
 
 Tasti e joypad si associano nel launcher (Mouse & Keyboard → Keys and
@@ -90,8 +140,8 @@ alla tastiera dell'Amiga.
 **F1** (o Start del joypad) apre il menu in gioco e ferma la partita:
 salvataggio e caricamento in quattro slot (dal menu principale del gioco,
 dove salva anche il gioco stesso), trucchi, schermo nitido o Commodore 1084S,
-schermo intero, volume, uscita. Anche il salvataggio del gioco (opzione DISCO
-del menu principale), che sull'Amiga restava solo in memoria, ora resta su
+schermo intero, volume, uscita. Anche il salvataggio del gioco (opzione
+SALVATAGGI del menu principale), che sull'Amiga restava solo in memoria, ora resta su
 file (`salvataggi/partita.sav`) e si ricarica le volte successive.
 
 ## Licenze
