@@ -45,6 +45,44 @@ static SDL_Renderer *s_ren;
 static SDL_Texture *s_tex;
 static uint32_t s_t_quadro;
 static int s_scala = 3;
+static int s_sensibilita = 100;      /* movimento del mouse, in percento */
+
+/* impostazioni.ini accanto all'eseguibile: cio' che si sceglie nel launcher
+ * (o a mano, senza launcher) e vale anche alla partenza successiva */
+typedef struct {
+    int scala, schermo_intero, filtro, volume, audio;
+    int sensibilita_mouse, cattura_mouse, salta_launcher;
+} impostazioni_t;
+
+static void leggi_impostazioni(impostazioni_t *s) {
+    *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0 };
+    FILE *f = fopen("impostazioni.ini", "r");
+    if (!f) return;
+    char k[64]; int v;
+    while (fscanf(f, " %63[^=]=%d", k, &v) == 2) {
+        if (!strcmp(k, "scala")) s->scala = v;
+        else if (!strcmp(k, "schermo_intero")) s->schermo_intero = v;
+        else if (!strcmp(k, "filtro")) s->filtro = v;
+        else if (!strcmp(k, "volume")) s->volume = v;
+        else if (!strcmp(k, "audio")) s->audio = v;
+        else if (!strcmp(k, "sensibilita_mouse")) s->sensibilita_mouse = v;
+        else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
+        else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
+    }
+    fclose(f);
+    if (s->scala < 1) s->scala = 1;
+    if (s->sensibilita_mouse < 25 || s->sensibilita_mouse > 400) s->sensibilita_mouse = 100;
+}
+
+static void scrivi_impostazioni(const impostazioni_t *s) {
+    FILE *f = fopen("impostazioni.ini", "w");
+    if (!f) return;
+    fprintf(f, "scala=%d\nschermo_intero=%d\nfiltro=%d\nvolume=%d\naudio=%d\n"
+               "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\n",
+            s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
+            s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher);
+    fclose(f);
+}
 
 /* ------------------------------------------------------------ memoria */
 
@@ -196,9 +234,10 @@ static void ingressi_sdl(void) {
         /* mouse catturato: il movimento in pixel della finestra diventa movimento
          * in pixel Amiga (diviso per la scala), il resto si porta avanti */
         if (ev.type == SDL_MOUSEMOTION && SDL_GetRelativeMouseMode()) {
-            resto_x += ev.motion.xrel; resto_y += ev.motion.yrel;
-            mdx += resto_x / s_scala; resto_x %= s_scala;
-            mdy += resto_y / s_scala; resto_y %= s_scala;
+            int div = s_scala * 100;                  /* sensibilita' in percento */
+            resto_x += ev.motion.xrel * s_sensibilita; resto_y += ev.motion.yrel * s_sensibilita;
+            mdx += resto_x / div; resto_x %= div;
+            mdy += resto_y / div; resto_y %= div;
         }
         if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12)    /* F12 libera il mouse */
             SDL_SetRelativeMouseMode(SDL_FALSE);
@@ -296,19 +335,27 @@ void glue_yield_for_interrupt_poll(void) {
 
 int main(int argc, char **argv) {
     const char *file = argc > 1 && argv[1][0] != '-' ? argv[1] : "rockstar_chipram.bin";
-    int scala = 3, schermo_intero = 0, lineare = 0;
+    impostazioni_t imp;
+    leggi_impostazioni(&imp);
     const char *q = getenv("AMIGA_QUADRI");
     if (g_game_spec.on_post_reset) g_game_spec.on_post_reset();   /* preferenze del gioco (mods) */
 #if defined(RECOMP_LAUNCHER)
     /* launcher recomp-ui (profilo "amiga"): scelta del file e impostazioni.
-     * Saltato nei test senza finestra e con --senza-launcher. */
+     * Saltato nei test senza finestra, con --senza-launcher, o se nel launcher
+     * si e' scelto "Skip launcher on boot" (--launcher lo riapre). */
     static char scelto[512];
-    int salta = q != NULL;
-    for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--senza-launcher")) salta = 1;
+    int salta = q != NULL || imp.salta_launcher;
+    for (int i = 1; i < argc; i++) {
+        if (!strcmp(argv[i], "--senza-launcher")) salta = 1;
+        if (!strcmp(argv[i], "--launcher")) salta = 0;
+    }
     if (!salta) {
         RecompLauncherCSettings io;
         memset(&io, 0, sizeof io);
-        io.window_scale = 3; io.enable_audio = 1; io.audio_freq = 48000; io.volume = 80;
+        io.window_scale = imp.scala; io.fullscreen = imp.schermo_intero;
+        io.linear_filter = imp.filtro; io.enable_audio = imp.audio; io.audio_freq = 48000;
+        io.volume = imp.volume; io.skip_launcher = imp.salta_launcher;
+        io.pointer_sensitivity = imp.sensibilita_mouse; io.pointer_capture = imp.cattura_mouse;
         RecompLauncherCGameInfo gi;
         memset(&gi, 0, sizeof gi);
         launcher_profile_apply("amiga", &gi);
@@ -317,11 +364,19 @@ int main(int argc, char **argv) {
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
-        scala = io.window_scale > 0 ? io.window_scale : 3;
-        schermo_intero = io.fullscreen;
-        lineare = io.linear_filter;
+        imp.scala = io.window_scale > 0 ? io.window_scale : 3;
+        imp.schermo_intero = io.fullscreen;
+        imp.filtro = io.linear_filter;
+        imp.volume = io.volume;
+        imp.audio = io.enable_audio;
+        imp.salta_launcher = io.skip_launcher;
+        imp.sensibilita_mouse = io.pointer_sensitivity > 0 ? io.pointer_sensitivity : 100;
+        imp.cattura_mouse = io.pointer_capture;
+        scrivi_impostazioni(&imp);
     }
 #endif
+    int scala = imp.scala, schermo_intero = imp.schermo_intero, lineare = imp.filtro;
+    s_sensibilita = imp.sensibilita_mouse;
     FILE *f = fopen(file, "rb");
     if (!f) { fprintf(stderr, "immagine non trovata: %s\n", file); return 1; }
     fseek(f, 0, SEEK_END);
@@ -361,7 +416,8 @@ int main(int argc, char **argv) {
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         s_scala = scala;
         SDL_RaiseWindow(s_win);                      /* dopo il launcher la finestra puo' nascere senza focus */
-        SDL_SetRelativeMouseMode(SDL_TRUE);          /* gioco a mouse: puntatore catturato */
+        if (imp.cattura_mouse)
+            SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
         s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_PRESENTVSYNC);
         SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
