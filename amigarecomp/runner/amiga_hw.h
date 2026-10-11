@@ -16,6 +16,12 @@ extern uint8_t *g_amiga_mem;          /* immagine della chip RAM (e oltre) */
 extern uint32_t g_amiga_mem_size;
 extern uint64_t g_amiga_letture_vhpos;
 
+/* velocita' della CPU rispetto al 68000 a 7,09 MHz (1 = A500, 12 = A4000/040):
+ * il C generato conta cicli 68000, e in un quadro la CPU ne fa
+ * AMIGA_CICLI_QUADRO * g_amiga_cpu_x (g_vblank_threshold); pennello, audio e
+ * tempo dei chip custom restano quelli veri (cicli / g_amiga_cpu_x) */
+extern uint32_t g_amiga_cpu_x;
+
 void     amiga_hw_init(void);
 int      amiga_hw_audio(int16_t **campioni);   /* campioni stereo a 48 kHz del quadro, poi azzera */
 

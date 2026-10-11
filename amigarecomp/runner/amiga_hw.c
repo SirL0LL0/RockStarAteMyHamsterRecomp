@@ -35,7 +35,7 @@ static uint16_t leggi_mem16(uint32_t a) {
 
 /* istante attuale in cicli CPU dall'avvio: quadri completati + posizione nel quadro */
 static uint64_t adesso(void) {
-    return (uint64_t)s_quadri * AMIGA_CICLI_QUADRO + g_cycle_accumulator;
+    return (uint64_t)s_quadri * AMIGA_CICLI_QUADRO + g_cycle_accumulator / g_amiga_cpu_x;
 }
 
 static void scrivi_custom(uint32_t off, uint16_t v) {
@@ -68,7 +68,7 @@ static uint16_t joydat(int su, int giu, int sx, int dx) {
 
 static uint16_t leggi_custom(uint32_t off) {
     off &= 0x1FE;
-    uint32_t t = g_cycle_accumulator;
+    uint32_t t = g_cycle_accumulator / g_amiga_cpu_x;      /* tempo dei chip, non della CPU */
     uint32_t riga = t / AMIGA_CICLI_RIGA, h = (t % AMIGA_CICLI_RIGA) / 2;
     switch (off) {
     case 0x002: return s_dmacon;

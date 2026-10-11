@@ -40,6 +40,18 @@ M68KState g_cpu;
 uint64_t  g_native_insn_count;
 uint32_t  g_cycle_accumulator;
 uint32_t  g_vblank_threshold = AMIGA_CICLI_QUADRO;
+uint32_t  g_amiga_cpu_x = 1;
+
+#define CPU_A4000 12u                        /* 68040 a 25 MHz contro 68000 a 7,09 */
+
+/* la CPU scelta: 0 A500, 1 A4000. Si puo' cambiare anche a gioco avviato:
+ * la posizione nel quadro resta la stessa */
+static void imposta_cpu(int a4000) {
+    uint32_t x = a4000 ? CPU_A4000 : 1u;
+    g_cycle_accumulator = g_cycle_accumulator / g_amiga_cpu_x * x;
+    g_amiga_cpu_x = x;
+    g_vblank_threshold = AMIGA_CICLI_QUADRO * x;
+}
 uint32_t  g_audio_cycle_counter;
 static int s_rte_pending;
 int *g_rte_pending_ptr = &s_rte_pending;
@@ -83,6 +95,7 @@ typedef struct {
     int scala, schermo_intero, filtro, volume, audio;
     int sensibilita_mouse, cattura_mouse, salta_launcher;
     int crt;                         /* 0 nitido, 1 Commodore 1084S */
+    int cpu;                         /* 0 A500 (68000), 1 A4000 (piu' fluido) */
     amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
     int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
     int lingua;                      /* LINGUA_ITALIANO / LINGUA_INGLESE */
@@ -96,6 +109,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
     *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0, 1 };
     amiga_ingressi_default(&s->ass);
     s->sorgente = 1;
+    s->cpu = 1;
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
     char riga[600]; int v, n;
@@ -121,6 +135,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
         else if (!strcmp(k, "crt")) s->crt = v;
+        else if (!strcmp(k, "cpu")) s->cpu = v ? 1 : 0;
         else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
         else if (!strcmp(k, "lingua")) s->lingua = v == LINGUA_INGLESE ? LINGUA_INGLESE : LINGUA_ITALIANO;
     }
@@ -136,7 +151,7 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
                "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
             s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
-    fprintf(f, "sorgente=%d\nlingua=%d\ndisco=%s\n", s->sorgente, s->lingua, s->disco);
+    fprintf(f, "cpu=%d\nsorgente=%d\nlingua=%d\ndisco=%s\n", s->cpu, s->sorgente, s->lingua, s->disco);
     for (int i = 0; i < AZ_NUMERO; i++)
         fprintf(f, "tasto%d=%d\npad%d=%d\n", i, s->ass.tasto[i], i, s->ass.pad[i]);
     fclose(f);
@@ -484,6 +499,13 @@ static void a_volume(int verso) {
     amiga_paula_volume(s_imp.audio ? s_imp.volume : 0);
     scrivi_impostazioni(&s_imp);
 }
+static void v_cpu(char *b, size_t n) { snprintf(b, n, "Amiga: %s", s_imp.cpu ? "A4000 (fluido)" : "A500 (originale)"); }
+static void a_cpu(int verso) {
+    (void)verso;
+    s_imp.cpu = !s_imp.cpu;
+    imposta_cpu(s_imp.cpu);
+    scrivi_impostazioni(&s_imp);
+}
 static void v_riprendi(char *b, size_t n) { snprintf(b, n, "Torna al gioco"); }
 static void a_riprendi(int verso) { (void)verso; amiga_menu_chiudi(); }
 static void v_esci(char *b, size_t n) { snprintf(b, n, "Esci"); }
@@ -493,6 +515,7 @@ static const amiga_voce_menu_t s_voci_runner[] = {
     { v_schermo, a_schermo, ok_schermo },
     { v_intero, a_intero, NULL },
     { v_volume, a_volume, NULL },
+    { v_cpu, a_cpu, NULL },
     { v_riprendi, a_riprendi, NULL },
     { v_esci, a_esci, NULL },
 };
@@ -690,6 +713,8 @@ int main(int argc, char **argv) {
     }
 #endif
     s_imp = imp;
+    if (getenv("AMIGA_CPU")) imp.cpu = s_imp.cpu = atoi(getenv("AMIGA_CPU")) ? 1 : 0;   /* per le prove */
+    imposta_cpu(imp.cpu);
     int scala = imp.scala, schermo_intero = imp.schermo_intero, lineare = imp.filtro;
     s_sensibilita = imp.sensibilita_mouse;
     {
