@@ -1,4 +1,4 @@
-/* rockstar_mods.c - trucchi di Rock Star Ate My Hamster nel menu Mods del
+﻿/* rockstar_mods.c - trucchi di Rock Star Ate My Hamster nel menu Mods del
  * launcher (recomp-ui), e il loro effetto sul gioco a ogni quadro.
  *
  * Soldi infiniti: i soldi sono 8 cifre decimali, una per byte, a $123CA
@@ -28,6 +28,15 @@
  * $8B46-$8B5A); deve superare $3B per le occasioni del menu ($8F88).
  * (Record delle star: 30 byte a $1147E, nome nei primi 20.)
  *
+ * Sempre primi in classifica: il singolo in uscita sta in $128C4 (posizione,
+ * 0 = nessuno, 1-10 in classifica, 11 e oltre fuori), $1289C e' la posizione
+ * migliore che puo' raggiungere (calcolata all'uscita da qualita' e pubblico,
+ * $B1F6) e $128C6 le settimane di salita (bit 7 = in discesa). Ogni settimana
+ * $B35A lo fa salire di qualche posto verso $1289C o scendere, e se e' fra i
+ * primi 10 scrive il segno $FE (il nostro disco) nella top 10 a $1241A.
+ * L'album fa lo stesso con $128C5 e la top 10 a $12438 ($B2A8). La mod, se un
+ * disco e' uscito, lo tiene al primo posto e in salita.
+ *
  * Le scelte si ricordano in mods.ini accanto all'eseguibile.
  */
 #include <stdio.h>
@@ -40,6 +49,10 @@
 #define SOLDI_ADDR        0x123CAu
 #define SALDO_NEG_ADDR    0x128BDu
 #define CONTO_TRUCCO_ADDR 0x0BB8Du
+#define SINGOLO_POS_ADDR  0x128C4u
+#define ALBUM_POS_ADDR    0x128C5u
+#define SINGOLO_SETT_ADDR 0x128C6u
+#define SINGOLO_MAX_ADDR  0x1289Cu
 #define FILE_MODS         "mods.ini"
 #define PACCHETTO         "rockstar-trucchi"
 
@@ -58,6 +71,9 @@ static trucco_t s_trucchi[] = {
       "sterline; F8 fa suonare la band al massimo (classifica, vendite dei dischi, "
       "occasioni di lavoro); F9 porta il pubblico al massimo. Senza questa mod il "
       "trucco si attiva digitando C O L B O P S durante la partita, poi F7, F8 o F9.", 0, 0 },
+    { "primi_in_classifica", "Sempre primi in classifica",
+      "Il singolo e l'album che pubblichi vanno subito al primo posto della "
+      "classifica e non scendono piu'.", 0, 0 },
 };
 #define N_TRUCCHI ((int)(sizeof s_trucchi / sizeof s_trucchi[0]))
 
@@ -107,6 +123,14 @@ void rockstar_mods_quadro(void) {
     }
     if (s_trucchi[1].attivo)                                       /* trucco originale */
         m68k_write8(CONTO_TRUCCO_ADDR, 7);
+    if (s_trucchi[2].attivo) {                                     /* sempre primi */
+        if (m68k_read8(SINGOLO_POS_ADDR)) {
+            m68k_write8(SINGOLO_POS_ADDR, 1);
+            m68k_write8(SINGOLO_MAX_ADDR, 1);
+            m68k_write8(SINGOLO_SETT_ADDR, 5);                     /* sempre in salita */
+        }
+        if (m68k_read8(ALBUM_POS_ADDR)) m68k_write8(ALBUM_POS_ADDR, 1);
+    }
 }
 
 /* ------------------------------------------------------------ fornitore */
@@ -118,7 +142,7 @@ static int package_get(void *ctx, int i, RecompLauncherCModPackage *o) {
     if (i != 0) return 0;
     memset(o, 0, sizeof *o);
     copia(o->id, sizeof o->id, PACCHETTO);
-    copia(o->version, sizeof o->version, "1.1");
+    copia(o->version, sizeof o->version, "1.2");
     copia(o->name, sizeof o->name, "Trucchi");
     copia(o->author, sizeof o->author, "Lollo");
     copia(o->description, sizeof o->description, "Trucchi per Rock Star Ate My Hamster.");
@@ -135,7 +159,7 @@ static int feature_get(void *ctx, int i, RecompLauncherCModFeature *o) {
     memset(o, 0, sizeof *o);
     copia(o->id, sizeof o->id, s_trucchi[i].id);
     copia(o->package_id, sizeof o->package_id, PACCHETTO);
-    copia(o->package_version, sizeof o->package_version, "1.1");
+    copia(o->package_version, sizeof o->package_version, "1.2");
     copia(o->package_name, sizeof o->package_name, "Trucchi");
     copia(o->name, sizeof o->name, s_trucchi[i].nome);
     copia(o->author, sizeof o->author, "Lollo");
