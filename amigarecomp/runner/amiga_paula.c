@@ -103,12 +103,23 @@ void amiga_paula_registro(uint32_t off, uint16_t v) {
     }
 }
 
+/* AMIGA_AUDIO_LOG=file: ogni avvio di nota (diagnostica) */
+#include <stdio.h>
+#include <stdlib.h>
+static FILE *s_log;
+static int s_log_pronto;
+
 void amiga_paula_dmacon(uint16_t prima, uint16_t dopo) {
+    if (!s_log_pronto) { s_log_pronto = 1; if (getenv("AMIGA_AUDIO_LOG")) s_log = fopen(getenv("AMIGA_AUDIO_LOG"), "w"); }
     if (!(dopo & 0x0200)) dopo = 0;                   /* senza DMAEN tutto fermo */
     if (!(prima & 0x0200)) prima = 0;
     for (int n = 0; n < 4; n++) {
         int era = (prima >> n) & 1, ora = (dopo >> n) & 1;
-        if (ora && !era) { s_c[n].dma = 1; avvia(&s_c[n]); }
+        if (ora && !era) {
+            s_c[n].dma = 1; avvia(&s_c[n]);
+            if (s_log) fprintf(s_log, "%llu %d %06X %u %u %u\n", (unsigned long long)s_cicli_fatti, n,
+                               s_c[n].lc, s_c[n].len, s_c[n].per, s_c[n].vol);
+        }
         else if (!ora && era) s_c[n].dma = 0;
     }
 }

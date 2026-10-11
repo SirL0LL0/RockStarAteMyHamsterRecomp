@@ -49,6 +49,7 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_hw.c
     amigarecomp/runner/amiga_debug.c
     amigarecomp/runner/amiga_paula.c
+    amigarecomp/runner/amiga_video_gl.c
     game/rockstar_spec.c
     game/rockstar_debug.c
     game/rockstar_mods.c
@@ -63,7 +64,7 @@ target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
     "${ROCKSTAR_SDL2_DIR}/include")
 
 target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")
-target_link_libraries(RockStarAteMyHamsterRecomp PRIVATE SDL2)
+target_link_libraries(RockStarAteMyHamsterRecomp PRIVATE SDL2 opengl32)
 # il C generato e' grande e ripetitivo: niente avvisi da li'
 set_source_files_properties(${GEN_FILES} PROPERTIES COMPILE_OPTIONS "-w")
 

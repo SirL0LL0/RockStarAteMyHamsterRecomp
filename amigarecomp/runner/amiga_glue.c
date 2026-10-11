@@ -24,6 +24,7 @@
 #include "amiga_hw.h"
 #include "amiga_debug.h"
 #include "amiga_paula.h"
+#include "amiga_video_gl.h"
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -76,10 +77,14 @@ static int s_sensibilita = 100;      /* movimento del mouse, in percento */
 typedef struct {
     int scala, schermo_intero, filtro, volume, audio;
     int sensibilita_mouse, cattura_mouse, salta_launcher;
+    int crt;                         /* 0 nitido, 1 Commodore 1084S */
 } impostazioni_t;
 
+static impostazioni_t s_imp;
+static int s_gl;                     /* presentazione OpenGL attiva */
+
 static void leggi_impostazioni(impostazioni_t *s) {
-    *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0 };
+    *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0, 1 };
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
     char k[64]; int v;
@@ -92,6 +97,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "sensibilita_mouse")) s->sensibilita_mouse = v;
         else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
+        else if (!strcmp(k, "crt")) s->crt = v;
     }
     fclose(f);
     if (s->scala < 1) s->scala = 1;
@@ -102,9 +108,9 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
     FILE *f = fopen("impostazioni.ini", "w");
     if (!f) return;
     fprintf(f, "scala=%d\nschermo_intero=%d\nfiltro=%d\nvolume=%d\naudio=%d\n"
-               "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\n",
+               "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
-            s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher);
+            s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
     fclose(f);
 }
 
@@ -182,6 +188,11 @@ uint32_t recomp_resolve_ram_trampoline(uint32_t addr) { return addr & 0xFFFFFFu;
  * codice non tradotto e' un errore di scoperta, non un caso da interpretare. */
 int recomp_dispatch_ram_stub(uint32_t addr) { (void)addr; return 0; }
 
+/* siti game_hook di game.toml: il C generato chiama questa prima dell'istruzione */
+int genesis_game_instruction_hook(uint32_t pc) {
+    return g_game_spec.instruction_hook ? g_game_spec.instruction_hook(pc) : 0;
+}
+
 void genesis_log_dispatch_miss(uint32_t addr) {
     FILE *f = fopen("dispatch_misses.toml", "w");
     if (f) {
@@ -207,10 +218,14 @@ static void eccezione(uint32_t vettore, int livello) {
 
 void m68k_trap_vector(uint8_t vec) { eccezione((uint32_t)vec * 4u, 0); }
 
+uint64_t g_amiga_irq[8];             /* interrupt consegnati per livello (debug) */
+
 static void consegna_interrupt(void) {
     int l = amiga_hw_livello_interrupt();
-    if (l > (int)((g_cpu.SR >> 8) & 7))
+    if (l > (int)((g_cpu.SR >> 8) & 7)) {
+        g_amiga_irq[l]++;
         eccezione(0x60u + (uint32_t)l * 4u, l);
+    }
 }
 
 /* ------------------------------------------------------------ quadro */
@@ -279,8 +294,15 @@ static void ingressi_sdl(void) {
             mdx += resto_x / div; resto_x %= div;
             mdy += resto_y / div; resto_y %= div;
         }
-        if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12)    /* F12 libera il mouse */
-            SDL_SetRelativeMouseMode(SDL_FALSE);
+        if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12 && !ev.key.repeat) {
+            if (ev.key.keysym.mod & KMOD_SHIFT) {          /* Shift+F12: nitido / 1084S */
+                if (s_gl) {
+                    s_imp.crt = !amiga_video_gl_modo_attuale();
+                    amiga_video_gl_modo(s_imp.crt);
+                    scrivi_impostazioni(&s_imp);
+                }
+            } else SDL_SetRelativeMouseMode(SDL_FALSE);   /* F12 libera il mouse */
+        }
     }
     amiga_hw_joystick(su, giu, sx, dx, fuoco);
     amiga_hw_mouse(mdx, mdy, mouse_sx || tieni_sx > 0, mouse_dx || tieni_dx > 0);
@@ -330,6 +352,7 @@ static void fine_quadro(void) {
             FILE *m = fopen("memoria_fine.bin", "wb");     /* stato per confronti */
             if (m) { fwrite(g_amiga_mem, 1, g_amiga_mem_size, m); fclose(m); }
             printf("quadri %llu, salvati quadro.bmp e memoria_fine.bin\n", (unsigned long long)s_quadri);
+            printf("interrupt consegnati: liv2 %llu  liv3 %llu  liv4 %llu\n", (unsigned long long)g_amiga_irq[2], (unsigned long long)g_amiga_irq[3], (unsigned long long)g_amiga_irq[4]);
             printf("istruzioni %llu, letture VHPOSR %llu\n", (unsigned long long)g_native_insn_count,
                    (unsigned long long)g_amiga_letture_vhpos);
             if (s_profilo) {
@@ -350,10 +373,13 @@ static void fine_quadro(void) {
         }
         return;
     }
+    if (s_gl) amiga_video_gl_presenta(amiga_hw_framebuffer());
+    else {
     SDL_UpdateTexture(s_tex, NULL, amiga_hw_framebuffer(), AMIGA_LARGHEZZA * 4);
     SDL_RenderClear(s_ren);
     SDL_RenderCopy(s_ren, s_tex, NULL, NULL);
     SDL_RenderPresent(s_ren);
+    }
     ingressi_sdl();
     /* 50 Hz PAL veri (un quadro = 142.102 cicli a 7,09 MHz = 20,03 ms), con un
      * passo fisso che non si azzera: niente vsync, che a 60 Hz sommato alla
@@ -412,6 +438,7 @@ int main(int argc, char **argv) {
         io.linear_filter = imp.filtro; io.enable_audio = imp.audio; io.audio_freq = 48000;
         io.volume = imp.volume; io.skip_launcher = imp.salta_launcher;
         io.pointer_sensitivity = imp.sensibilita_mouse; io.pointer_capture = imp.cattura_mouse;
+        io.screen_kind = imp.crt;
         RecompLauncherCGameInfo gi;
         memset(&gi, 0, sizeof gi);
         launcher_profile_apply("amiga", &gi);
@@ -428,9 +455,11 @@ int main(int argc, char **argv) {
         imp.salta_launcher = io.skip_launcher;
         imp.sensibilita_mouse = io.pointer_sensitivity > 0 ? io.pointer_sensitivity : 100;
         imp.cattura_mouse = io.pointer_capture;
+        imp.crt = io.screen_kind ? 1 : 0;
         scrivi_impostazioni(&imp);
     }
 #endif
+    s_imp = imp;
     int scala = imp.scala, schermo_intero = imp.schermo_intero, lineare = imp.filtro;
     s_sensibilita = imp.sensibilita_mouse;
     FILE *f = fopen(file, "rb");
@@ -480,16 +509,20 @@ int main(int argc, char **argv) {
         const char *titolo = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         s_win = SDL_CreateWindow(titolo, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                  AMIGA_LARGHEZZA * scala, AMIGA_ALTEZZA * scala,
-                                 SDL_WINDOW_RESIZABLE | (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
+                                 SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL |
+                                 (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         s_scala = scala;
         SDL_RaiseWindow(s_win);                      /* dopo il launcher la finestra puo' nascere senza focus */
         if (imp.cattura_mouse)
             SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
-        s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
-        SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
-        s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
-                                  AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+        s_gl = amiga_video_gl_init(s_win, imp.crt);  /* filtro CRT; senza OpenGL, renderer SDL */
+        if (!s_gl) {
+            s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
+            SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+            s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
+                                      AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+        }
     }
     int debug = getenv("AMIGA_DEBUG") != NULL;
     for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--debug")) debug = 1;

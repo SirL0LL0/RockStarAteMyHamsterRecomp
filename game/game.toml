@@ -19,3 +19,11 @@ vbla_stack     = 0x07F000
 intr_stack     = 0x07F000
 player_object  = 0x000000
 level_modes    = []
+
+# Siti di aggancio del gioco (kind = "game_hook"): prima dell'istruzione il
+# C generato chiama g_game_spec.instruction_hook (game/rockstar_spec.c).
+# $133D6: il bne dopo "cmpi.l #6,$13cee" - la velocita' della musica e'
+# riscritta nel codice stesso (move.b d0,$133d1), va riletta dalla memoria.
+[[widescreen_site]]
+addr = 0x0133D6
+kind = "game_hook"
