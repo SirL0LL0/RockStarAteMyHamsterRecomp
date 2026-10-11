@@ -148,9 +148,44 @@ static void prova_slot(uint64_t quadro) {
            memcmp(&cpu, &g_cpu, sizeof cpu) ? "CAMBIATI" : "intatti");
 }
 
+/* AMIGA_PROVA_MANIFESTO=N:dump:membri (prove senza finestra): al quadro N
+ * copia la partita da un dump della memoria (debug_memoria.bin), mette
+ * "membri" star nella band (foto 0..membri-1) e lo sponsor, poi disegna il
+ * manifesto del concerto ($C71C). La prova finisce mentre il manifesto e'
+ * a video: quadro.bmp. Serve a controllare l'impaginazione. */
+static void prova_manifesto(uint64_t quadro) {
+    static int fatta;
+    const char *e = getenv("AMIGA_PROVA_MANIFESTO");
+    if (fatta || !e) return;
+    char file[400] = "";
+    unsigned long long q = 0;
+    int membri = 1;
+    if (sscanf(e, "%llu:%399[^:]:%d", &q, file, &membri) < 2 || quadro != q) return;
+    fatta = 1;
+    FILE *f = fopen(file, "rb");
+    if (!f) { printf("prova manifesto: non trovo %s\n", file); return; }
+    static uint8_t m[0x100000];
+    size_t n = fread(m, 1, sizeof m, f);
+    fclose(f);
+    if (n != sizeof m) { printf("prova manifesto: dump corto\n"); return; }
+    scrivi_memoria(CLASSIFICHE, m + CLASSIFICHE, N_CLASSIFICHE);
+    scrivi_memoria(PARTITA, m + PARTITA, N_PARTITA);
+    m68k_write8(0x129C4, (uint8_t)membri);
+    for (int i = 0; i < 4; i++) {
+        m68k_write8(0x128FC + i, 0);                     /* presente */
+        m68k_write8(0x129C6 + i, (uint8_t)i);            /* foto */
+    }
+    m68k_write8(0x12892, 1);                             /* con sponsor */
+    printf("prova manifesto: %d membri\n", membri);
+    fflush(stdout);
+    recomp_push_return(0x09AAAu);
+    func_00C71C();                                       /* non torna prima della fine della prova */
+}
+
 void rockstar_menu_quadro(uint64_t quadro) {
     uint8_t d[N_BLOCCO];
     prova_slot(quadro);
+    prova_manifesto(quadro);
     if (quadro == 2) {                                   /* alla partenza: rimette la partita */
         salvataggio_t s;
         if (leggi(-1, &s)) {
