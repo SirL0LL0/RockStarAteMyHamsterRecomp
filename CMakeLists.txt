@@ -61,6 +61,7 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_debug.c
     amigarecomp/runner/amiga_paula.c
     amigarecomp/runner/amiga_video_gl.c
+    amigarecomp/runner/amiga_ingressi.c
     game/rockstar_spec.c
     game/rockstar_debug.c
     game/rockstar_mods.c

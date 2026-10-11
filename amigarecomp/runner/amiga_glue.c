@@ -25,6 +25,7 @@
 #include "amiga_debug.h"
 #include "amiga_paula.h"
 #include "amiga_video_gl.h"
+#include "amiga_ingressi.h"
 #if __has_include("immagine_crc.h")
 #include "immagine_crc.h"
 #endif
@@ -91,6 +92,8 @@ typedef struct {
     int scala, schermo_intero, filtro, volume, audio;
     int sensibilita_mouse, cattura_mouse, salta_launcher;
     int crt;                         /* 0 nitido, 1 Commodore 1084S */
+    amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
+    int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
 } impostazioni_t;
 
 static impostazioni_t s_imp;
@@ -98,10 +101,14 @@ static int s_gl;                     /* presentazione OpenGL attiva */
 
 static void leggi_impostazioni(impostazioni_t *s) {
     *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0, 1 };
+    amiga_ingressi_default(&s->ass);
+    s->sorgente = 1;
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
-    char k[64]; int v;
+    char k[64]; int v, n;
     while (fscanf(f, " %63[^=]=%d", k, &v) == 2) {
+        if (sscanf(k, "tasto%d", &n) == 1 && n >= 0 && n < AZ_NUMERO) { s->ass.tasto[n] = v; continue; }
+        if (sscanf(k, "pad%d", &n) == 1 && n >= 0 && n < AZ_NUMERO) { s->ass.pad[n] = v; continue; }
         if (!strcmp(k, "scala")) s->scala = v;
         else if (!strcmp(k, "schermo_intero")) s->schermo_intero = v;
         else if (!strcmp(k, "filtro")) s->filtro = v;
@@ -111,6 +118,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
         else if (!strcmp(k, "crt")) s->crt = v;
+        else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
     }
     fclose(f);
     if (s->scala < 1) s->scala = 1;
@@ -124,6 +132,9 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
                "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
             s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
+    fprintf(f, "sorgente=%d\n", s->sorgente);
+    for (int i = 0; i < AZ_NUMERO; i++)
+        fprintf(f, "tasto%d=%d\npad%d=%d\n", i, s->ass.tasto[i], i, s->ass.pad[i]);
     fclose(f);
 }
 
@@ -269,7 +280,7 @@ static int codice_amiga(SDL_Keycode k) {
 }
 
 static void ingressi_sdl(void) {
-    static int su, giu, sx, dx, fuoco, mouse_sx, mouse_dx, resto_x, resto_y;
+    static int mouse_sx, mouse_dx, resto_x, resto_y;
     /* un clic deve durare almeno qualche quadro: se pressione e rilascio
      * arrivano fra due letture, il gioco vedrebbe solo il tasto su */
     static int tieni_sx, tieni_dx;
@@ -279,19 +290,13 @@ static void ingressi_sdl(void) {
         if (ev.type == SDL_QUIT) exit(0);
         if (amiga_debug_evento(&ev)) continue;              /* F11, finestra di debug */
         if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_CLOSE) exit(0);
+        /* tasti e joypad associati nel launcher (joystick, clic, Spazio...) */
+        if (amiga_ingressi_evento(&ev)) continue;
         if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
-            int giu_ = ev.type == SDL_KEYDOWN;
-            switch (ev.key.keysym.sym) {     /* joystick in porta 2: frecce + Ctrl */
-            case SDLK_UP: su = giu_; break;
-            case SDLK_DOWN: giu = giu_; break;
-            case SDLK_LEFT: sx = giu_; break;
-            case SDLK_RIGHT: dx = giu_; break;
-            case SDLK_LCTRL: case SDLK_RCTRL: fuoco = giu_; break;
-            default:
-                if (!ev.key.repeat) {
-                    int c = codice_amiga(ev.key.keysym.sym);
-                    if (c >= 0) amiga_hw_tasto((uint8_t)c, !giu_);
-                }
+            /* gli altri tasti vanno alla tastiera Amiga */
+            if (!ev.key.repeat) {
+                int c = codice_amiga(ev.key.keysym.sym);
+                if (c >= 0) amiga_hw_tasto((uint8_t)c, ev.type == SDL_KEYUP);
             }
         }
         if (ev.type == SDL_MOUSEBUTTONDOWN || ev.type == SDL_MOUSEBUTTONUP) {
@@ -335,8 +340,11 @@ static void ingressi_sdl(void) {
             } else SDL_SetRelativeMouseMode(SDL_FALSE);   /* F12 libera il mouse */
         }
     }
-    amiga_hw_joystick(su, giu, sx, dx, fuoco);
-    amiga_hw_mouse(mdx, mdy, mouse_sx || tieni_sx > 0, mouse_dx || tieni_dx > 0);
+    amiga_stato_ingressi_t st;
+    amiga_ingressi_quadro(&st, s_sensibilita);
+    amiga_hw_joystick(st.su, st.giu, st.sx, st.dx, st.fuoco);
+    amiga_hw_mouse(mdx + st.mdx, mdy + st.mdy, mouse_sx || tieni_sx > 0 || st.mouse_sx,
+                   mouse_dx || tieni_dx > 0 || st.mouse_dx);
     if (tieni_sx > 0) tieni_sx--;
     if (tieni_dx > 0) tieni_dx--;
 }
@@ -471,9 +479,23 @@ int main(int argc, char **argv) {
         io.volume = imp.volume; io.skip_launcher = imp.salta_launcher;
         io.pointer_sensitivity = imp.sensibilita_mouse; io.pointer_capture = imp.cattura_mouse;
         io.screen_kind = imp.crt;
+        /* tasti e joypad: valori attuali e predefiniti (per "Restore defaults") */
+        static RecompLauncherCSettings predef;
+        amiga_associazioni_t def;
+        amiga_ingressi_default(&def);
+        io.player_src[0] = imp.sorgente;
+        predef = io;
+        predef.player_src[0] = 1;
+        for (int i = 0; i < AZ_NUMERO; i++) {
+            io.player_key_bind[0][i] = imp.ass.tasto[i];
+            io.player_pad_bind[0][i] = imp.ass.pad[i];
+            predef.player_key_bind[0][i] = def.tasto[i];
+            predef.player_pad_bind[0][i] = def.pad[i];
+        }
         RecompLauncherCGameInfo gi;
         memset(&gi, 0, sizeof gi);
         launcher_profile_apply("amiga", &gi);
+        gi.default_settings = &predef;
         gi.name = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         gi.mods = g_game_spec.mods ? g_game_spec.mods(NULL) : NULL;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
@@ -488,6 +510,11 @@ int main(int argc, char **argv) {
         imp.sensibilita_mouse = io.pointer_sensitivity > 0 ? io.pointer_sensitivity : 100;
         imp.cattura_mouse = io.pointer_capture;
         imp.crt = io.screen_kind ? 1 : 0;
+        imp.sorgente = io.player_src[0] == 2 ? 2 : 1;
+        for (int i = 0; i < AZ_NUMERO; i++) {
+            imp.ass.tasto[i] = io.player_key_bind[0][i];
+            imp.ass.pad[i] = io.player_pad_bind[0][i];
+        }
         scrivi_impostazioni(&imp);
     }
 #endif
@@ -539,7 +566,8 @@ int main(int argc, char **argv) {
     if (getenv("AMIGA_INGRESSI")) snprintf(s_ingressi_test, sizeof s_ingressi_test, "%s", getenv("AMIGA_INGRESSI"));
 
     SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");   /* il primo clic arriva al gioco */
-    SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO | (imp.audio ? SDL_INIT_AUDIO : 0));
+    SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | (imp.audio ? SDL_INIT_AUDIO : 0));
+    amiga_ingressi_imposta(&imp.ass);
     amiga_hw_init();
     amiga_paula_volume(imp.audio ? imp.volume : 0);
     if (!s_senza_finestra && imp.audio) {
