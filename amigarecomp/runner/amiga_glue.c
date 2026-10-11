@@ -234,8 +234,14 @@ void m68k_trap_vector(uint8_t vec) { eccezione((uint32_t)vec * 4u, 0); }
 uint64_t g_amiga_irq[8];             /* interrupt consegnati per livello (debug) */
 
 static void consegna_interrupt(void) {
-    int l = amiga_hw_livello_interrupt();
-    if (l > (int)((g_cpu.SR >> 8) & 7)) {
+    /* come il 68000: finito un gestore (RTE), se c'e' ancora un livello
+     * pendente sopra la maschera parte subito. Consegnarne uno solo per volta
+     * faceva morire di fame la tastiera (livello 2): il VBlank (livello 3)
+     * arrivava insieme a lei a ogni quadro, vinceva sempre e non azzera il
+     * bit PORTS. Il limite evita cicli se un gestore non pulisce INTREQ. */
+    for (int giri = 0; giri < 8; giri++) {
+        int l = amiga_hw_livello_interrupt();
+        if (l <= (int)((g_cpu.SR >> 8) & 7)) break;
         g_amiga_irq[l]++;
         eccezione(0x60u + (uint32_t)l * 4u, l);
     }
@@ -378,6 +384,7 @@ static void fine_quadro(void) {
             if (m) { fwrite(g_amiga_mem, 1, g_amiga_mem_size, m); fclose(m); }
             printf("quadri %llu, salvati quadro.bmp e memoria_fine.bin\n", (unsigned long long)s_quadri);
             printf("interrupt consegnati: liv2 %llu  liv3 %llu  liv4 %llu\n", (unsigned long long)g_amiga_irq[2], (unsigned long long)g_amiga_irq[3], (unsigned long long)g_amiga_irq[4]);
+            printf("INTENA %04X  INTREQ %04X  SR %04X\n", m68k_read16(0xDFF01C), m68k_read16(0xDFF01E), g_cpu.SR);
             printf("istruzioni %llu, letture VHPOSR %llu\n", (unsigned long long)g_native_insn_count,
                    (unsigned long long)g_amiga_letture_vhpos);
             if (s_profilo) {
