@@ -14,14 +14,18 @@
  * dei soldi ($123CB, +1.000.000), F8 porta $128CE a 255, F9 porta $128CD a
  * 255. La mod tiene il conto a 7, cioe' il trucco sempre sbloccato.
  *
- * $128CE: media del byte 20 dei record delle 4 star (2-30) piu' $1285C
+ * Le guide del gioco chiamano F8 "Band plays their best" e F9 "Biggest
+ * audience", e F7 "Extra 100,000": in questa versione F7 aggiunge invece
+ * 1.000.000 (la cifra dei milioni, misurato: da 50.000 a 1.050.000).
+ *
+ * $128CE, qualita' dell'esibizione:
+ * media del byte 20 dei record delle 4 star (2-30) piu' $1285C
  * ($8B5C-$8B7C). Decide la posizione in classifica (10 soglie a $121D7,
  * $B252), entra nei ricavi delle vendite (*256, $9850), sceglie la fascia
  * delle occasioni nel menu (<$46 <$6E <$A0 <$FA, $8F88) e a 200 o piu' fa
  * scattare l'evento dei dischi piratati ($D264, messaggio #170).
- * $128CD: media del byte 22 dei record delle 4 star (1-15, $8B46-$8B5A);
- * deve superare $3B per le occasioni del menu ($8F88). Il gioco non lo
- * mostra mai a schermo, quindi non ne conosciamo il nome.
+ * $128CD, pubblico: media del byte 22 dei record delle 4 star (1-15,
+ * $8B46-$8B5A); deve superare $3B per le occasioni del menu ($8F88).
  * (Record delle star: 30 byte a $1147E, nome nei primi 20.)
  *
  * Le scelte si ricordano in mods.ini accanto all'eseguibile.
@@ -51,10 +55,9 @@ static trucco_t s_trucchi[] = {
       "senza mai finire in rosso.", 0, 0 },
     { "trucco_originale", "Trucco originale (F7 / F8 / F9)",
       "Sblocca il trucco nascosto nel gioco. In partita: F7 aggiunge 1.000.000 di "
-      "sterline; F8 porta al massimo il successo della band (classifica, vendite "
-      "dei dischi, occasioni di lavoro); F9 porta al massimo il secondo requisito "
-      "per le occasioni. Senza questa mod il trucco si attiva digitando "
-      "C O L B O P S durante la partita, poi F7, F8 o F9.", 0, 0 },
+      "sterline; F8 fa suonare la band al massimo (classifica, vendite dei dischi, "
+      "occasioni di lavoro); F9 porta il pubblico al massimo. Senza questa mod il "
+      "trucco si attiva digitando C O L B O P S durante la partita, poi F7, F8 o F9.", 0, 0 },
 };
 #define N_TRUCCHI ((int)(sizeof s_trucchi / sizeof s_trucchi[0]))
 
