@@ -1,7 +1,7 @@
 # prova_quadri.ps1 - fa girare il port senza finestra e salva l'ultimo quadro.
 #   tools\prova_quadri.ps1 [-quadri 3500] [-ingressi "f:3000"] [-exe build\...exe]
 param([int]$quadri = 300, [string]$ingressi = "",
-      [string]$exe = "build\RockStarAteMyHamsterRecomp.exe",
+      [string]$exe = "build\cmake\RockStarAteMyHamsterRecomp.exe",
       [string]$immagine = "build\rockstar_chipram.bin")
 $repo = Split-Path $PSScriptRoot -Parent
 $dir = Join-Path $repo "build"
