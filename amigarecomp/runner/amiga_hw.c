@@ -8,6 +8,7 @@
  * controller della tastiera dell'Amiga, con l'interrupt PORTS.
  */
 #include "amiga_hw.h"
+#include "amiga_paula.h"
 #include <string.h>
 
 #include "genesis_runtime.h"     /* g_cycle_accumulator: posizione del pennello */
@@ -32,10 +33,27 @@ static uint16_t leggi_mem16(uint32_t a) {
     return a + 1 < g_amiga_mem_size ? (uint16_t)(g_amiga_mem[a] << 8 | g_amiga_mem[a + 1]) : 0;
 }
 
+/* istante attuale in cicli CPU dall'avvio: quadri completati + posizione nel quadro */
+static uint64_t adesso(void) {
+    return (uint64_t)s_quadri * AMIGA_CICLI_QUADRO + g_cycle_accumulator;
+}
+
 static void scrivi_custom(uint32_t off, uint16_t v) {
     off &= 0x1FE;
+    if (off >= 0x0A0 && off < 0x0E0) {                /* audio: prima si genera fin qui */
+        amiga_paula_avanza(adesso());
+        amiga_paula_registro(off, v);
+    }
     switch (off) {
-    case 0x096: s_dmacon = (v & 0x8000) ? (uint16_t)(s_dmacon | (v & 0x7FFF)) : (uint16_t)(s_dmacon & ~v); return;
+    case 0x096: {
+        uint16_t prima = s_dmacon;
+        s_dmacon = (v & 0x8000) ? (uint16_t)(s_dmacon | (v & 0x7FFF)) : (uint16_t)(s_dmacon & ~v);
+        if ((prima ^ s_dmacon) & 0x020F) {
+            amiga_paula_avanza(adesso());
+            amiga_paula_dmacon(prima, s_dmacon);
+        }
+        return;
+    }
     case 0x09A: s_intena = (v & 0x8000) ? (uint16_t)(s_intena | (v & 0x7FFF)) : (uint16_t)(s_intena & ~v); return;
     case 0x09C: s_intreq = (v & 0x8000) ? (uint16_t)(s_intreq | (v & 0x7FFF)) : (uint16_t)(s_intreq & ~v); return;
     case 0x088: return;                  /* COPJMP1: il copper riparte da COP1LC a ogni quadro */
@@ -206,7 +224,12 @@ static void disegna_sprite(void) {
     }
 }
 
+void amiga_hw_init(void) { amiga_paula_init(&s_intreq); }
+
+int amiga_hw_audio(int16_t **campioni) { return amiga_paula_prendi(campioni); }
+
 void amiga_hw_fine_quadro(void) {
+    amiga_paula_avanza((uint64_t)(s_quadri + 1) * AMIGA_CICLI_QUADRO);   /* audio del quadro finito */
     s_quadri++;
     disegna();
     disegna_sprite();

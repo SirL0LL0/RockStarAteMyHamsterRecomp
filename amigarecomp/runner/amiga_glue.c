@@ -23,6 +23,7 @@
 #include "game_spec.h"
 #include "amiga_hw.h"
 #include "amiga_debug.h"
+#include "amiga_paula.h"
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -46,6 +47,27 @@ static SDL_Renderer *s_ren;
 static SDL_Texture *s_tex;
 static uint32_t s_t_quadro;
 static int s_scala = 3;
+static SDL_AudioDeviceID s_audio;
+static FILE *s_wav;                  /* AMIGA_WAV=file: registra l'audio (test) */
+static uint32_t s_wav_byte;
+
+static void scarica_audio(void) {
+    int16_t *c;
+    int n = amiga_hw_audio(&c);
+    if (s_wav && n) { fwrite(c, 4, (size_t)n, s_wav); s_wav_byte += (uint32_t)n * 4; }
+    if (s_audio && n && SDL_GetQueuedAudioSize(s_audio) < 48000u * 4u / 5u)   /* al massimo ~200 ms in coda */
+        SDL_QueueAudio(s_audio, c, (Uint32)n * 4);
+}
+
+static void chiudi_wav(void) {
+    if (!s_wav) return;
+    uint32_t h[11] = { 0x46464952, 36 + s_wav_byte, 0x45564157, 0x20746D66, 16, 0x00020001,
+                       48000, 48000 * 4, 0x00100004, 0x61746164, s_wav_byte };
+    fseek(s_wav, 0, SEEK_SET);
+    fwrite(h, 4, 11, s_wav);
+    fclose(s_wav);
+    s_wav = NULL;
+}
 static int s_sensibilita = 100;      /* movimento del mouse, in percento */
 
 /* impostazioni.ini accanto all'eseguibile: cio' che si sceglie nel launcher
@@ -298,9 +320,11 @@ static void fine_quadro(void) {
     if (g_game_spec.on_frame_post) g_game_spec.on_frame_post(s_quadri);
     amiga_debug_quadro(s_quadri);
     amiga_hw_fine_quadro();
+    scarica_audio();
     if (s_senza_finestra) {
         ingressi_test();
         if ((long)s_quadri >= s_quadri_max) {
+            chiudi_wav();
             salva_bmp("quadro.bmp");
             FILE *m = fopen("memoria_fine.bin", "wb");     /* stato per confronti */
             if (m) { fwrite(g_amiga_mem, 1, g_amiga_mem_size, m); fclose(m); }
@@ -425,7 +449,19 @@ int main(int argc, char **argv) {
     if (getenv("AMIGA_INGRESSI")) snprintf(s_ingressi_test, sizeof s_ingressi_test, "%s", getenv("AMIGA_INGRESSI"));
 
     SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");   /* il primo clic arriva al gioco */
-    SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO);
+    SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO | (imp.audio ? SDL_INIT_AUDIO : 0));
+    amiga_hw_init();
+    amiga_paula_volume(imp.audio ? imp.volume : 0);
+    if (!s_senza_finestra && imp.audio) {
+        SDL_AudioSpec voglio = { 0 }, ho;
+        voglio.freq = 48000; voglio.format = AUDIO_S16SYS; voglio.channels = 2; voglio.samples = 1024;
+        s_audio = SDL_OpenAudioDevice(NULL, 0, &voglio, &ho, 0);
+        if (s_audio) SDL_PauseAudioDevice(s_audio, 0);
+    }
+    if (getenv("AMIGA_WAV")) {
+        s_wav = fopen(getenv("AMIGA_WAV"), "wb");
+        if (s_wav) fseek(s_wav, 44, SEEK_SET);
+    }
     if (!s_senza_finestra) {
         const char *titolo = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         s_win = SDL_CreateWindow(titolo, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,

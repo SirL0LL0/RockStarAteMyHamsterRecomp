@@ -16,6 +16,9 @@ extern uint8_t *g_amiga_mem;          /* immagine della chip RAM (e oltre) */
 extern uint32_t g_amiga_mem_size;
 extern uint64_t g_amiga_letture_vhpos;
 
+void     amiga_hw_init(void);
+int      amiga_hw_audio(int16_t **campioni);   /* campioni stereo a 48 kHz del quadro, poi azzera */
+
 /* registri e periferiche */
 uint8_t  amiga_hw_read8(uint32_t addr);
 uint16_t amiga_hw_read16(uint32_t addr);
