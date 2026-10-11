@@ -2,7 +2,7 @@
 """cerca_automodifica.py - scritture ad indirizzi assoluti che cadono dentro
 un'istruzione (codice automodificante): il C generato ne congela il valore.
 
-    python tools/cerca_automodifica.py ../rockstar.asm
+    python tools/cerca_automodifica.py ../documentazione/rockstar.asm
 """
 import re
 import sys

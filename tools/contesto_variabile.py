@@ -2,7 +2,7 @@
 """contesto_variabile.py - dove il gioco usa un indirizzo e quali messaggi
 mostrano le funzioni che lo toccano.
 
-    python tools/contesto_variabile.py 128ce 128cd [--asm ../rockstar.asm]
+    python tools/contesto_variabile.py 128ce 128cd [--asm ../documentazione/rockstar.asm]
 
 Per ogni funzione che nomina l'indirizzo (direttamente, o chiamando una
 funzione che lo nomina) stampa le istruzioni coinvolte e i commenti
@@ -14,7 +14,7 @@ import re
 import sys
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
-asm = '../rockstar.asm'
+asm = '../documentazione/rockstar.asm'
 if '--asm' in sys.argv:
     asm = sys.argv[sys.argv.index('--asm') + 1]
     args = [a for a in args if a != asm]
