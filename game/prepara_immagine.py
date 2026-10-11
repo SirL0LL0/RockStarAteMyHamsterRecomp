@@ -234,8 +234,16 @@ def main():
     en[tab:tab + info['len_tab']] = tabella_inglese(base, br.TAB_OFF, info['off_str'], info['len_tab'])
 
     # il codice dev'essere identico: nessuna istruzione nelle zone cambiate
-    cicli = os.path.join(REPO, 'build', 'cmake', 'generated', 'rockstar_cycles.c')
-    if os.path.exists(cicli):
+    # (con gli indirizzi del C generato, solo se viene da questa stessa immagine;
+    # altrimenti il controllo si fa la volta dopo, a C rigenerato)
+    gen = os.path.join(REPO, 'build', 'cmake', 'generated')
+    cicli = os.path.join(gen, 'rockstar_cycles.c')
+    crc_gen = os.path.join(gen, 'immagine_crc.h')
+    stesso = os.path.exists(crc_gen) and ('0x%08Xu' % crc(it)) in open(crc_gen).read()
+    if os.path.exists(cicli) and not stesso:
+        print("controllo del codice dell'inglese: il C generato e' di un'altra immagine, "
+              "lo rifa' la prossima esecuzione dopo la build")
+    if os.path.exists(cicli) and stesso:
         import re
         istr = {int(x, 16) for x in re.findall(r'\{0x([0-9A-F]+)u,', open(cicli).read())}
         for da, a in zone(it, en):
