@@ -48,11 +48,14 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_glue.c
     amigarecomp/runner/amiga_hw.c
     game/rockstar_spec.c
+    game/rockstar_mods.c
     ${GEN_FILES})
 
 target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
     amigarecomp/runner
     amigarecomp/runner/include
+    game
+    external/recomp-ui/src
     "${GEN_DIR}"
     "${ROCKSTAR_SDL2_DIR}/include")
 
@@ -63,6 +66,9 @@ set_source_files_properties(${GEN_FILES} PROPERTIES COMPILE_OPTIONS "-w")
 
 if(ROCKSTAR_LAUNCHER)
     set(RECOMP_UI_SDL3 OFF CACHE BOOL "" FORCE)
+    if(NOT DEFINED RECOMP_UI_ENABLE_MODS)
+        set(RECOMP_UI_ENABLE_MODS ON CACHE BOOL "Menu Mods del launcher (trucchi)")
+    endif()
     include("${CMAKE_SOURCE_DIR}/external/recomp-ui/recomp_ui.cmake")
     recomp_target_launcher_ui(RockStarAteMyHamsterRecomp CONSOLE amiga)
     target_include_directories(RockStarAteMyHamsterRecomp PRIVATE

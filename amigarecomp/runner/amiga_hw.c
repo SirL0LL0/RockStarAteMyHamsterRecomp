@@ -24,7 +24,7 @@ static uint8_t s_cia_icr_mask, s_cia_icr_dati, s_cia_sdr, s_cia_pra = 0xFF;
 static uint8_t s_tasti[64];
 static int s_n_tasti;
 
-static int s_fuoco1, s_fuoco2, s_su, s_giu, s_sx, s_dx, s_mx, s_my;
+static int s_fuoco1, s_fuoco2, s_su, s_giu, s_sx, s_dx, s_mx, s_my, s_destro;
 
 static uint16_t leggi_mem16(uint32_t a) {
     a &= 0xFFFFFEu;
@@ -57,7 +57,7 @@ static uint16_t leggi_custom(uint32_t off) {
     case 0x006: return (uint16_t)((riga & 0xFF) << 8 | (h & 0xFF));
     case 0x00A: return (uint16_t)((s_my & 0xFF) << 8 | (s_mx & 0xFF));
     case 0x00C: return joydat(s_su, s_giu, s_sx, s_dx);
-    case 0x016: return 0xFF00;
+    case 0x016: return (uint16_t)(0xFF00 & ~(s_destro ? 0x0400 : 0));   /* POTGOR: DATLY = destro porta 0 */
     case 0x01C: return s_intena;
     case 0x01E: return s_intreq;
     }
@@ -190,6 +190,6 @@ void amiga_hw_joystick(int su, int giu, int sx, int dx, int fuoco) {
     s_su = su; s_giu = giu; s_sx = sx; s_dx = dx; s_fuoco2 = fuoco;
 }
 
-void amiga_hw_mouse(int dx, int dy, int sinistro) {
-    s_mx += dx; s_my += dy; s_fuoco1 = sinistro;
+void amiga_hw_mouse(int dx, int dy, int sinistro, int destro) {
+    s_mx += dx; s_my += dy; s_fuoco1 = sinistro; s_destro = destro;
 }

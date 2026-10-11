@@ -31,4 +31,4 @@ const uint32_t *amiga_hw_framebuffer(void);
 /* ingressi dall'host */
 void     amiga_hw_tasto(uint8_t codice_raw, int rilasciato);
 void     amiga_hw_joystick(int su, int giu, int sx, int dx, int fuoco);
-void     amiga_hw_mouse(int dx, int dy, int sinistro);
+void     amiga_hw_mouse(int dx, int dy, int sinistro, int destro);   /* porta 0 */

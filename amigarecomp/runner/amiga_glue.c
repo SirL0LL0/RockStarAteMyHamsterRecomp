@@ -44,6 +44,7 @@ static SDL_Window *s_win;
 static SDL_Renderer *s_ren;
 static SDL_Texture *s_tex;
 static uint32_t s_t_quadro;
+static int s_scala = 3;
 
 /* ------------------------------------------------------------ memoria */
 
@@ -138,7 +139,7 @@ static int codice_amiga(SDL_Keycode k) {
 }
 
 static void ingressi_sdl(void) {
-    static int su, giu, sx, dx, fuoco, mouse_sx;
+    static int su, giu, sx, dx, fuoco, mouse_sx, mouse_dx, resto_x, resto_y;
     int mdx = 0, mdy = 0;
     SDL_Event ev;
     while (SDL_PollEvent(&ev)) {
@@ -158,12 +159,24 @@ static void ingressi_sdl(void) {
                 }
             }
         }
-        if ((ev.type == SDL_MOUSEBUTTONDOWN || ev.type == SDL_MOUSEBUTTONUP) && ev.button.button == SDL_BUTTON_LEFT)
-            mouse_sx = ev.type == SDL_MOUSEBUTTONDOWN;
-        if (ev.type == SDL_MOUSEMOTION) { mdx += ev.motion.xrel; mdy += ev.motion.yrel; }
+        if (ev.type == SDL_MOUSEBUTTONDOWN || ev.type == SDL_MOUSEBUTTONUP) {
+            int giu_ = ev.type == SDL_MOUSEBUTTONDOWN;
+            if (ev.button.button == SDL_BUTTON_LEFT) mouse_sx = giu_;
+            if (ev.button.button == SDL_BUTTON_RIGHT) mouse_dx = giu_;
+            if (giu_ && !SDL_GetRelativeMouseMode()) SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        /* mouse catturato: il movimento in pixel della finestra diventa movimento
+         * in pixel Amiga (diviso per la scala), il resto si porta avanti */
+        if (ev.type == SDL_MOUSEMOTION && SDL_GetRelativeMouseMode()) {
+            resto_x += ev.motion.xrel; resto_y += ev.motion.yrel;
+            mdx += resto_x / s_scala; resto_x %= s_scala;
+            mdy += resto_y / s_scala; resto_y %= s_scala;
+        }
+        if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12)    /* F12 libera il mouse */
+            SDL_SetRelativeMouseMode(SDL_FALSE);
     }
     amiga_hw_joystick(su, giu, sx, dx, fuoco);
-    amiga_hw_mouse(mdx, mdy, mouse_sx);
+    amiga_hw_mouse(mdx, mdy, mouse_sx, mouse_dx);
 }
 
 static void ingressi_test(void) {
@@ -194,6 +207,7 @@ static void salva_bmp(const char *nome) {
 
 static void fine_quadro(void) {
     s_quadri++;
+    if (g_game_spec.on_frame_post) g_game_spec.on_frame_post(s_quadri);
     amiga_hw_fine_quadro();
     if (s_senza_finestra) {
         ingressi_test();
@@ -234,6 +248,7 @@ int main(int argc, char **argv) {
     const char *file = argc > 1 && argv[1][0] != '-' ? argv[1] : "rockstar_chipram.bin";
     int scala = 3, schermo_intero = 0, lineare = 0;
     const char *q = getenv("AMIGA_QUADRI");
+    if (g_game_spec.on_post_reset) g_game_spec.on_post_reset();   /* preferenze del gioco (mods) */
 #if defined(RECOMP_LAUNCHER)
     /* launcher recomp-ui (profilo "amiga"): scelta del file e impostazioni.
      * Saltato nei test senza finestra e con --senza-launcher. */
@@ -248,6 +263,7 @@ int main(int argc, char **argv) {
         memset(&gi, 0, sizeof gi);
         launcher_profile_apply("amiga", &gi);
         gi.name = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
+        gi.mods = g_game_spec.mods ? g_game_spec.mods(NULL) : NULL;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
@@ -277,6 +293,8 @@ int main(int argc, char **argv) {
                                  AMIGA_LARGHEZZA * scala, AMIGA_ALTEZZA * scala,
                                  SDL_WINDOW_RESIZABLE | (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+        s_scala = scala;
+        SDL_SetRelativeMouseMode(SDL_TRUE);          /* gioco a mouse: puntatore catturato */
         s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_PRESENTVSYNC);
         SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
