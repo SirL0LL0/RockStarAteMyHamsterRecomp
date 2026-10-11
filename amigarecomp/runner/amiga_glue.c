@@ -28,6 +28,7 @@
 #include "amiga_ingressi.h"
 #include "amiga_disco.h"
 #include "amiga_lingue.h"
+#include "amiga_menu.h"
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -292,6 +293,13 @@ static void ingressi_sdl(void) {
         if (ev.type == SDL_QUIT) exit(0);
         if (amiga_debug_evento(&ev)) continue;              /* F11, finestra di debug */
         if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_CLOSE) exit(0);
+        /* F1 o Start/Guide del joypad: menu in gioco */
+        if ((ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F1 && !ev.key.repeat) ||
+            (ev.type == SDL_CONTROLLERBUTTONDOWN && (ev.cbutton.button == SDL_CONTROLLER_BUTTON_START ||
+                                                    ev.cbutton.button == SDL_CONTROLLER_BUTTON_GUIDE))) {
+            amiga_menu_apri();
+            continue;
+        }
         /* tasti e joypad associati nel launcher (joystick, clic, Spazio...) */
         if (amiga_ingressi_evento(&ev)) continue;
         if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
@@ -371,6 +379,8 @@ static void ingressi_test(void) {
     amiga_hw_mouse(0, 0, sinistro, 0);
 }
 
+static void ciclo_menu(void);
+
 static void salva_bmp(const char *nome) {
     SDL_Surface *s = SDL_CreateRGBSurfaceWithFormatFrom((void *)amiga_hw_framebuffer(), AMIGA_LARGHEZZA,
                                                         AMIGA_ALTEZZA, 32, AMIGA_LARGHEZZA * 4,
@@ -423,6 +433,7 @@ static void fine_quadro(void) {
     SDL_RenderPresent(s_ren);
     }
     ingressi_sdl();
+    if (amiga_menu_aperto()) ciclo_menu();
     /* 50 Hz PAL veri (un quadro = 142.102 cicli a 7,09 MHz = 20,03 ms), con un
      * passo fisso che non si azzera: niente vsync, che a 60 Hz sommato alla
      * pausa faceva durare molti quadri 33 ms e rallentava gioco e musica */
@@ -439,6 +450,80 @@ static void fine_quadro(void) {
     static uint64_t t0; static int n;
     if (!t0) t0 = ora;
     if (++n == 50) { g_amiga_fps = 50.0 * (double)freq / (double)(ora - t0); t0 = ora; n = 0; }
+}
+
+/* ------------------------------------------------------------ menu in gioco */
+
+static void v_schermo(char *b, size_t n) {
+    snprintf(b, n, "Schermo: %s", s_imp.crt ? "Commodore 1084S" : "nitido");
+}
+static void a_schermo(int verso) {
+    (void)verso;
+    s_imp.crt = !s_imp.crt;
+    amiga_video_gl_modo(s_imp.crt);
+    scrivi_impostazioni(&s_imp);
+}
+static int ok_schermo(void) { return s_gl; }
+static void v_intero(char *b, size_t n) { snprintf(b, n, "Schermo intero: %s", s_imp.schermo_intero ? "si'" : "no"); }
+static void a_intero(int verso) {
+    (void)verso;
+    s_imp.schermo_intero = !s_imp.schermo_intero;
+    SDL_SetWindowFullscreen(s_win, s_imp.schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    scrivi_impostazioni(&s_imp);
+}
+static void v_volume(char *b, size_t n) { snprintf(b, n, "Volume: %d%%  < >", s_imp.audio ? s_imp.volume : 0); }
+static void a_volume(int verso) {
+    if (verso == 0) s_imp.audio = !s_imp.audio;
+    else {
+        s_imp.audio = 1;
+        s_imp.volume += verso * 5;
+        if (s_imp.volume < 0) s_imp.volume = 0;
+        if (s_imp.volume > 100) s_imp.volume = 100;
+    }
+    amiga_paula_volume(s_imp.audio ? s_imp.volume : 0);
+    scrivi_impostazioni(&s_imp);
+}
+static void v_riprendi(char *b, size_t n) { snprintf(b, n, "Torna al gioco"); }
+static void a_riprendi(int verso) { (void)verso; amiga_menu_chiudi(); }
+static void v_esci(char *b, size_t n) { snprintf(b, n, "Esci"); }
+static void a_esci(int verso) { if (verso == 0) exit(0); }
+
+static const amiga_voce_menu_t s_voci_runner[] = {
+    { v_schermo, a_schermo, ok_schermo },
+    { v_intero, a_intero, NULL },
+    { v_volume, a_volume, NULL },
+    { v_riprendi, a_riprendi, NULL },
+    { v_esci, a_esci, NULL },
+};
+
+/* il gioco e' fermo dentro fine_quadro finche' il menu e' aperto: si
+ * ridisegna l'ultimo quadro con il menu sopra, l'audio si svuota */
+static int s_nel_menu;
+static void ciclo_menu(void) {
+    if (s_nel_menu) return;                     /* un'azione del menu che fa girare il gioco */
+    s_nel_menu = 1;
+    static uint32_t copia[AMIGA_LARGHEZZA * AMIGA_ALTEZZA];
+    while (amiga_menu_aperto()) {
+        SDL_Event ev;
+        while (SDL_PollEvent(&ev)) {
+            if (ev.type == SDL_QUIT) exit(0);
+            if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_CLOSE) exit(0);
+            amiga_ingressi_evento(&ev);         /* joypad collegati/scollegati */
+            amiga_menu_evento(&ev);
+        }
+        memcpy(copia, amiga_hw_framebuffer(), sizeof copia);
+        amiga_menu_disegna(copia, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+        if (s_gl) amiga_video_gl_presenta(copia);
+        else {
+            SDL_UpdateTexture(s_tex, NULL, copia, AMIGA_LARGHEZZA * 4);
+            SDL_RenderClear(s_ren);
+            SDL_RenderCopy(s_ren, s_tex, NULL, NULL);
+            SDL_RenderPresent(s_ren);
+        }
+        SDL_Delay(16);
+    }
+    s_prossimo_quadro = 0;                      /* il ritmo riparte da adesso */
+    s_nel_menu = 0;
 }
 
 void glue_check_vblank(void) {
@@ -608,6 +693,7 @@ int main(int argc, char **argv) {
     SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");   /* il primo clic arriva al gioco */
     SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | (imp.audio ? SDL_INIT_AUDIO : 0));
     amiga_ingressi_imposta(&imp.ass);
+    amiga_menu_registra(1, s_voci_runner, (int)(sizeof s_voci_runner / sizeof s_voci_runner[0]));
     amiga_hw_init();
     amiga_paula_volume(imp.audio ? imp.volume : 0);
     if (!s_senza_finestra && imp.audio) {

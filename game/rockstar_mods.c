@@ -66,7 +66,7 @@ static trucco_t s_trucchi[] = {
     { "soldi_infiniti", "Soldi infiniti",
       "I soldi restano sempre a 999.999 sterline: ingaggi, concerti e dischi "
       "senza mai finire in rosso.", 0, 0 },
-    { "trucco_originale", "Trucco originale (F7 / F8 / F9)",
+    { "trucco_originale", "Trucco originale F7 F8 F9",
       "Sblocca il trucco nascosto nel gioco. In partita: F7 aggiunge 1.000.000 di "
       "sterline; F8 fa suonare la band al massimo (classifica, vendite dei dischi, "
       "occasioni di lavoro); F9 porta il pubblico al massimo. Senza questa mod il "
@@ -131,6 +131,20 @@ void rockstar_mods_quadro(void) {
         }
         if (m68k_read8(ALBUM_POS_ADDR)) m68k_write8(ALBUM_POS_ADDR, 1);
     }
+}
+
+/* ------------------------------------------------------------ menu in gioco */
+
+int rockstar_mods_numero(void) { return N_TRUCCHI; }
+const char *rockstar_mods_nome(int i) { return i >= 0 && i < N_TRUCCHI ? s_trucchi[i].nome : ""; }
+int rockstar_mods_attivo(int i) { return i >= 0 && i < N_TRUCCHI && s_trucchi[i].attivo; }
+
+/* acceso/spento subito, e ricordato in mods.ini come dal launcher */
+void rockstar_mods_cambia(int i) {
+    if (i < 0 || i >= N_TRUCCHI) return;
+    for (int k = 0; k < N_TRUCCHI; k++) s_trucchi[k].scelto = s_trucchi[k].attivo;
+    s_trucchi[i].scelto = !s_trucchi[i].attivo;
+    salva();
 }
 
 /* ------------------------------------------------------------ fornitore */

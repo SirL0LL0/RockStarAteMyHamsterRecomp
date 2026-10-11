@@ -64,6 +64,8 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_ingressi.c
     amigarecomp/runner/amiga_disco.c
     amigarecomp/runner/amiga_lingue.c
+    amigarecomp/runner/amiga_menu.c
+    game/rockstar_menu.c
     game/rockstar_spec.c
     game/rockstar_debug.c
     game/rockstar_mods.c

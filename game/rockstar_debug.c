@@ -11,6 +11,7 @@
 
 #include "amiga_debug.h"
 #include "genesis_runtime.h"
+#include "rockstar_menu.h"
 
 #define BUFFER_TESTO 0x122C8u
 
@@ -48,9 +49,14 @@ static void fine_messaggio(uint32_t ritorno) {
     amiga_debug_messaggio(s_numero, t);
 }
 
+/* le tre chiamate al menu principale ($9944 da $8E08, $8E66, $8E9C): il menu
+ * in gioco salva e carica solo li' (rockstar_menu.c) */
 static const debug_aggancio_t s_agganci[] = {
     { 0x00D640, inizio_messaggio },
     { 0x00D73A, fine_messaggio },
+    { 0x008E0C, rockstar_menu_principale },
+    { 0x008E6A, rockstar_menu_principale },
+    { 0x008EA0, rockstar_menu_principale },
 };
 
 const debug_gioco_t g_debug_gioco = {

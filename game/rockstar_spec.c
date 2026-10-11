@@ -3,13 +3,17 @@
 #include "game_spec.h"
 #include "genesis_runtime.h"
 #include "rockstar_mods.h"
+#include "rockstar_menu.h"
 
 static void a_ogni_quadro(uint64_t quadro) {
-    (void)quadro;
     rockstar_mods_quadro();
+    rockstar_menu_quadro(quadro);
 }
 
-static void dopo_avvio(void) { rockstar_mods_carica(); }
+static void dopo_avvio(void) {
+    rockstar_mods_carica();
+    rockstar_menu_registra();
+}
 
 /* Codice automodificante del player musicale. f_133c6 avanza la riga quando
  * il contatore $13CEE vale "cmpi.l #6,$13cee" ($133CC), ma l'effetto F della

@@ -87,6 +87,13 @@ RB/B = clic sinistro/destro, X = Spazio, Y = Invio, LB = Backspace,
 Back = Esc; lo stick sinistro muove il puntatore. I tasti non associati vanno
 alla tastiera dell'Amiga.
 
+**F1** (o Start del joypad) apre il menu in gioco e ferma la partita:
+salvataggio e caricamento in quattro slot (dal menu principale del gioco,
+dove salva anche il gioco stesso), trucchi, schermo nitido o Commodore 1084S,
+schermo intero, volume, uscita. Anche il salvataggio del gioco (opzione DISCO
+del menu principale), che sull'Amiga restava solo in memoria, ora resta su
+file (`salvataggi/partita.sav`) e si ricarica le volte successive.
+
 ## Licenze
 
 Il codice derivato da `segagenesisrecomp` (`amigarecomp/recompiler/src`,
