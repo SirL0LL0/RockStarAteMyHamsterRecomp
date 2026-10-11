@@ -94,11 +94,14 @@ if(ROCKSTAR_LAUNCHER)
     endif()
     include("${CMAKE_SOURCE_DIR}/external/recomp-ui/recomp_ui.cmake")
     recomp_target_launcher_ui(RockStarAteMyHamsterRecomp CONSOLE amiga)
-    # la copertina, che il launcher mostra quando il disco e' riconosciuto
-    add_custom_command(TARGET RockStarAteMyHamsterRecomp POST_BUILD
+    # la copertina (tools/disegna_copertina.py), che il launcher mostra quando
+    # il disco e' riconosciuto: copiata a ogni build, anche se l'eseguibile non cambia
+    add_custom_target(rockstar_copertina ALL
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 "${CMAKE_SOURCE_DIR}/game/copertina.jpg"
-                "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>/assets/img/copertina.jpg")
+                "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>/assets/img/copertina.jpg"
+        DEPENDS RockStarAteMyHamsterRecomp
+        COMMENT "copertina accanto all'eseguibile")
     target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
         "${CMAKE_SOURCE_DIR}/external/recomp-ui/src")
 endif()
