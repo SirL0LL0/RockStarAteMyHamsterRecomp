@@ -4,7 +4,8 @@ project(RockStarAteMyHamsterRecomp C CXX)
 # Rock Star Ate My Hamster (Amiga, Codemasters 1989) - port nativo per
 # ricompilazione statica, traduzione italiana.
 #
-#   1. python game/prepara_immagine.py      (dai tuoi file: build/rockstar_chipram.bin)
+#   0. python traduzione/base_canonica.py <disco.ipf|disco.adf> ../rockstar_base.bin
+#   1. python game/prepara_immagine.py      (build/rockstar_chipram.bin e i dati per l'eseguibile)
 #   2. cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 #   3. cmake --build build
 #
@@ -64,6 +65,7 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_ingressi.c
     amigarecomp/runner/amiga_disco.c
     amigarecomp/runner/amiga_lingue.c
+    amigarecomp/runner/amiga_esporta.c
     amigarecomp/runner/amiga_menu.c
     game/rockstar_menu.c
     game/rockstar_spec.c
@@ -77,7 +79,7 @@ target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
     game
     external/recomp-ui/src
     "${GEN_DIR}"
-    "${CMAKE_SOURCE_DIR}/build"            # lingue_dati.h da game/prepara_immagine.py
+    "${CMAKE_SOURCE_DIR}/build"            # lingue_dati.h e amiga_kit.h da game/prepara_immagine.py
     "${ROCKSTAR_SDL2_DIR}/include")
 
 target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")

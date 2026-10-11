@@ -1,0 +1,3840 @@
+[
+ {
+  "offset": 26967,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "CAPO ",
+   "BOSS "
+  ]
+ },
+ {
+  "offset": 26980,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "DONOVAN ",
+   "ENGLEBERT ",
+   "MANNILOW ",
+   "JULIO "
+  ]
+ },
+ {
+  "offset": 27015,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DANZANTE ",
+   "PARLANTE ",
+   "MANGIAUOMINI ",
+   "LANCIACOLTELLI ",
+   "ACROBATA "
+  ]
+ },
+ {
+  "offset": 27068,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "IL GERBILLO ",
+   "LA GIRAFFA ",
+   "IL CRICETO ",
+   "LA PULCE ",
+   "L'IGUANA "
+  ]
+ },
+ {
+  "offset": 27105,
+  "type": "GROUP",
+  "count": 8,
+  "items": [
+   "DA URLO ",
+   "FOLLE ",
+   "DA PAURA ",
+   "ECCEZIONALE ",
+   "FORTE ",
+   "ALLUCINANTE ",
+   "INCREDIBILE ",
+   "GENIALE "
+  ]
+ },
+ {
+  "offset": 27174,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "ALLA GRANDE ",
+   "DACCI DENTRO ",
+   "MITICO ",
+   "OK ",
+   "FORTE "
+  ]
+ },
+ {
+  "offset": 27216,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "CREPA{|TE} PURE ",
+   "MANGIA{|TE} MERDA ",
+   "SPAR{ISCI|ITE} ",
+   "CHIUD{I|ETE} IL BECCO ",
+   "{VAI|ANDATE} A CAGARE "
+  ]
+ },
+ {
+  "offset": 27274,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "COLLEGAMI ",
+   "SINTONIZZAMI ",
+   "ACCENDIMI ",
+   "CONNETTIMI "
+  ]
+ },
+ {
+  "offset": 27296,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "LA CLASSIFICA COSMICA ",
+   "I MIEI SOGNI IN TV ",
+   "LA PIAZZA GLOBALE ",
+   "IL RITMO DEL VENDITORE ",
+   "IL POLSO DELLA NAZIONE "
+  ]
+ },
+ {
+  "offset": 27412,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "CHE NE PENSI",
+   "CHE NE DICI",
+   "ACCETTIAMO",
+   "SECONDO TE DOVREMMO"
+  ]
+ },
+ {
+  "offset": 27481,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "LA FONDAZIONE PER I SORDI ",
+   "LA FONDAZIONE DEL PRINCIPE ",
+   "LA FONDAZIONE SALVA LA PULCE "
+  ]
+ },
+ {
+  "offset": 27525,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "LA CAMPAGNA PER LE ESECUZIONI PUBBLICHE ",
+   "LA CAMPAGNA PER GLI ESPERIMENTI SUGLI ANIMALI ",
+   "LA LEGA ATOMIZZA LA NONNA "
+  ]
+ },
+ {
+  "offset": 27646,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "EHI ",
+   "SENTI ",
+   "ASCOLTA "
+  ]
+ },
+ {
+  "offset": 27674,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "OK ",
+   "CAPITO ",
+   "PRESO "
+  ]
+ },
+ {
+  "offset": 27697,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "GRUPPO ",
+   "BRANCO ",
+   "CLAN "
+  ]
+ },
+ {
+  "offset": 27716,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   ", BRANCO DI CIALTRONI ",
+   ", BANDA DI FANNULLONI ",
+   ", MASNADA DI SCROCCONI "
+  ]
+ },
+ {
+  "offset": 27746,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "ULTRA ",
+   "EXTRA ",
+   "REALLY ",
+   "PRETTY ",
+   "FAIRLY ",
+   "QUITE "
+  ]
+ },
+ {
+  "offset": 27787,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "NASTY ",
+   "POTENT ",
+   "HORRID ",
+   "NORMAL "
+  ]
+ },
+ {
+  "offset": 27816,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "RED-HOT ",
+   "SCREAMING ",
+   "THROBBING ",
+   "WAILING ",
+   "LOUD ",
+   "NOISY "
+  ]
+ },
+ {
+  "offset": 27865,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "MEGADEATH ",
+   "ARMAGEDDON ",
+   "HELLFIRE ",
+   "POISON ",
+   "THRASH ",
+   "DISTURBANCE "
+  ]
+ },
+ {
+  "offset": 27923,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DEAD ",
+   "KINKY ",
+   "SMELLY ",
+   "ROTTING ",
+   "SWEATY "
+  ]
+ },
+ {
+  "offset": 27958,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "PRESIDENTS ",
+   "LUNATICS ",
+   "PENSIONERS ",
+   "DONKEYS ",
+   "FLESHPOTS ",
+   "SAUSAGES "
+  ]
+ },
+ {
+  "offset": 28018,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "SPARKLY ",
+   "RUSTY ",
+   "SHINY ",
+   "BROKEN "
+  ]
+ },
+ {
+  "offset": 28047,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "BEDSPRINGS ",
+   "BAUBLES ",
+   "ROCKETS ",
+   "GUNS "
+  ]
+ },
+ {
+  "offset": 28081,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "SONIC ",
+   "FUNKY ",
+   "NON-STOP ",
+   "PLASTIC ",
+   "UP-TEMPO "
+  ]
+ },
+ {
+  "offset": 28121,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "HIP-HOP ",
+   "VOODOO ",
+   "ALIEN ",
+   "RHYTHM "
+  ]
+ },
+ {
+  "offset": 28151,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DANCE ",
+   "LOVE ",
+   "MOOD ",
+   "SPACE ",
+   "STYLE "
+  ]
+ },
+ {
+  "offset": 28181,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "GROUP ",
+   "BAND ",
+   "CROWD ",
+   "ORCHESTRA ",
+   "ORGANIZATION "
+  ]
+ },
+ {
+  "offset": 28223,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "NATTY ",
+   "MIGHTY ",
+   "RANKIN "
+  ]
+ },
+ {
+  "offset": 28245,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "BABYLON ",
+   "DREAD ",
+   "REBEL ",
+   "TRENCHTOWN ",
+   "CRISIS "
+  ]
+ },
+ {
+  "offset": 28285,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "MOSSA ",
+   "SCELTA ",
+   "DECISIONE "
+  ]
+ },
+ {
+  "offset": 28308,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SEI D'ACCORDO ",
+   "CHE NE DICI ",
+   "CHE NE PENSI "
+  ]
+ },
+ {
+  "offset": 28354,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "OK ",
+   "GIUSTO ",
+   "VA BENE "
+  ]
+ },
+ {
+  "offset": 28381,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "CI POSSO CONVIVERE ",
+   "CE LA FACCIO BENISSIMO ",
+   "REGGO BOTTA SENZA PROBLEMI "
+  ]
+ },
+ {
+  "offset": 28436,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "VOGLIAMO ",
+   "VUOI "
+  ]
+ },
+ {
+  "offset": 28462,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "BELL{O|A|I} ",
+   "TESTON{E|A|I} ",
+   "BABBE{O|A|I} ",
+   "PAPER{O|A|I} ",
+   "TACCHIN{O|A|I} ",
+   "PEZZENTE "
+  ]
+ },
+ {
+  "offset": 28515,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "MISERABILE ",
+   "IGNOBILE ",
+   "PESTILENTE ",
+   "RIPUGNANTE ",
+   "PUZZOLENTE "
+  ]
+ },
+ {
+  "offset": 28553,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "CARROZZONE ",
+   "ORGANICO ",
+   "BARACCONE "
+  ]
+ },
+ {
+  "offset": 28583,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SFONDARE ",
+   "FARCELA ",
+   "ESSERE PRIM{O|A|I|E} "
+  ]
+ },
+ {
+  "offset": 28624,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "DORME ",
+   "ZZZ ",
+   "RUSSA ",
+   "SBADIGLIA "
+  ]
+ },
+ {
+  "offset": 28646,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "PERFETT{O|A|I|E} ",
+   "AFFIATAT{O|A|I|E} ",
+   "IMPECCABIL{E|E|I|I} "
+  ]
+ },
+ {
+  "offset": 28695,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "{VAI|ANDATE} ",
+   "{ESCI|USCITE} "
+  ]
+ },
+ {
+  "offset": 28706,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "STEND{ILI|ETELI}",
+   "{FALLI|FATELI} NERI",
+   "CONQUISTA{LI|TELI}"
+  ]
+ },
+ {
+  "offset": 28752,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "GUAI ",
+   "BRUTTA ARIA ",
+   "ARIA PESANTE "
+  ]
+ },
+ {
+  "offset": 28785,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "INCID{I|ETE} ",
+   "REGISTRA{|TE} ",
+   "SFORNA{|TE} ",
+   "SUONA{|TE} ",
+   "FISSA{|TE} ",
+   "{METTI|METTETE} SU NASTRO "
+  ]
+ },
+ {
+  "offset": 28824,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "CLASSICO ",
+   "TOSTO ",
+   "MOSTRUOSO ",
+   "MEGA ",
+   "SUPER "
+  ]
+ },
+ {
+  "offset": 28859,
+  "type": "GROUP",
+  "count": 7,
+  "items": [
+   "PEZZO",
+   "GROOVE",
+   "TORMENTONE",
+   "BRANO",
+   "SUCCESSO",
+   "MOTIVO",
+   "NUMERO"
+  ]
+ },
+ {
+  "offset": 28895,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "INCISO",
+   "PRONTO",
+   "PORTATO A CASA",
+   "REGISTRATO",
+   "FATTO",
+   "SU NASTRO"
+  ]
+ },
+ {
+  "offset": 28933,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SESSO ",
+   "AUTO ",
+   "RAGAZZE "
+  ]
+ },
+ {
+  "offset": 28950,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "VIOLENZA ",
+   "SOLE ",
+   "SHOCK ",
+   "BALLO "
+  ]
+ },
+ {
+  "offset": 28978,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "BRUTALE ",
+   "PULSANTE ",
+   "INCALZANTE ",
+   "VIBRANTE "
+  ]
+ },
+ {
+  "offset": 29014,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "RUMORE ",
+   "MUSICA ",
+   "BRIVIDO ",
+   "PIACERE "
+  ]
+ },
+ {
+  "offset": 29049,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "DA CELLULOIDE ",
+   "CINEMATICO ",
+   "DA CINEMA "
+  ]
+ },
+ {
+  "offset": 29077,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "EPICO ",
+   "CAPOLAVORO ",
+   "KOLOSSAL "
+  ]
+ },
+ {
+  "offset": 29109,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   " ",
+   " "
+  ]
+ },
+ {
+  "offset": 29113,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "TETTONE ",
+   "GAMBUTE ",
+   "FOCOSE "
+  ]
+ },
+ {
+  "offset": 29133,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "BELLEZZE ",
+   "MODELLE ",
+   "PUPE "
+  ]
+ },
+ {
+  "offset": 29159,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "IN DOCCIA ",
+   "IN SPIAGGIA ",
+   "CON FRUSTE ",
+   "NEL FANGO "
+  ]
+ },
+ {
+  "offset": 29213,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "TROPPO ",
+   "DAVVERO ",
+   "PROPRIO "
+  ]
+ },
+ {
+  "offset": 29238,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "DEPRIMENTI",
+   "IRREALI",
+   "INGUARDABILI"
+  ]
+ },
+ {
+  "offset": 29260,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "CARTONI ",
+   "PUPAZZI ",
+   "PELUCHE "
+  ]
+ },
+ {
+  "offset": 29294,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "UNTI ",
+   "SUDATI ",
+   "MACHO ",
+   "BISUNTI "
+  ]
+ },
+ {
+  "offset": 29321,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "FUSTI ",
+   "TOY BOYS "
+  ]
+ },
+ {
+  "offset": 29339,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "IN PALESTRA ",
+   "ALLENANDOSI ",
+   "A CAZZEGGIO "
+  ]
+ },
+ {
+  "offset": 29378,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "ORRIBILI ",
+   "CRUDELI ",
+   "FEROCI "
+  ]
+ },
+ {
+  "offset": 29399,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "CRICETI ESPLOSIVI ",
+   "INSEGUIMENTI ",
+   "CENE CANNIBALI "
+  ]
+ },
+ {
+  "offset": 29447,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "LICANTROPI ",
+   "VAMPIRI ",
+   "ZOMBI ",
+   "MUTANTI "
+  ]
+ },
+ {
+  "offset": 29485,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "MAGHI ",
+   "STREGHE ",
+   "RAGNI ",
+   "SPETTRI ",
+   "GHOUL "
+  ]
+ },
+ {
+  "offset": 29525,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "ELFI ",
+   "NOTTOLE ",
+   "RATTI "
+  ]
+ },
+ {
+  "offset": 29543,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "NOIOSE ",
+   "MORTALI ",
+   "SOPORIFERE "
+  ]
+ },
+ {
+  "offset": 29574,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "POSE COL PLETTRO ",
+   "RIPRESE LIVE ",
+   "FOTO DAL CONCERTO "
+  ]
+ },
+ {
+  "offset": 29616,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "A",
+   "A"
+  ]
+ },
+ {
+  "offset": 29620,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "LASSIE ",
+   "THATCHER ",
+   "HITLER ",
+   "ELVIS "
+  ]
+ },
+ {
+  "offset": 29651,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UN ARMADIO",
+   "UN VEGANO",
+   "UNA DONNA",
+   "UN CRICETO",
+   "UN PUNK"
+  ]
+ },
+ {
+  "offset": 29699,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "BALLANDO ",
+   "BRINDANDO ",
+   "CANTANDO ",
+   "BEVENDO ",
+   "SCATENANDO "
+  ]
+ },
+ {
+  "offset": 29744,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "I FOLLETTI",
+   "IL PAPA",
+   "LA THATCHER",
+   "IL FISCO",
+   "IL GASISTA",
+   "IL BOIA"
+  ]
+ },
+ {
+  "offset": 29791,
+  "type": "GROUP",
+  "count": 7,
+  "items": [
+   "MUOVI ",
+   "BATTI ",
+   "SUONA ",
+   "GRATTA ",
+   "ALZA ",
+   "SPINGI ",
+   "SCUOTI "
+  ]
+ },
+ {
+  "offset": 29832,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "FUNKY ",
+   "BOOGIE ",
+   "RAP ",
+   "DISCO ",
+   "ACID ",
+   "TECHNO "
+  ]
+ },
+ {
+  "offset": 29877,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "GROOVE ",
+   "BALLO ",
+   "SOUND ",
+   "BEAT ",
+   "PARTY ",
+   "RITMO "
+  ]
+ },
+ {
+  "offset": 29914,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "MIX",
+   "PARTY",
+   "FEVER",
+   "NIGHT",
+   "MANIA",
+   "STORY"
+  ]
+ },
+ {
+  "offset": 29948,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "LECCA ",
+   "BACIA "
+  ]
+ },
+ {
+  "offset": 29960,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "IL MIO SEDERE",
+   "I MIEI STIVALI",
+   "I MIEI CALZINI",
+   "LE MIE ASCELLE"
+  ]
+ },
+ {
+  "offset": 29989,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "ASCIUGA ",
+   "BUTTA ",
+   "SPUTA ",
+   "SOFFIA ",
+   "DIMMI ",
+   "STRAPPA "
+  ]
+ },
+ {
+  "offset": 30021,
+  "type": "GROUP",
+  "count": 7,
+  "items": [
+   "IL MIO CUORE",
+   "LA MIA ANIMA",
+   "IL MIO CERVELLO",
+   "LA MIA CARTA ORO",
+   "LA MIA BAMBOLA",
+   "LA MIA VIRILITA'",
+   "LA MIA CAMICIA"
+  ]
+ },
+ {
+  "offset": 30071,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "BOBBY ",
+   "TRACY ",
+   "MAMMA ",
+   "PAPA ",
+   "PUPA "
+  ]
+ },
+ {
+  "offset": 30100,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "SBAVA PER ",
+   "SCAPPA CON ",
+   "SPOSA ",
+   "LITIGA CON ",
+   "ESCE CON ",
+   "EVADE CON "
+  ]
+ },
+ {
+  "offset": 30184,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UNA BARISTA",
+   "UN PRETE",
+   "UN AUTISTA",
+   "UN GALEOTTO",
+   "UNA VELINA"
+  ]
+ },
+ {
+  "offset": 30226,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "FACCIAMO TUTTI ",
+   "DAI, FACCIAMO ",
+   "TUTTI A FARE ",
+   "ADESSO FACCIO "
+  ]
+ },
+ {
+  "offset": 30270,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "IL TRENINO",
+   "IL TWIST",
+   "IL CAMERIERE",
+   "LA RAPINA",
+   "I PIATTI",
+   "IL CRUCIVERBA"
+  ]
+ },
+ {
+  "offset": 30316,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "MARCIO NASCENTE",
+   "UMIDO NASCENTE",
+   "MUTUO NASCENTE",
+   "AFFITTO NASCENTE"
+  ]
+ },
+ {
+  "offset": 30341,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DOOBIE ",
+   "SHOOBIE ",
+   "DUM ",
+   "OOH-WAH ",
+   "OOPS "
+  ]
+ },
+ {
+  "offset": 30375,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DOOBIE ",
+   "SHOOBIE ",
+   "DUMMA ",
+   "LALALA ",
+   "BOP-A "
+  ]
+ },
+ {
+  "offset": 30411,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "DOO ",
+   "DUWA ",
+   "DINDON ",
+   "SHALA ",
+   "LALLA "
+  ]
+ },
+ {
+  "offset": 30458,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "OOH ",
+   "OH "
+  ]
+ },
+ {
+  "offset": 30475,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "BABY ",
+   "BIMBA ",
+   "PUPA "
+  ]
+ },
+ {
+  "offset": 30497,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "FELICE",
+   "BENE",
+   "MALE",
+   "STRANO"
+  ]
+ },
+ {
+  "offset": 30535,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "VABBE ",
+   "BOH ",
+   "MAH "
+  ]
+ },
+ {
+  "offset": 30560,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "COSI' VA IL MONDO ",
+   "FA PARTE DEL GIOCO ",
+   "E' LA VITA "
+  ]
+ },
+ {
+  "offset": 30642,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "SPOCK ",
+   "SNOT ",
+   "SPOT ",
+   "SLOPS ",
+   "SMUT "
+  ]
+ },
+ {
+  "offset": 30671,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "AMOS ",
+   "HAMISH ",
+   "AIMLESS ",
+   "APRIL ",
+   "APRON "
+  ]
+ },
+ {
+  "offset": 30705,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "WATERFALL ",
+   "WATERSKI ",
+   "WATERING-CAN ",
+   "BEDPAN ",
+   "WAITROSE "
+  ]
+ },
+ {
+  "offset": 30755,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "I POLIZIOTTI ",
+   "GLI SBIRRI ",
+   "I PORCI ",
+   "LE GUARDIE "
+  ]
+ },
+ {
+  "offset": 30784,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "SI E' ROTTO ",
+   "E' ESPLOSO ",
+   "E' MORTO ",
+   "SI E' SFATTO "
+  ]
+ },
+ {
+  "offset": 30825,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "EEK ",
+   "ULP ",
+   "GASP "
+  ]
+ },
+ {
+  "offset": 30840,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "COSO ",
+   "TASTO ",
+   "FILO ",
+   "PERNO "
+  ]
+ },
+ {
+  "offset": 30866,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UN FURGONE ",
+   "UN FUCILE ",
+   "UN FETICCIO ",
+   "UN NASO ",
+   "UN MUTUO "
+  ]
+ },
+ {
+  "offset": 30907,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "LUI ",
+   "LEI "
+  ]
+ },
+ {
+  "offset": 30914,
+  "type": "GROUP",
+  "count": 7,
+  "items": [
+   "IN VITA",
+   "DI QUESTO MONDO",
+   "UN ESSERE UMANO",
+   "UN RAVER",
+   "UNO ZOMBI",
+   "IN SE'",
+   "IN FORMA"
+  ]
+ },
+ {
+  "offset": 30959,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "SORDO",
+   "MORTO",
+   "PIU' ALTO",
+   "UN CHIRURGO",
+   "PAPERONE"
+  ]
+ },
+ {
+  "offset": 31012,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "ASSO ",
+   "SUPER ",
+   "SPRINT "
+  ]
+ },
+ {
+  "offset": 31033,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "PENNIVENDOLO",
+   "CRONISTA",
+   "SEGUGIO",
+   "SPIONE"
+  ]
+ },
+ {
+  "offset": 31067,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UN MILIARDO AL BINGO",
+   "UN MILIONE AL LOTTO",
+   "UNA NOTTE IN UN CENTRO MASSAGGI",
+   "UNA SERATA CON UNA VELINA",
+   "UN ANNO DI PROFILATTICI"
+  ]
+ },
+ {
+  "offset": 31175,
+  "type": "GROUP",
+  "count": 6,
+  "items": [
+   "UN CRICETO ",
+   "UNA SUORA ",
+   "UN MARZIANO ",
+   "UN VESCOVO ",
+   "UNA PORNOSTAR ",
+   "UN LUPO MANNARO "
+  ]
+ },
+ {
+  "offset": 31223,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "TETTONA TINA ",
+   "BOLLENTE BRUNA ",
+   "SEXY SONIA ",
+   "GOLOSA GILDA ",
+   "CURVY CARLA "
+  ]
+ },
+ {
+  "offset": 31289,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "IL CRICETO",
+   "IL MARITO",
+   "LA FRUSTA",
+   "LE MUTANDE",
+   "IL TOY BOY"
+  ]
+ },
+ {
+  "offset": 31329,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SENZA TESTA ",
+   "RIDENTE ",
+   "ALCOLISTA "
+  ]
+ },
+ {
+  "offset": 31359,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "MEDICO ",
+   "NANO ",
+   "SUORA ",
+   "BANCHIERE "
+  ]
+ },
+ {
+  "offset": 31385,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "DOLCE MORTE",
+   "RITO DELL'ORRORE",
+   "CORSA PIETOSA",
+   "ENIGMA FATALE"
+  ]
+ },
+ {
+  "offset": 31435,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "LA FIGLIA",
+   "IL CRICETO",
+   "LA VOLVO",
+   "IL CERVELLO",
+   "IL MARITO"
+  ]
+ },
+ {
+  "offset": 31469,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "IL PESCE ROSSO",
+   "LA SALSICCIA",
+   "LA BARRETTA"
+  ]
+ },
+ {
+  "offset": 31499,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "DIETA ",
+   "FILATELIA ",
+   "TRENI "
+  ]
+ },
+ {
+  "offset": 31541,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "AL BAR",
+   "NEL SONNO",
+   "IN SALOTTO"
+  ]
+ },
+ {
+  "offset": 31565,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "DALL'ASINO",
+   "DAL MARCIAPIEDE",
+   "DAI TACCHI"
+  ]
+ },
+ {
+  "offset": 31590,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "LA MOGLIE",
+   "IL CANE",
+   "IL CRICETO",
+   "LA CASA"
+  ]
+ },
+ {
+  "offset": 31611,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "BONDAGE ",
+   "LUSSURIA ",
+   "CRIMINE "
+  ]
+ },
+ {
+  "offset": 31632,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "GUERRA ATOMICA",
+   "ATTACCO TERRORISTA",
+   "ORGIA",
+   "DISASTRO AEREO"
+  ]
+ },
+ {
+  "offset": 31677,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "ATTACCA ",
+   "PICCHIA ",
+   "MORDE "
+  ]
+ },
+ {
+  "offset": 31701,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "UN CRONISTA",
+   "UN VESCOVO",
+   "UN DEEJAY"
+  ]
+ },
+ {
+  "offset": 31723,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "FAN",
+   "MELOMANI",
+   "API ASSASSINE",
+   "ALIENI"
+  ]
+ },
+ {
+  "offset": 31758,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "COREA ",
+   "TAIWAN ",
+   "BRIANZA "
+  ]
+ },
+ {
+  "offset": 31784,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UNA FRANA",
+   "UN MORMONE",
+   "UN CLONE",
+   "UNA CAROGNA",
+   "UN VIGILE"
+  ]
+ },
+ {
+  "offset": 31820,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "IL CRAMPO",
+   "LA FEBBRE",
+   "IL BLUES",
+   "LA TRISTEZZA",
+   "IL DOLORE"
+  ]
+ },
+ {
+  "offset": 31849,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "ME",
+   "I SOLDI",
+   "UN TAGLIO",
+   "TE"
+  ]
+ },
+ {
+  "offset": 31870,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UNA DONNA",
+   "COME ME",
+   "UNA STAR",
+   "UN MITO",
+   "IRRESISTIBILE"
+  ]
+ },
+ {
+  "offset": 31903,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "DELLA REGINA",
+   "DI ME STESSO",
+   "DI ESTHER RANSON",
+   "DI EDNA EVERAGE"
+  ]
+ },
+ {
+  "offset": 31946,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "IN CROCIERA",
+   "IN CAMION",
+   "ALLA DERIVA",
+   "A TUTTA BIRRA"
+  ]
+ },
+ {
+  "offset": 31980,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "NELLA CREMA",
+   "NEI JEANS",
+   "IN GOLA",
+   "NEI PANTALONI"
+  ]
+ },
+ {
+  "offset": 32008,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "TERMINALI",
+   "VUOTI",
+   "DI PIOMBO",
+   "BRUCIATI"
+  ]
+ },
+ {
+  "offset": 32042,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SCUSA?",
+   "RIPETI",
+   "ALZA IL VOLUME"
+  ]
+ },
+ {
+  "offset": 32072,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "RACCONTA",
+   "SCAPPA",
+   "FAI PACE"
+  ]
+ },
+ {
+  "offset": 32087,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "MOLLI",
+   "GRUMOSE",
+   "APPICCICOSE"
+  ]
+ },
+ {
+  "offset": 32108,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "GUARDAMI ",
+   "LEGAMI ",
+   "BLOCCAMI ",
+   "CHIAMAMI ",
+   "VESTIMI "
+  ]
+ },
+ {
+  "offset": 32134,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "MODESTIA",
+   "IL MIO GRANDE SUCCESSO",
+   "CIAO TESORI"
+  ]
+ },
+ {
+  "offset": 32169,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "ESPLODO",
+   "SCOPPIO",
+   "PENZOLO",
+   "CROLLO"
+  ]
+ },
+ {
+  "offset": 32203,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "MANGIA ",
+   "LECCA ",
+   "BACIA ",
+   "PRENDI ",
+   "SENTI "
+  ]
+ },
+ {
+  "offset": 32228,
+  "type": "GROUP",
+  "count": 2,
+  "items": [
+   "RAGAZZI ",
+   "RAGAZZE "
+  ]
+ },
+ {
+  "offset": 32241,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "CONCERTO ",
+   "STUDIO ",
+   "JUKEBOX ",
+   "PALAZZO DELLE HIT "
+  ]
+ },
+ {
+  "offset": 32285,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "GRUPPO DI GO-GO GIRLS ",
+   "MEGA SHOW LASER ",
+   "CRICETO GONFIABILE DA 10 METRI ",
+   "SPETTACOLO PIROTECNICO "
+  ]
+ },
+ {
+  "offset": 32377,
+  "type": "GROUP",
+  "count": 5,
+  "items": [
+   "UNA PORSCHE ",
+   "UN CAMION DI VODKA ",
+   "UNA TUTA DI DIAMANTI ",
+   "UNA CASSA DI CAVIALE ",
+   "UN BUONO PER LA CHIRURGIA "
+  ]
+ },
+ {
+  "offset": 32471,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "SFASCIA ",
+   "FA SALTARE ",
+   "ALLAGA "
+  ]
+ },
+ {
+  "offset": 32496,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "UNA STANZA D'HOTEL",
+   "UNA CATTEDRALE",
+   "UN NIGHTCLUB"
+  ]
+ },
+ {
+  "offset": 32526,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "OSCENITA",
+   "RISSA",
+   "UBRIACHEZZA"
+  ]
+ },
+ {
+  "offset": 32554,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "TERRY WIGAN ",
+   "SUE LAWLESS ",
+   "RABID FROST ",
+   "ESTHER RANCID "
+  ]
+ },
+ {
+  "offset": 32606,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "MARIA BUTTOCKS ",
+   "STIFF PILCHARDS ",
+   "MARY TIGHTHOUSE "
+  ]
+ },
+ {
+  "offset": 32655,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "POPE JOHN-PAUL RINGO ",
+   "CHRIS DE BERK ",
+   "THE ARCHBISHOP OF CANTURBURY "
+  ]
+ },
+ {
+  "offset": 32721,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "AL BAR",
+   "IN CLINICA",
+   "IN BAGNO",
+   "IN OSPEDALE"
+  ]
+ },
+ {
+  "offset": 32752,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "CAMMINA ",
+   "BALLA ",
+   "CANTA ",
+   "MUOVITI "
+  ]
+ },
+ {
+  "offset": 32775,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "TONTO",
+   "UBRIACO",
+   "PAGLIACCIO",
+   "IDIOTA"
+  ]
+ },
+ {
+  "offset": 32800,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "CUORE",
+   "SPECCHIO",
+   "FEGATO"
+  ]
+ },
+ {
+  "offset": 32821,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "APPENDICE ",
+   "FEGATO ",
+   "RENI "
+  ]
+ },
+ {
+  "offset": 32846,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "IL BUIO ",
+   "LA CHIESA ",
+   "IL SUPERMERCATO "
+  ]
+ },
+ {
+  "offset": 32884,
+  "type": "GROUP",
+  "count": 3,
+  "items": [
+   "BAMBINO",
+   "PERVERTITO",
+   "SETTARIO"
+  ]
+ },
+ {
+  "offset": 32907,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "DEL TUTTO ",
+   "PROPRIO ",
+   "TOTALMENTE ",
+   "INCREDIBILMENTE "
+  ]
+ },
+ {
+  "offset": 32949,
+  "type": "GROUP",
+  "count": 4,
+  "items": [
+   "GENIALE ",
+   "ECCEZIONALE ",
+   "MEMORABILE ",
+   "INCREDIBILE "
+  ]
+ },
+ {
+  "offset": 32987,
+  "type": "GROUP",
+  "count": 68,
+  "items": [
+   "LIVE ",
+   "UN BEL GIORNO ",
+   " ",
+   "ALLA SEDE DELL'",
+   "CECIL PITT ",
+   "AGENZIA TEATRALE ",
+   "! ",
+   ", ",
+   ". ",
+   "? ",
+   "SIAMO FINITI ",
+   "ORA ANCHE ",
+   "CI HA MOLLATI! LASCIO IL TEATRO PER SEMPRE!",
+   "IL ROCK ",
+   "LI' STANNO I SOLDI! APRIAMO UN'AGENZIA ROCK CON QUELLE `50.000 CHE TI HA LASCIATO ZIA MABEL!",
+   "... ",
+   "EHI! ROCK AND ROLL! ",
+   "FORMIAMO UNA BAND ",
+   "PORTAMI IN SALA AUDIZIONI",
+   "@ ",
+   "SI' NO",
+   "CON ",
+   "C'E' UN TIPO AL TELEFONO ",
+   "TE ",
+   "DI ",
+   "NON VOGLIAMO AVERE A CHE FARE CON ",
+   "CERTO, CI PIACEREBBE ",
+   "ABBIAMO SEMPRE SOSTENUTO LA VOSTRA CAUSA",
+   "ORA DIAMO UN NOME ALLA BAND! ",
+   "PROPONGO ",
+   "SCEGLI TU",
+   "ORA CONVIENE COMPRARE ",
+   "DEL ",
+   "COSTERA' `",
+   "`",
+   "NUOVO ",
+   "USATO ",
+   "CADUTO DA UN CAMION ",
+   "ROBA LOSCA ",
+   "FIAMMANTE ",
+   "O ",
+   "CHE CI VUOLE PER UN CONCERTO BENEFICO ",
+   "AIUTARE ",
+   "CHE ",
+   "FARE ORA ",
+   "PROVE CONCERTO STAMPA REGALI ",
+   "DA ",
+   "CHE VUOLE INGAGGIARE ",
+   "PER `",
+   "E ",
+   "% ROYALTY ",
+   "DISCHI MOSCI ",
+   "RUDE ",
+   "S+M ",
+   "PHONEYGRAM ",
+   "MEGA BIG ",
+   "RECORDS ",
+   "MINI ",
+   "STIAMO PER {=P}",
+   "NON CI SERVE IL ",
+   "ENTRARE NEL ",
+   "TUO ",
+   "SIR ",
+   "VABBE', ",
+   "ORA DI PROVE EH? ",
+   "OK ",
+   "UNA SALA PROVE COSTA `100 AL GIORNO! QUANTO CI CHIUDIAMO ",
+   "LA' DENTRO?"
+  ]
+ },
+ {
+  "offset": 33952,
+  "type": "STR",
+  "text": "1 "
+ },
+ {
+  "offset": 33954,
+  "type": "STR",
+  "text": "2 "
+ },
+ {
+  "offset": 33956,
+  "type": "STR",
+  "text": "3 "
+ },
+ {
+  "offset": 33958,
+  "type": "STR",
+  "text": "4 "
+ },
+ {
+  "offset": 33960,
+  "type": "STR",
+  "text": "5 "
+ },
+ {
+  "offset": 33962,
+  "type": "STR",
+  "text": "GIORNO "
+ },
+ {
+  "offset": 33967,
+  "type": "STR",
+  "text": "GIORNI "
+ },
+ {
+  "offset": 33972,
+  "type": "STR",
+  "text": "EHM "
+ },
+ {
+  "offset": 33975,
+  "type": "STR",
+  "text": "SCOMMETTO CHE "
+ },
+ {
+  "offset": 33984,
+  "type": "STR",
+  "text": "SARANNO "
+ },
+ {
+  "offset": 33992,
+  "type": "STR",
+  "text": "ORMAI "
+ },
+ {
+  "offset": 33999,
+  "type": "STR",
+  "text": "WOW "
+ },
+ {
+  "offset": 34003,
+  "type": "STR",
+  "text": "TOUR "
+ },
+ {
+  "offset": 34008,
+  "type": "STR",
+  "text": "TIPO DI LOCALI "
+ },
+ {
+  "offset": 34023,
+  "type": "STR",
+  "text": "BAR      LOCALI  UNIVERSITA'  SALE CONCERTI STADI   "
+ },
+ {
+  "offset": 34075,
+  "type": "STR",
+  "text": "BAR "
+ },
+ {
+  "offset": 34079,
+  "type": "STR",
+  "text": "LOCALE "
+ },
+ {
+  "offset": 34084,
+  "type": "STR",
+  "text": "UNIVERSITA' "
+ },
+ {
+  "offset": 34095,
+  "type": "STR",
+  "text": "SALA CONCERTI "
+ },
+ {
+  "offset": 34108,
+  "type": "STR",
+  "text": "STADIO "
+ },
+ {
+  "offset": 34116,
+  "type": "STR",
+  "text": "NON E' "
+ },
+ {
+  "offset": 34118,
+  "type": "STR",
+  "text": ", POSTI "
+ },
+ {
+  "offset": 34124,
+  "type": "STR",
+  "text": "I COSTI "
+ },
+ {
+  "offset": 34130,
+  "type": "STR",
+  "text": "NULLA"
+ },
+ {
+  "offset": 34138,
+  "type": "STR",
+  "text": "AFFITTO PER UNA SERA "
+ },
+ {
+  "offset": 34158,
+  "type": "STR",
+  "text": "CHE "
+ },
+ {
+  "offset": 34176,
+  "type": "STR",
+  "text": "PREZZO "
+ },
+ {
+  "offset": 34183,
+  "type": "STR",
+  "text": "METTIAMO AL BIGLIETTO?"
+ },
+ {
+  "offset": 34194,
+  "type": "STR",
+  "text": "10 "
+ },
+ {
+  "offset": 34197,
+  "type": "STR",
+  "text": "15 "
+ },
+ {
+  "offset": 34200,
+  "type": "STR",
+  "text": "20 "
+ },
+ {
+  "offset": 34203,
+  "type": "STR",
+  "text": "STOP   "
+ },
+ {
+  "offset": 34210,
+  "type": "STR",
+  "text": "QUANT{I|E|I} "
+ },
+ {
+  "offset": 34219,
+  "type": "STR",
+  "text": "6 "
+ },
+ {
+  "offset": 34221,
+  "type": "STR",
+  "text": "7 "
+ },
+ {
+  "offset": 34223,
+  "type": "STR",
+  "text": "SERATE "
+ },
+ {
+  "offset": 34230,
+  "type": "STR",
+  "text": "ADESSO "
+ },
+ {
+  "offset": 34244,
+  "type": "STR",
+  "text": "LA FUORI "
+ },
+ {
+  "offset": 34262,
+  "type": "STR",
+  "text": "{DACCI|DATECI} DENTRO "
+ },
+ {
+  "offset": 34272,
+  "type": "STR",
+  "text": "COM'E' ANDATA LA VENDITA DEI BIGLIETTI "
+ },
+ {
+  "offset": 34300,
+  "type": "STR",
+  "text": "BENE "
+ },
+ {
+  "offset": 34305,
+  "type": "STR",
+  "text": "ABBIAMO VENDUTO "
+ },
+ {
+  "offset": 34313,
+  "type": "STR",
+  "text": "BIGLIETTI A `"
+ },
+ {
+  "offset": 34325,
+  "type": "STR",
+  "text": "INCASSANDO `"
+ },
+ {
+  "offset": 34333,
+  "type": "STR",
+  "text": "SUONIAMO "
+ },
+ {
+  "offset": 34347,
+  "type": "STR",
+  "text": "E' ORA DI PAGARE GLI STIPENDI "
+ },
+ {
+  "offset": 34363,
+  "type": "STR",
+  "text": "INCIDI{|AMO} "
+ },
+ {
+  "offset": 34370,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 34371,
+  "type": "STR",
+  "text": "DAI, "
+ },
+ {
+  "offset": 34377,
+  "type": "STR",
+  "text": "UN "
+ },
+ {
+  "offset": 34380,
+  "type": "STR",
+  "text": "ALBUM "
+ },
+ {
+  "offset": 34386,
+  "type": "STR",
+  "text": "STUDIO "
+ },
+ {
+  "offset": 34398,
+  "type": "STR",
+  "text": "PISTE "
+ },
+ {
+  "offset": 34404,
+  "type": "STR",
+  "text": "A  "
+ },
+ {
+  "offset": 34407,
+  "type": "STR",
+  "text": "000 "
+ },
+ {
+  "offset": 34411,
+  "type": "STR",
+  "text": "2"
+ },
+ {
+  "offset": 34412,
+  "type": "STR",
+  "text": "5"
+ },
+ {
+  "offset": 34413,
+  "type": "STR",
+  "text": "10"
+ },
+ {
+  "offset": 34415,
+  "type": "STR",
+  "text": "16"
+ },
+ {
+  "offset": 34417,
+  "type": "STR",
+  "text": "20"
+ },
+ {
+  "offset": 34419,
+  "type": "STR",
+  "text": "50"
+ },
+ {
+  "offset": 34421,
+  "type": "STR",
+  "text": "QUALCHE "
+ },
+ {
+  "offset": 34426,
+  "type": "STR",
+  "text": "E' IL MIGLIOR "
+ },
+ {
+  "offset": 34442,
+  "type": "STR",
+  "text": "CHE ABBIA MAI SENTITO! "
+ },
+ {
+  "offset": 34459,
+  "type": "STR",
+  "text": "USARE "
+ },
+ {
+  "offset": 34463,
+  "type": "STR",
+  "text": "CHIAMARE "
+ },
+ {
+  "offset": 34468,
+  "type": "STR",
+  "text": "QUESTO "
+ },
+ {
+  "offset": 34473,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 34475,
+  "type": "STR",
+  "text": "IL PRIMO "
+ },
+ {
+  "offset": 34485,
+  "type": "STR",
+  "text": "UN ALTRO "
+ },
+ {
+  "offset": 34493,
+  "type": "STR",
+  "text": "8 "
+ },
+ {
+  "offset": 34495,
+  "type": "STR",
+  "text": "24 "
+ },
+ {
+  "offset": 34498,
+  "type": "STR",
+  "text": "48 "
+ },
+ {
+  "offset": 34501,
+  "type": "STR",
+  "text": "LANCIA  "
+ },
+ {
+  "offset": 34509,
+  "type": "STR",
+  "text": "SINGOLO"
+ },
+ {
+  "offset": 34516,
+  "type": "STR",
+  "text": "SUONA{|TE} "
+ },
+ {
+  "offset": 34527,
+  "type": "STR",
+  "text": "{RIUSCIRA'|RIUSCIRANNO} A "
+ },
+ {
+  "offset": 34532,
+  "type": "STR",
+  "text": "CON "
+ },
+ {
+  "offset": 34537,
+  "type": "STR",
+  "text": "SONO "
+ },
+ {
+  "offset": 34541,
+  "type": "STR",
+  "text": "IMPAZZISCO PER "
+ },
+ {
+  "offset": 34545,
+  "type": "STR",
+  "text": "AND THE "
+ },
+ {
+  "offset": 34551,
+  "type": "STR",
+  "text": "FARE UN "
+ },
+ {
+  "offset": 34556,
+  "type": "STR",
+  "text": "VIDEO "
+ },
+ {
+  "offset": 34562,
+  "type": "STR",
+  "text": "DA ABBINARE "
+ },
+ {
+  "offset": 34568,
+  "type": "STR",
+  "text": "CHI "
+ },
+ {
+  "offset": 34572,
+  "type": "STR",
+  "text": "PER LA REGIA "
+ },
+ {
+  "offset": 34589,
+  "type": "STR",
+  "text": "DOVE "
+ },
+ {
+  "offset": 34595,
+  "type": "STR",
+  "text": "GIRARE "
+ },
+ {
+  "offset": 34601,
+  "type": "STR",
+  "text": "METTERE "
+ },
+ {
+  "offset": 34609,
+  "type": "STR",
+  "text": "IN "
+ },
+ {
+  "offset": 34612,
+  "type": "STR",
+  "text": "MISCELA SOTTILE "
+ },
+ {
+  "offset": 34625,
+  "type": "STR",
+  "text": "FILM VISTO DA "
+ },
+ {
+  "offset": 34646,
+  "type": "STR",
+  "text": "STEVEN CHEESEBURGER `3000000 CECIL BIDET-MILLS   `1000000 BUSBY BERSERKELY    `50000 WRIGLEY SCOTT       `10000 JULIAN TEMPLE-MEADS `5000 "
+ },
+ {
+  "offset": 34784,
+  "type": "STR",
+  "text": "BAHAMAS     `50000 HOLLYWOOD   `20000 CINECITTA   `10000 CINISELLO   `50 "
+ },
+ {
+  "offset": 34857,
+  "type": "STR",
+  "text": "MUSICAL "
+ },
+ {
+  "offset": 34865,
+  "type": "STR",
+  "text": "QUALE "
+ },
+ {
+  "offset": 34871,
+  "type": "STR",
+  "text": "              `5"
+ },
+ {
+  "offset": 34887,
+  "type": "STR",
+  "text": "TUTTO "
+ },
+ {
+  "offset": 34891,
+  "type": "STR",
+  "text": "REG SETTER "
+ },
+ {
+  "offset": 34902,
+  "type": "STR",
+  "text": "AND THE LAMPPOSTS"
+ },
+ {
+  "offset": 34911,
+  "type": "STR",
+  "text": "METAGALACTIC HEAT DEATH"
+ },
+ {
+  "offset": 34934,
+  "type": "STR",
+  "text": "TOTALLY ALIEN QUIZ SHOW HOST"
+ },
+ {
+  "offset": 34962,
+  "type": "STR",
+  "text": "BAZOOMAROOMA"
+ },
+ {
+  "offset": 34974,
+  "type": "STR",
+  "text": "WHIPLASH SISTERS"
+ },
+ {
+  "offset": 34990,
+  "type": "STR",
+  "text": "SINDY CLEAVAGE"
+ },
+ {
+  "offset": 35004,
+  "type": "STR",
+  "text": "SWEAT "
+ },
+ {
+  "offset": 35010,
+  "type": "STR",
+  "text": "BRUCE EVERISS ON 45"
+ },
+ {
+  "offset": 35029,
+  "type": "STR",
+  "text": "BONDAGE PIXIES"
+ },
+ {
+  "offset": 35043,
+  "type": "STR",
+  "text": "LEPER"
+ },
+ {
+  "offset": 35048,
+  "type": "STR",
+  "text": "STARTLED BY MIDGETS"
+ },
+ {
+  "offset": 35067,
+  "type": "STR",
+  "text": "WAX"
+ },
+ {
+  "offset": 35070,
+  "type": "STR",
+  "text": "VICTOR SINEX "
+ },
+ {
+  "offset": 35083,
+  "type": "STR",
+  "text": "AND THE NOSE FLUTES"
+ },
+ {
+  "offset": 35094,
+  "type": "STR",
+  "text": "SEX KITTENS"
+ },
+ {
+  "offset": 35105,
+  "type": "STR",
+  "text": "BORING OLD GITS FROM"
+ },
+ {
+  "offset": 35126,
+  "type": "STR",
+  "text": "THE 60'S"
+ },
+ {
+  "offset": 35130,
+  "type": "STR",
+  "text": "POTATOES"
+ },
+ {
+  "offset": 35138,
+  "type": "STR",
+  "text": "WHITE TRASH"
+ },
+ {
+  "offset": 35149,
+  "type": "STR",
+  "text": "TONE "
+ },
+ {
+  "offset": 35154,
+  "type": "STR",
+  "text": "EH?"
+ },
+ {
+  "offset": 35157,
+  "type": "STR",
+  "text": "SMELL"
+ },
+ {
+  "offset": 35162,
+  "type": "STR",
+  "text": "IMPLANTS"
+ },
+ {
+  "offset": 35170,
+  "type": "STR",
+  "text": "TERMINAL BOREDOM"
+ },
+ {
+  "offset": 35186,
+  "type": "STR",
+  "text": "PARTY POOPERS"
+ },
+ {
+  "offset": 35199,
+  "type": "STR",
+  "text": "FLATULENT HIPSTERS"
+ },
+ {
+  "offset": 35217,
+  "type": "STR",
+  "text": "STRANGULATED HERNIA"
+ },
+ {
+  "offset": 35236,
+  "type": "STR",
+  "text": "SQUAD"
+ },
+ {
+  "offset": 35241,
+  "type": "STR",
+  "text": "RENT SHOP BOYS"
+ },
+ {
+  "offset": 35251,
+  "type": "STR",
+  "text": "DEAF "
+ },
+ {
+  "offset": 35256,
+  "type": "STR",
+  "text": "SIMPLY "
+ },
+ {
+  "offset": 35263,
+  "type": "STR",
+  "text": "BUTTOCK BROTHERS"
+ },
+ {
+  "offset": 35279,
+  "type": "STR",
+  "text": "DROSS"
+ },
+ {
+  "offset": 35284,
+  "type": "STR",
+  "text": "ZZZ TOP"
+ },
+ {
+  "offset": 35291,
+  "type": "STR",
+  "text": "VS"
+ },
+ {
+  "offset": 35293,
+  "type": "STR",
+  "text": "ERA "
+ },
+ {
+  "offset": 35297,
+  "type": "STR",
+  "text": "QUEL "
+ },
+ {
+  "offset": 35302,
+  "type": "STR",
+  "text": "PRONTO? CERCO LA MIA "
+ },
+ {
+  "offset": 35305,
+  "type": "STR",
+  "text": "TUTTO"
+ },
+ {
+  "offset": 35311,
+  "type": "STR",
+  "text": "RIDAMMI "
+ },
+ {
+  "offset": 35324,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 35327,
+  "type": "STR",
+  "text": "NON FAR "
+ },
+ {
+  "offset": 35330,
+  "type": "STR",
+  "text": "HOUSE OF "
+ },
+ {
+  "offset": 35336,
+  "type": "STR",
+  "text": "LA CASA DEL "
+ },
+ {
+  "offset": 35343,
+  "type": "STR",
+  "text": "VOGLIO IL "
+ },
+ {
+  "offset": 35350,
+  "type": "STR",
+  "text": "MI FAI STARE "
+ },
+ {
+  "offset": 35358,
+  "type": "STR",
+  "text": "UN PAZZO "
+ },
+ {
+  "offset": 35364,
+  "type": "STR",
+  "text": "PRODUTTORE, BILL SPECTRE, CI HA RUBATO IL "
+ },
+ {
+  "offset": 35411,
+  "type": "STR",
+  "text": "CHIEDE UN RISCATTO "
+ },
+ {
+  "offset": 35435,
+  "type": "STR",
+  "text": "PAGARLO?"
+ },
+ {
+  "offset": 35443,
+  "type": "STR",
+  "text": "NASTRO "
+ },
+ {
+  "offset": 35448,
+  "type": "STR",
+  "text": "DI NUOVO NOSTRO "
+ },
+ {
+  "offset": 35459,
+  "type": "STR",
+  "text": "UFF! "
+ },
+ {
+  "offset": 35465,
+  "type": "STR",
+  "text": "SOLLIEVO "
+ },
+ {
+  "offset": 35472,
+  "type": "STR",
+  "text": "DICE CHE HA"
+ },
+ {
+  "offset": 35482,
+  "type": "STR",
+  "text": "CANCELLATO "
+ },
+ {
+  "offset": 35493,
+  "type": "STR",
+  "text": "L'INTERO "
+ },
+ {
+  "offset": 35500,
+  "type": "STR",
+  "text": "NUOVO "
+ },
+ {
+  "offset": 35505,
+  "type": "STR",
+  "text": "MATERIALE "
+ },
+ {
+  "offset": 35515,
+  "type": "STR",
+  "text": "SUPPONGO "
+ },
+ {
+  "offset": 35523,
+  "type": "STR",
+  "text": "PROBLEMA "
+ },
+ {
+  "offset": 35531,
+  "type": "STR",
+  "text": "HANNO "
+ },
+ {
+  "offset": 35536,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 35541,
+  "type": "STR",
+  "text": "FATTO CAUSA A "
+ },
+ {
+  "offset": 35546,
+  "type": "STR",
+  "text": "AVER COPIATO "
+ },
+ {
+  "offset": 35558,
+  "type": "STR",
+  "text": "IL LORO "
+ },
+ {
+  "offset": 35564,
+  "type": "STR",
+  "text": "BRANO "
+ },
+ {
+  "offset": 35570,
+  "type": "STR",
+  "text": "IL CONTO E'"
+ },
+ {
+  "offset": 35574,
+  "type": "STR",
+  "text": "IL FISCO"
+ },
+ {
+  "offset": 35580,
+  "type": "STR",
+  "text": "FINALMENTE "
+ },
+ {
+  "offset": 35588,
+  "type": "STR",
+  "text": "HA FATTO I CONTI "
+ },
+ {
+  "offset": 35598,
+  "type": "STR",
+  "text": "NOI "
+ },
+ {
+  "offset": 35601,
+  "type": "STR",
+  "text": "DOBBIAMO "
+ },
+ {
+  "offset": 35608,
+  "type": "STR",
+  "text": "TASSE ARRETRATE "
+ },
+ {
+  "offset": 35619,
+  "type": "STR",
+  "text": "IL NOSTRO "
+ },
+ {
+  "offset": 35623,
+  "type": "STR",
+  "text": "E' STATO COLPITO DA UN FULMINE "
+ },
+ {
+  "offset": 35648,
+  "type": "STR",
+  "text": "FATTO IRRUZIONE DA "
+ },
+ {
+  "offset": 35655,
+  "type": "STR",
+  "text": "PRESO "
+ },
+ {
+  "offset": 35661,
+  "type": "STR",
+  "text": "DICONO CHE ERA RUBATO!"
+ },
+ {
+  "offset": 35685,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 35689,
+  "type": "STR",
+  "text": "UN MILIONE "
+ },
+ {
+  "offset": 35697,
+  "type": "STR",
+  "text": "PER "
+ },
+ {
+  "offset": 35701,
+  "type": "STR",
+  "text": "IL NASTRO E' "
+ },
+ {
+  "offset": 35708,
+  "type": "STR",
+  "text": "ASPETTA "
+ },
+ {
+  "offset": 35716,
+  "type": "STR",
+  "text": "COS'E' "
+ },
+ {
+  "offset": 35723,
+  "type": "STR",
+  "text": "NON TOCCARE "
+ },
+ {
+  "offset": 35735,
+  "type": "STR",
+  "text": "COSO "
+ },
+ {
+  "offset": 35740,
+  "type": "STR",
+  "text": "TROPPO TARDI "
+ },
+ {
+  "offset": 35749,
+  "type": "STR",
+  "text": "Y "
+ },
+ {
+  "offset": 35751,
+  "type": "STR",
+  "text": "DI IERI "
+ },
+ {
+  "offset": 35756,
+  "type": "STR",
+  "text": "HA AVUTO "
+ },
+ {
+  "offset": 35760,
+  "type": "STR",
+  "text": "NUOVO"
+ },
+ {
+  "offset": 35766,
+  "type": "STR",
+  "text": "NON SEI "
+ },
+ {
+  "offset": 35770,
+  "type": "STR",
+  "text": "VORREI ESSERE "
+ },
+ {
+  "offset": 35779,
+  "type": "STR",
+  "text": "DI CHIAMARLO "
+ },
+ {
+  "offset": 35790,
+  "type": "STR",
+  "text": "HAI "
+ },
+ {
+  "offset": 35797,
+  "type": "STR",
+  "text": "TUN"
+ },
+ {
+  "offset": 35800,
+  "type": "STR",
+  "text": "DA "
+ },
+ {
+  "offset": 35803,
+  "type": "STR",
+  "text": "STUN "
+ },
+ {
+  "offset": 35808,
+  "type": "STR",
+  "text": "VINCI "
+ },
+ {
+  "offset": 35812,
+  "type": "STR",
+  "text": "VEDI PAG 7"
+ },
+ {
+  "offset": 35822,
+  "type": "STR",
+  "text": "UNA TROVATA PUBBLICITARIA "
+ },
+ {
+  "offset": 35838,
+  "type": "STR",
+  "text": "LASCIA FARE A ME "
+ },
+ {
+  "offset": 35853,
+  "type": "STR",
+  "text": "PRETE "
+ },
+ {
+  "offset": 35859,
+  "type": "STR",
+  "text": "SPOSA "
+ },
+ {
+  "offset": 35867,
+  "type": "STR",
+  "text": "MI HA RUBATO "
+ },
+ {
+  "offset": 35876,
+  "type": "STR",
+  "text": "UN ALIENO "
+ },
+ {
+  "offset": 35883,
+  "type": "STR",
+  "text": "ROCK "
+ },
+ {
+  "offset": 35888,
+  "type": "STR",
+  "text": "STAR "
+ },
+ {
+  "offset": 35893,
+  "type": "STR",
+  "text": "STAR "
+ },
+ {
+  "offset": 35897,
+  "type": "STR",
+  "text": "MI HA MANGIATO "
+ },
+ {
+  "offset": 35904,
+  "type": "STR",
+  "text": "UNA VITA "
+ },
+ {
+  "offset": 35909,
+  "type": "STR",
+  "text": "MUORE "
+ },
+ {
+  "offset": 35914,
+  "type": "STR",
+  "text": "CADE "
+ },
+ {
+  "offset": 35924,
+  "type": "STR",
+  "text": "AGGREDITA "
+ },
+ {
+  "offset": 35933,
+  "type": "STR",
+  "text": "VEDI PAG 9 "
+ },
+ {
+  "offset": 35944,
+  "type": "STR",
+  "text": "PUBBLICITA'"
+ },
+ {
+  "offset": 35953,
+  "type": "STR",
+  "text": "E' BUONA "
+ },
+ {
+  "offset": 35958,
+  "type": "STR",
+  "text": "COME DICONO "
+ },
+ {
+  "offset": 35970,
+  "type": "STR",
+  "text": "OGNI "
+ },
+ {
+  "offset": 35974,
+  "type": "STR",
+  "text": "L'AGENZIA "
+ },
+ {
+  "offset": 35985,
+  "type": "STR",
+  "text": "PRESENTA"
+ },
+ {
+  "offset": 35992,
+  "type": "STR",
+  "text": "DAL VIVO "
+ },
+ {
+  "offset": 36006,
+  "type": "STR",
+  "text": "THE "
+ },
+ {
+  "offset": 36007,
+  "type": "STR",
+  "text": "JOKA COLA "
+ },
+ {
+  "offset": 36017,
+  "type": "STR",
+  "text": "BULLWISER "
+ },
+ {
+  "offset": 36032,
+  "type": "STR",
+  "text": "SOMA ELECTRICS "
+ },
+ {
+  "offset": 36047,
+  "type": "STR",
+  "text": "LIEVIE JEANS "
+ },
+ {
+  "offset": 36060,
+  "type": "STR",
+  "text": "AUTO FRAUD "
+ },
+ {
+  "offset": 36071,
+  "type": "STR",
+  "text": "  BEVI UNA JOKA"
+ },
+ {
+  "offset": 36085,
+  "type": "STR",
+  "text": "PRENDI "
+ },
+ {
+  "offset": 36092,
+  "type": "STR",
+  "text": "BULL"
+ },
+ {
+  "offset": 36096,
+  "type": "STR",
+  "text": "SOMA"
+ },
+ {
+  "offset": 36100,
+  "type": "STR",
+  "text": "METTI UN LIE"
+ },
+ {
+  "offset": 36112,
+  "type": "STR",
+  "text": "GUIDA FRAUD  "
+ },
+ {
+  "offset": 36125,
+  "type": "STR",
+  "text": "CASSA:"
+ },
+ {
+  "offset": 36130,
+  "type": "STR",
+  "text": "VUOLE SPONSORIZZARE "
+ },
+ {
+  "offset": 36139,
+  "type": "STR",
+  "text": "SPONSOR "
+ },
+ {
+  "offset": 36147,
+  "type": "STR",
+  "text": "100"
+ },
+ {
+  "offset": 36150,
+  "type": "STR",
+  "text": "SI E' RITIRATO "
+ },
+ {
+  "offset": 36161,
+  "type": "STR",
+  "text": "PER COLPA DEL NOSTRO "
+ },
+ {
+  "offset": 36169,
+  "type": "STR",
+  "text": "LOOK "
+ },
+ {
+  "offset": 36175,
+  "type": "STR",
+  "text": "PIRATI "
+ },
+ {
+  "offset": 36183,
+  "type": "STR",
+  "text": "STA PIRATANDO "
+ },
+ {
+  "offset": 36195,
+  "type": "STR",
+  "text": "DENUNCIA"
+ },
+ {
+  "offset": 36199,
+  "type": "STR",
+  "text": "FECCIA"
+ },
+ {
+  "offset": 36204,
+  "type": "STR",
+  "text": "I RAGAZZI"
+ },
+ {
+  "offset": 36209,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 36215,
+  "type": "STR",
+  "text": "MANDA"
+ },
+ {
+  "offset": 36220,
+  "type": "STR",
+  "text": "*#?!*'S "
+ },
+ {
+  "offset": 36228,
+  "type": "STR",
+  "text": "COMPRA"
+ },
+ {
+  "offset": 36232,
+  "type": "STR",
+  "text": "!"
+ },
+ {
+  "offset": 36236,
+  "type": "STR",
+  "text": "COSI' ABBIAMO "
+ },
+ {
+  "offset": 36243,
+  "type": "STR",
+  "text": "FERMATO "
+ },
+ {
+  "offset": 36251,
+  "type": "STR",
+  "text": "COME "
+ },
+ {
+  "offset": 36260,
+  "type": "STR",
+  "text": "PARE "
+ },
+ {
+  "offset": 36264,
+  "type": "STR",
+  "text": "QUELLA "
+ },
+ {
+  "offset": 36273,
+  "type": "STR",
+  "text": "ABBIAMO PERSO LA"
+ },
+ {
+  "offset": 36281,
+  "type": "STR",
+  "text": "CAUSA CONTRO "
+ },
+ {
+  "offset": 36294,
+  "type": "STR",
+  "text": "SPESE LEGALI "
+ },
+ {
+  "offset": 36305,
+  "type": "STR",
+  "text": "MA "
+ },
+ {
+  "offset": 36309,
+  "type": "STR",
+  "text": "VOGLIONO "
+ },
+ {
+  "offset": 36319,
+  "type": "STR",
+  "text": "PER IL DISTURBO"
+ },
+ {
+  "offset": 36337,
+  "type": "STR",
+  "text": "LE HANNO PRESE DAI"
+ },
+ {
+  "offset": 36354,
+  "type": "STR",
+  "text": "ABBIAMO "
+ },
+ {
+  "offset": 36357,
+  "type": "STR",
+  "text": "    "
+ },
+ {
+  "offset": 36361,
+  "type": "STR",
+  "text": "CLASSIFICA SINGOLI "
+ },
+ {
+  "offset": 36369,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 36375,
+  "type": "STR",
+  "text": "CLASSIFICA ALBUM "
+ },
+ {
+  "offset": 36382,
+  "type": "STR",
+  "text": "9"
+ },
+ {
+  "offset": 36383,
+  "type": "STR",
+  "text": "PASSA "
+ },
+ {
+  "offset": 36387,
+  "type": "STR",
+  "text": "FAMMI PASSARE "
+ },
+ {
+  "offset": 36390,
+  "type": "STR",
+  "text": "{E'|SONO} "
+ },
+ {
+  "offset": 36393,
+  "type": "STR",
+  "text": "VUOLE ESSERE "
+ },
+ {
+  "offset": 36396,
+  "type": "STR",
+  "text": "VOGLIO SOLO "
+ },
+ {
+  "offset": 36401,
+  "type": "STR",
+  "text": "CHILD"
+ },
+ {
+  "offset": 36406,
+  "type": "STR",
+  "text": "HA "
+ },
+ {
+  "offset": 36412,
+  "type": "STR",
+  "text": "UN NODO "
+ },
+ {
+  "offset": 36417,
+  "type": "STR",
+  "text": ": IL MEGLIO"
+ },
+ {
+  "offset": 36430,
+  "type": "STR",
+  "text": "GLI ANNI "
+ },
+ {
+  "offset": 36435,
+  "type": "STR",
+  "text": "STANOTTE"
+ },
+ {
+  "offset": 36438,
+  "type": "STR",
+  "text": "NASTRI DEL "
+ },
+ {
+  "offset": 36449,
+  "type": "STR",
+  "text": "TIME"
+ },
+ {
+  "offset": 36454,
+  "type": "STR",
+  "text": "BACIA E "
+ },
+ {
+  "offset": 36459,
+  "type": "STR",
+  "text": "ANNI '60"
+ },
+ {
+  "offset": 36468,
+  "type": "STR",
+  "text": "13 COSE VERDI E "
+ },
+ {
+  "offset": 36472,
+  "type": "STR",
+  "text": "TOYS"
+ },
+ {
+  "offset": 36476,
+  "type": "STR",
+  "text": "STASERA"
+ },
+ {
+  "offset": 36479,
+  "type": "STR",
+  "text": "E' ORA DELLA CLASSIFICA "
+ },
+ {
+  "offset": 36484,
+  "type": "STR",
+  "text": "VENDITE"
+ },
+ {
+  "offset": 36489,
+  "type": "STR",
+  "text": "ONLUS "
+ },
+ {
+  "offset": 36497,
+  "type": "STR",
+  "text": " DA PAURA"
+ },
+ {
+  "offset": 36501,
+  "type": "STR",
+  "text": "GABBATA "
+ },
+ {
+  "offset": 36507,
+  "type": "STR",
+  "text": "UNA FINTA "
+ },
+ {
+  "offset": 36513,
+  "type": "STR",
+  "text": "CINICO SGARBO ALLA "
+ },
+ {
+  "offset": 36521,
+  "type": "STR",
+  "text": "IL TEMPO"
+ },
+ {
+  "offset": 36532,
+  "type": "STR",
+  "text": "FALLITI"
+ },
+ {
+  "offset": 36540,
+  "type": "STR",
+  "text": "SIAMO "
+ },
+ {
+  "offset": 36546,
+  "type": "STR",
+  "text": "ZERO "
+ },
+ {
+  "offset": 36552,
+  "type": "STR",
+  "text": "IN SQUADRA "
+ },
+ {
+  "offset": 36557,
+  "type": "STR",
+  "text": "PREMI FUOCO/INVIO "
+ },
+ {
+  "offset": 36574,
+  "type": "STR",
+  "text": "PER RIGIOCARE"
+ },
+ {
+  "offset": 36587,
+  "type": "STR",
+  "text": "ABBIAMO "
+ },
+ {
+  "offset": 36593,
+  "type": "STR",
+  "text": "VINTO IL DISCO DI PLATINO "
+ },
+ {
+  "offset": 36607,
+  "type": "STR",
+  "text": "NON CE L'AVREI "
+ },
+ {
+  "offset": 36618,
+  "type": "STR",
+  "text": "FATTA "
+ },
+ {
+  "offset": 36626,
+  "type": "STR",
+  "text": "SENZA "
+ },
+ {
+  "offset": 36634,
+  "type": "STR",
+  "text": "SEI LICENZIAT{O|A|I} "
+ },
+ {
+  "offset": 36647,
+  "type": "STR",
+  "text": "ODORE DI "
+ },
+ {
+  "offset": 36654,
+  "type": "STR",
+  "text": "CANCRO"
+ },
+ {
+  "offset": 36659,
+  "type": "STR",
+  "text": "CAUSANO "
+ },
+ {
+  "offset": 36665,
+  "type": "STR",
+  "text": "STERILITA "
+ },
+ {
+  "offset": 36675,
+  "type": "STR",
+  "text": "CREA DIPENDENZA "
+ },
+ {
+  "offset": 36685,
+  "type": "STR",
+  "text": "ESPLODONO SEMPRE "
+ },
+ {
+  "offset": 36700,
+  "type": "STR",
+  "text": "PERICOLOSE "
+ },
+ {
+  "offset": 36713,
+  "type": "STR",
+  "text": "GUARDA "
+ },
+ {
+  "offset": 36718,
+  "type": "STR",
+  "text": "LE TV "
+ },
+ {
+  "offset": 36722,
+  "type": "STR",
+  "text": "SONO "
+ },
+ {
+  "offset": 36726,
+  "type": "STR",
+  "text": "SE N'E' ANDAT{O|A|I} A "
+ },
+ {
+  "offset": 36734,
+  "type": "STR",
+  "text": "GRANDE "
+ },
+ {
+  "offset": 36740,
+  "type": "STR",
+  "text": "CIELO "
+ },
+ {
+  "offset": 36744,
+  "type": "STR",
+  "text": "PENSA CHE "
+ },
+ {
+  "offset": 36751,
+  "type": "STR",
+  "text": "MIGLIOREREBBE MOLTO LO "
+ },
+ {
+  "offset": 36772,
+  "type": "STR",
+  "text": "SHOW "
+ },
+ {
+  "offset": 36777,
+  "type": "STR",
+  "text": "DI STASERA"
+ },
+ {
+  "offset": 36784,
+  "type": "STR",
+  "text": "FALLIT{O|A|I} "
+ },
+ {
+  "offset": 36791,
+  "type": "STR",
+  "text": "GESTISCO "
+ },
+ {
+  "offset": 36797,
+  "type": "STR",
+  "text": "SUL PIEDE DI PARTENZA "
+ },
+ {
+  "offset": 36806,
+  "type": "STR",
+  "text": "SE NON RICEVE "
+ },
+ {
+  "offset": 36813,
+  "type": "STR",
+  "text": "PRIMA DELLO "
+ },
+ {
+  "offset": 36830,
+  "type": "STR",
+  "text": "TU "
+ },
+ {
+  "offset": 36837,
+  "type": "STR",
+  "text": "IN GALERA "
+ },
+ {
+  "offset": 36844,
+  "type": "STR",
+  "text": "CAUZIONE"
+ },
+ {
+  "offset": 36848,
+  "type": "STR",
+  "text": "PER INIZIARE "
+ },
+ {
+  "offset": 36857,
+  "type": "STR",
+  "text": "K"
+ },
+ {
+  "offset": 36858,
+  "type": "STR",
+  "text": "K"
+ },
+ {
+  "offset": 36859,
+  "type": "STR",
+  "text": "CHIEDE `"
+ },
+ {
+  "offset": 36869,
+  "type": "STR",
+  "text": "A SETTIMANA"
+ },
+ {
+  "offset": 36875,
+  "type": "STR",
+  "text": "PRESENTANO"
+ },
+ {
+  "offset": 36885,
+  "type": "STR",
+  "text": " "
+ },
+ {
+  "offset": 36886,
+  "type": "STR",
+  "text": "RIAVVOLGI "
+ },
+ {
+  "offset": 36893,
+  "type": "STR",
+  "text": "IL NASTRO DATI "
+ },
+ {
+  "offset": 36898,
+  "type": "STR",
+  "text": "CONCERTI "
+ },
+ {
+  "offset": 36903,
+  "type": "STR",
+  "text": "SUONA "
+ },
+ {
+  "offset": 36908,
+  "type": "STR",
+  "text": "LE STESSE "
+ },
+ {
+  "offset": 36913,
+  "type": "STR",
+  "text": "UN "
+ },
+ {
+  "offset": 36918,
+  "type": "STR",
+  "text": "DOPO LO "
+ },
+ {
+  "offset": 36924,
+  "type": "STR",
+  "text": "SERA"
+ },
+ {
+  "offset": 36929,
+  "type": "STR",
+  "text": "BISOGNA TENERE "
+ },
+ {
+  "offset": 36937,
+  "type": "STR",
+  "text": "SU DI MORALE "
+ },
+ {
+  "offset": 36943,
+  "type": "STR",
+  "text": "REGALARE {ALLA NOSTRA|ALLE NOSTRE} ROCK STAR"
+ },
+ {
+  "offset": 36948,
+  "type": "STR",
+  "text": "AUTO"
+ },
+ {
+  "offset": 36952,
+  "type": "STR",
+  "text": "GIOIELLI`"
+ },
+ {
+  "offset": 36961,
+  "type": "STR",
+  "text": "VESTITI `"
+ },
+ {
+  "offset": 36970,
+  "type": "STR",
+  "text": "BEVUTE  `"
+ },
+ {
+  "offset": 36979,
+  "type": "STR",
+  "text": "CIBO"
+ },
+ {
+  "offset": 36983,
+  "type": "STR",
+  "text": " FUMETTI `1"
+ },
+ {
+  "offset": 36994,
+  "type": "STR",
+  "text": "PER OGNI "
+ },
+ {
+  "offset": 36998,
+  "type": "STR",
+  "text": "NO  SI "
+ },
+ {
+  "offset": 37005,
+  "type": "STR",
+  "text": "PRENDER{LO|LA|LI}"
+ },
+ {
+  "offset": 37012,
+  "type": "STR",
+  "text": "PREMI FUOCO      "
+ },
+ {
+  "offset": 37029,
+  "type": "STR",
+  "text": "AVANTI INDIETRO SCEGLI"
+ },
+ {
+  "offset": 37051,
+  "type": "STR",
+  "text": "SALVATAGGI ESCI"
+ },
+ {
+  "offset": 37066,
+  "type": "STR",
+  "text": "ROCK STAR ATE MY HAMSTER "
+ },
+ {
+  "offset": 37091,
+  "type": "STR",
+  "text": "SCRITTO E PROGRAMMATO DA "
+ },
+ {
+  "offset": 37117,
+  "type": "STR",
+  "text": "COLIN JONES "
+ },
+ {
+  "offset": 37129,
+  "type": "STR",
+  "text": "ARTISTI GRAFICI "
+ },
+ {
+  "offset": 37145,
+  "type": "STR",
+  "text": "CHRIS GRAHAM "
+ },
+ {
+  "offset": 37158,
+  "type": "STR",
+  "text": "BRIAN HARTLEY "
+ },
+ {
+  "offset": 37172,
+  "type": "STR",
+  "text": "MUSICHE ED EFFETTI SONORI DI "
+ },
+ {
+  "offset": 37207,
+  "type": "STR",
+  "text": "ALLISTER BRIMBLE "
+ },
+ {
+  "offset": 37224,
+  "type": "STR",
+  "text": "SIGLA "
+ },
+ {
+  "offset": 37235,
+  "type": "STR",
+  "text": "\"A ROCK STAR ATE MY HAMSTER\" "
+ },
+ {
+  "offset": 37264,
+  "type": "STR",
+  "text": "SCRITTA E ESEGUITA DA "
+ },
+ {
+  "offset": 37289,
+  "type": "STR",
+  "text": "MIXATA DA "
+ },
+ {
+  "offset": 37298,
+  "type": "STR",
+  "text": "DIRETTORI: "
+ },
+ {
+  "offset": 37309,
+  "type": "STR",
+  "text": "RICHARD DARLING "
+ },
+ {
+  "offset": 37325,
+  "type": "STR",
+  "text": "PRODUTTORI: "
+ },
+ {
+  "offset": 37336,
+  "type": "STR",
+  "text": "DAVID:::  DARLING "
+ },
+ {
+  "offset": 37354,
+  "type": "STR",
+  "text": "VOMITO E SANGUE DI BEERMACHT "
+ },
+ {
+  "offset": 37383,
+  "type": "STR",
+  "text": "VUOI DAVVERO ABBANDONARE "
+ },
+ {
+  "offset": 37418,
+  "type": "STR",
+  "text": "GIOCO DA ROCK STAR? "
+ },
+ {
+  "offset": 37434,
+  "type": "STR",
+  "text": "VUOI SALVARE O CARICARE UNA PARTITA DALLA MEMORIA? "
+ },
+ {
+  "offset": 37489,
+  "type": "STR",
+  "text": "SALVA     CARICA    ANNULLA"
+ },
+ {
+  "offset": 37516,
+  "type": "STR",
+  "text": "PORTAMI "
+ },
+ {
+  "offset": 37531,
+  "type": "STR",
+  "text": "COME UN "
+ },
+ {
+  "offset": 37538,
+  "type": "STR",
+  "text": "NON SONO PIU' UN "
+ },
+ {
+  "offset": 37548,
+  "type": "STR",
+  "text": "SONO COTTO "
+ },
+ {
+  "offset": 37557,
+  "type": "STR",
+  "text": "ASSISTENTE TECNICO TIM MANN "
+ },
+ {
+  "offset": 37586,
+  "type": "STR",
+  "text": "COORDINAMENTO: TIM MILLER "
+ },
+ {
+  "offset": 37614,
+  "type": "STR",
+  "text": "PROMOZIONE: MIKE CLARKE "
+ },
+ {
+  "offset": 37633,
+  "type": "STR",
+  "text": "MIKE NON STRIZZARE IL GATTO, DACCI BIRRE CAZZO,:::: A CERTAIN RATIO,:::: DUB SEX,:: E FRANK SIDEBOTTOM PER IL CONTRIBUTO "
+ }
+]

@@ -13,6 +13,10 @@ generated/
 *.slave
 rockstar
 rockstar_ita*
+!traduzione/rockstar_ita_img.patch
+*.info
+mappa_messaggi.txt
+rockstar_band_rivali.json
 
 # uscite dei test
 quadro.bmp

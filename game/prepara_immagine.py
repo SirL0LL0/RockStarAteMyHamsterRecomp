@@ -4,12 +4,12 @@
 prepara_immagine.py - le immagini della chip RAM (italiano e inglese) e i dati
 con cui l'eseguibile le ricostruisce dal disco dell'utente.
 
-    python game/prepara_immagine.py [--traduzione CARTELLA] [--uscita FILE]
+    python game/prepara_immagine.py [--uscita FILE]
 
-Il repository non contiene file del gioco. Si parte dalla cartella della
-traduzione (default: quella che contiene il repository), che deve avere
-rockstar_base.bin (la base canonica: base_canonica.py dal disco IPF o ADF),
-rockstar_ita_img.bin e le tabelle dei testi.
+Il repository non contiene file del gioco. Si parte dalla traduzione
+(traduzione/: testi, patch, codice aggiunto) e dalla base canonica del gioco,
+rockstar_base.bin, che sta fuori dal repository (traduzione/percorsi.py; la
+crea base_canonica.py dal disco IPF o ADF).
 
 IMMAGINE ITALIANA (--uscita, default build/rockstar_chipram.bin)
     Come lo slave WHDLoad: immagine a $8100, blocco esteso (post-codice,
@@ -36,6 +36,16 @@ DATI PER L'ESEGUIBILE (build/lingue_dati.h)
     dalla tabella del disco dell'utente (amiga_lingue.c, stesso algoritmo di
     tabella_inglese() qui sotto). Dentro ci sono solo dati nostri: traduzione,
     patch e codice aggiunto. Piu' i CRC delle due immagini.
+
+KIT AMIGA (build/amiga_kit.h)
+    Quello che serve all'eseguibile per costruire, dal disco dell'utente, le
+    versioni Amiga in italiano (amiga_esporta.c): la patch dalla base
+    all'immagine che va nel floppy e in WHDLoad; l'eseguibile Amiga senza i
+    dati compressi del gioco (testa e coda: caricatore, decompressore,
+    post-codice, tabella estesa, accordo, trucchi), che l'eseguibile rifa'
+    comprimendo l'immagine con lo stesso algoritmo (s404_compress.py), e il
+    CRC che il risultato deve avere; i file dell'installazione WHDLoad
+    (slave, blocco esteso, ReadMe, icone). Anche qui solo dati nostri.
 """
 import argparse
 import os
@@ -142,12 +152,25 @@ def tratti(base, finale, escludi=()):
 
 
 def scrivi_dati_c(percorso, voci):
-    """voci: lista di (nome, valore) -- int o lista di tratti"""
+    """voci: lista di (nome, valore) -- int, str, bytes o lista di tratti"""
     righe = ['/* generato da game/prepara_immagine.py: non modificare */',
              '#include <stdint.h>', '']
     for nome, v in voci:
         if isinstance(v, int):
             righe.append('#define %s 0x%Xu' % (nome, v))
+            continue
+        if isinstance(v, str):
+            righe.append('#define %s "%s"' % (nome, v))
+            continue
+        if isinstance(v, (bytes, bytearray)):
+            righe.append('static const uint8_t %s[%d] = {' % (nome, max(len(v), 1)))
+            for k in range(0, len(v), 24):
+                righe.append('    ' + ','.join('%d' % x for x in v[k:k + 24]) + ',')
+            if not v:
+                righe.append('    0')
+            righe.append('};')
+            righe.append('#define %s_LUNG %du' % (nome, len(v)))
+            righe.append('')
             continue
         blob = bytearray()
         indice = []
@@ -170,6 +193,44 @@ def scrivi_dati_c(percorso, voci):
         righe.append('#define %s_N %d' % (nome, len(indice)))
         righe.append('')
     open(percorso, 'w', encoding='utf-8').write('\n'.join(righe) + '\n')
+
+
+def kit(percorso, base, imm, est_voci, comp_voci):
+    """build/amiga_kit.h: vedi KIT AMIGA in cima"""
+    import build_ram as br
+    import build_whdload as bw
+    parti = {}
+    exe, _ = br.costruisci_exe(imm, est_voci, comp_voci, parti=parti)
+    img = parti['immagine']                     # va compressa nel floppy e sta in data/ di WHDLoad
+    da, n = parti['blob_da'], parti['blob_n']
+    voci_whd = bw.installazione(imm)
+    nomi = [p for p, _ in voci_whd]
+    dati_whd = dict(voci_whd)
+    p_img = bw.NOME + '/data/rockstar.img'
+    if dati_whd[p_img] != img:
+        raise SystemExit("kit: l'immagine di WHDLoad non e' quella del floppy")
+    lb = len(img)
+    voci = [
+        ('KIT_IMM_LUNG', lb),
+        ('KIT_IMM_CRC', crc(img)),
+        ('KIT_PATCH', [(a, b) for a, b in tratti(base[:lb], img)]),
+        ('KIT_EXE_LUNG', len(exe)),
+        ('KIT_EXE_CRC', crc(exe)),
+        ('KIT_BLOB_N', n),
+        ('KIT_EXE_TESTA', exe[:da]),
+        ('KIT_EXE_CODA', exe[da + n:]),
+        ('KIT_WHD_N', len(nomi)),
+        ('KIT_WHD_LHA', bw.ARCHIVIO),
+    ]
+    for i, p in enumerate(nomi):
+        voci.append(('KIT_WHD_NOME_%d' % i, p))
+        if p == p_img:
+            voci.append(('KIT_WHD_IMMAGINE', i))       # questo lo rifa' l'eseguibile
+            voci.append(('KIT_WHD_%d' % i, b''))
+        else:
+            voci.append(('KIT_WHD_%d' % i, dati_whd[p]))
+    scrivi_dati_c(percorso, voci)
+    print("kit Amiga: eseguibile %d byte (dati compressi %d), WHDLoad %d file" % (len(exe), n, len(nomi)))
 
 
 def esegui_post(m):
@@ -197,7 +258,7 @@ def esegui_post(m):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--traduzione", default=os.path.dirname(REPO))
+    ap.add_argument("--traduzione", default=os.path.join(REPO, "traduzione"))
     ap.add_argument("--uscita", default=os.path.join(REPO, "build", "rockstar_chipram.bin"))
     o = ap.parse_args()
 
@@ -206,9 +267,10 @@ def main():
     import build_ram as br
     import patch_finestre
 
+    import percorsi
     t = lambda n: os.path.join(o.traduzione, n)
-    base = open(t('rockstar_base.bin'), 'rb').read()
-    imm = open(t('rockstar_ita_img.bin'), 'rb').read()
+    base = percorsi.base()
+    imm = percorsi.immagine_ita()
     info = {}
     img, ext = bw.file_dati(imm, br.carica(t('rockstar_text_table_ESTESA.json')),
                             br.carica(t('rockstar_text_table_ITA.json')), info=info)
@@ -272,6 +334,8 @@ def main():
         ('LINGUE_PATCH_IT', t_it),
         ('LINGUE_PATCH_EN', t_en),
     ])
+    kit(os.path.join(os.path.dirname(o.uscita), 'amiga_kit.h'), base, imm,
+        br.carica(t('rockstar_text_table_ESTESA.json')), br.carica(t('rockstar_text_table_ITA.json')))
     print("immagine: %s (%d byte), blocco esteso %d byte a $%X" % (o.uscita, len(it), len(ext), EXT))
     print("inglese:  %s, CRC IT %08X EN %08X" % (p_en, crc(it), crc(en)))
     print("patch: italiano %d tratti %d byte, inglese %d tratti %d byte" % (

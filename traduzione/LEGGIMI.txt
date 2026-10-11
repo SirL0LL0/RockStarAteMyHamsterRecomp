@@ -1,0 +1,43 @@
+ROCK STAR ATE MY HAMSTER - traduzione italiana (pipeline)
+=========================================================
+
+Qui c'e' tutto quello che serve a costruire la traduzione: testi, patch,
+codice 68000 aggiunto e script. Nessun file del gioco: quelli stanno nella
+cartella dei dati, fuori dal repository (di norma quella che contiene il
+repository; altrimenti la variabile RSAMH_DATI). Vedi percorsi.py.
+
+PRIMA VOLTA: la base del gioco dal tuo disco originale
+    python base_canonica.py "Rock Star Ate My Hamster (Europe).ipf" ..\..\rockstar_base.bin
+    (oppure dall'ADF "Rock Star Ate My Hamster (1989)(Codemasters).adf")
+
+RIFARE TUTTO dopo una modifica ai testi o alle patch:
+    .\ricostruisci_tutto.ps1            (anche il port: il gioco non deve essere aperto)
+    .\ricostruisci_tutto.ps1 -senza_port
+    Le versioni Amiga vanno in uscite\ nella cartella dei dati:
+        RockStar_ITA_1MB.adf     floppy avviabile (1 MB, ogni Amiga)
+        rockstar_ita_ram.bin     l'eseguibile dentro l'ADF
+        WHDLoad_RockStar\        installazione WHDLoad e il suo .lha
+    Serve amitools (pip install amitools) per l'ADF; unicorn e capstone per
+    le prove. Il port fa le stesse versioni Amiga da solo (amiga_esporta.c).
+
+DATI DELLA TRADUZIONE
+    rockstar_text_table_ESTESA.json   testi (versione estesa: WHDLoad, port, floppy con memoria)
+    rockstar_text_table_ITA.json      testi (versione compatta: floppy senza memoria libera)
+    rockstar_script_ITA.json          ordine delle parole nei messaggi
+    rockstar_generi.json              genere delle star (accordo)
+    rockstar_ita_img.patch            modifiche alla base fatte negli anni con l'editor
+    contesto_messaggi.json            da dove viene ogni messaggio (per l'editor)
+
+SCRIPT PRINCIPALI
+    correzioni_testi.py   ritocchi ai testi, rispettando i vincoli delle due tabelle
+    rsamh_editor.py       editor della traduzione
+    build_ram.py          eseguibile Amiga (caricatore, selettore dei trucchi)
+    s404_stub.py          il decompressore S404 dell'eseguibile (nostro)
+    s404_compress.py      il compressore S404
+    build_whdload.py      installazione WHDLoad (icone.py: le icone)
+    accordo.py            genere e numero nei messaggi, centratura del manifesto
+    trucchi.py            trucchi nelle versioni Amiga
+    patch_velocita.py     stessa velocita' su 68000 e 68020+
+    patch_finestre.py     finestre di testo allargate, manifesto del concerto
+    base_canonica.py      la base del gioco dall'IPF o dall'ADF originali
+    percorsi.py           dove stanno i file del gioco; immagine di partenza

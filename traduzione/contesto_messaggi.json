@@ -1,0 +1,339 @@
+{
+ "0": [
+  "introduzione: finestra"
+ ],
+ "5": [
+  "routine $0d084: finestra"
+ ],
+ "6": [
+  "classifica: fumetto; dopo il #191"
+ ],
+ "7": [
+  "ciclo principale: menu SI/NO; dopo il #33",
+  "concerto benefico: menu SI/NO; dopo il #8; poi il #12",
+  "nome della band: menu SI/NO; dopo il #13; poi il #14",
+  "uscita dal gioco: menu SI/NO; dopo il #216",
+  "contratto discografico: menu SI/NO; poi il #25",
+  "titolo del pezzo: menu SI/NO; dopo il #123; poi il #14",
+  "uscita album/singolo e video: menu SI/NO; dopo il #66; poi il #67",
+  "nastro rubato: menu SI/NO; dopo il #112; poi il #115",
+  "capricci in tour: menu SI/NO; dopo il #209; poi il #210",
+  "capricci in tour: menu SI/NO; dopo il #211; poi il #212",
+  "sponsor: menu SI/NO; dopo il #164; poi il #24"
+ ],
+ "8": [
+  "concerto benefico: fumetto; poi il #7"
+ ],
+ "9": [
+  "concerto benefico: fumetto; dopo il #11"
+ ],
+ "10": [
+  "concerto benefico: fumetto; dopo il #12; poi il #11"
+ ],
+ "11": [
+  "concerto benefico: fumetto; dopo il #10; poi il #9"
+ ],
+ "12": [
+  "concerto benefico: fumetto; dopo il #7; poi il #10"
+ ],
+ "13": [
+  "nome della band: fumetto; poi il #7"
+ ],
+ "14": [
+  "nome della band: fumetto; dopo il #7",
+  "titolo del pezzo: fumetto; dopo il #7"
+ ],
+ "15": [
+  "acquisto strumenti: fumetto; poi il #16"
+ ],
+ "16": [
+  "acquisto strumenti: menu con 3 opzioni; dopo il #15"
+ ],
+ "17": [
+  "menu principale: fumetto; poi il #18"
+ ],
+ "18": [
+  "menu principale: menu con 4 opzioni; dopo il #17; poi il #45"
+ ],
+ "20": [
+  "il gioco riscrive un token: qui compare nome della casa discografica"
+ ],
+ "21": [
+  "sala proiezioni (scelta delle rock star): fumetto; dopo il #72; poi il #215"
+ ],
+ "23": [
+  "sala proiezioni (scelta delle rock star): fumetto; poi il #35"
+ ],
+ "24": [
+  "contratto discografico: fumetto; dopo il #25",
+  "sponsor: fumetto; dopo il #7; poi il #25"
+ ],
+ "25": [
+  "contratto discografico: fumetto; dopo il #7; poi il #24",
+  "sponsor: fumetto+pausa; dopo il #24; poi il #169"
+ ],
+ "26": [
+  "prove: fumetto; poi il #27"
+ ],
+ "27": [
+  "prove: menu con 5 opzioni; dopo il #26; poi il #28"
+ ],
+ "28": [
+  "prove: fumetto+pausa; dopo il #27; poi il #29"
+ ],
+ "29": [
+  "prove: fumetto; dopo il #28; poi il #30"
+ ],
+ "30": [
+  "prove: fumetto+pausa; dopo il #29"
+ ],
+ "31": [
+  "tour: fumetto; poi il #32"
+ ],
+ "32": [
+  "tour: menu con 6 opzioni; dopo il #31; poi il #34"
+ ],
+ "33": [
+  "ciclo principale: fumetto; poi il #7"
+ ],
+ "34": [
+  "tour: fumetto; dopo il #32; poi il #38",
+  "il gioco riscrive un token: qui compare tipo di locale (bar, locale, ...)"
+ ],
+ "35": [
+  "sala proiezioni (scelta delle rock star): menu con 114 opzioni; dopo il #23; poi il #72"
+ ],
+ "36": [
+  "registrazione album: fumetto; dopo il #48; poi il #49"
+ ],
+ "37": [
+  "capricci in tour: fumetto+pausa; dopo il #212; poi il #167",
+  "il gioco riscrive un token: qui compare nome di una rock star"
+ ],
+ "38": [
+  "tour: menu con 7 opzioni; dopo il #34; poi il #39"
+ ],
+ "39": [
+  "tour: fumetto; dopo il #38; poi il #40"
+ ],
+ "40": [
+  "tour: menu con 8 opzioni; dopo il #39; poi il #41"
+ ],
+ "41": [
+  "tour: fumetto+pausa; dopo il #40; poi il #42"
+ ],
+ "42": [
+  "tour: fumetto+pausa; dopo il #41; poi il #43"
+ ],
+ "43": [
+  "tour: fumetto; dopo il #42"
+ ],
+ "44": [
+  "stipendi: fumetto"
+ ],
+ "45": [
+  "menu principale: menu con 9 opzioni; dopo il #18; poi il #190"
+ ],
+ "46": [
+  "registrazione album: fumetto; poi il #47"
+ ],
+ "47": [
+  "registrazione album: menu con 10 opzioni; dopo il #46; poi il #48"
+ ],
+ "48": [
+  "registrazione album: fumetto+pausa; dopo il #47; poi il #36"
+ ],
+ "49": [
+  "registrazione album: fumetto+pausa; dopo il #36"
+ ],
+ "50": [
+  "regali: menu con 115 opzioni; dopo il #126; poi il #167"
+ ],
+ "51": [
+  "titolo del pezzo: fumetto+pausa; poi il #122"
+ ],
+ "52": [
+  "uscita album/singolo e video: menu con 11 opzioni; poi il #53"
+ ],
+ "53": [
+  "uscita album/singolo e video: fumetto; dopo il #52; poi il #54"
+ ],
+ "54": [
+  "uscita album/singolo e video: fumetto+pausa; dopo il #53; poi il #55"
+ ],
+ "55": [
+  "uscita album/singolo e video: fumetto; dopo il #54; poi il #72"
+ ],
+ "56": [
+  "uscita album/singolo e video: diretto; dopo il #72; poi il #66"
+ ],
+ "66": [
+  "uscita album/singolo e video: fumetto; dopo il #56; poi il #7"
+ ],
+ "67": [
+  "uscita album/singolo e video: fumetto; dopo il #7; poi il #68"
+ ],
+ "68": [
+  "uscita album/singolo e video: menu con 23 opzioni; dopo il #67; poi il #69"
+ ],
+ "69": [
+  "uscita album/singolo e video: fumetto; dopo il #68; poi il #70"
+ ],
+ "70": [
+  "uscita album/singolo e video: menu con 24 opzioni; dopo il #69; poi il #71"
+ ],
+ "71": [
+  "uscita album/singolo e video: fumetto; dopo il #70; poi il #72"
+ ],
+ "72": [
+  "fine partita: fumetto; poi il #199",
+  "sala proiezioni (scelta delle rock star): fumetto; dopo il #35; poi il #21",
+  "sala proiezioni (scelta delle rock star): fumetto; dopo il #215",
+  "uscita album/singolo e video: finestra; dopo il #55; poi il #56",
+  "uscita album/singolo e video: finestra; dopo il #71; poi il #73",
+  "pulizia del fumetto: fumetto"
+ ],
+ "73": [
+  "uscita album/singolo e video: diretto; dopo il #72; poi il #79"
+ ],
+ "79": [
+  "uscita album/singolo e video: fumetto; dopo il #73"
+ ],
+ "111": [
+  "manifesto del concerto: riga; dopo il #148; poi il #151"
+ ],
+ "112": [
+  "nastro rubato: fumetto; poi il #7"
+ ],
+ "114": [
+  "bancarotta: fumetto; dopo il #196",
+  "nastro rubato: fumetto+pausa; dopo il #115",
+  "trovata pubblicitaria: fumetto; dopo il #146; poi il #147"
+ ],
+ "115": [
+  "nastro rubato: fumetto+pausa; dopo il #7; poi il #114"
+ ],
+ "117": [
+  "irruzione della polizia: fumetto+pausa"
+ ],
+ "120": [
+  "causa per plagio: fumetto"
+ ],
+ "122": [
+  "titolo del pezzo: fumetto+pausa; dopo il #51; poi il #123"
+ ],
+ "123": [
+  "titolo del pezzo: fumetto+pausa; dopo il #122; poi il #7"
+ ],
+ "124": [
+  "il gioco riscrive un token: qui compare nome di un membro della band"
+ ],
+ "125": [
+  "il gioco riscrive un token: qui compare nome di un membro della band"
+ ],
+ "126": [
+  "regali: fumetto; poi il #50",
+  "il gioco riscrive un token: qui compare ' ' oppure 'S ' (plurale inglese)"
+ ],
+ "128": [
+  "giornale: diretto; poi il #129"
+ ],
+ "129": [
+  "giornale: diretto; dopo il #128"
+ ],
+ "131": [
+  "trovata pubblicitaria: fumetto+pausa; poi il #146"
+ ],
+ "145": [
+  "titoli di giornale: diretto"
+ ],
+ "146": [
+  "trovata pubblicitaria: fumetto; dopo il #131; poi il #114"
+ ],
+ "147": [
+  "trovata pubblicitaria: fumetto; dopo il #114"
+ ],
+ "148": [
+  "manifesto del concerto: diretto; poi il #111"
+ ],
+ "151": [
+  "manifesto del concerto: diretto; dopo il #111; poi il #152"
+ ],
+ "152": [
+  "manifesto del concerto: diretto; dopo il #151"
+ ],
+ "163": [
+  "cassa: diretto"
+ ],
+ "164": [
+  "sponsor: fumetto; poi il #7",
+  "il gioco riscrive un token: qui compare nome dello sponsor"
+ ],
+ "167": [
+  "regali: fumetto+pausa; dopo il #50",
+  "capricci in tour: fumetto+pausa; dopo il #37"
+ ],
+ "169": [
+  "sponsor: fumetto; dopo il #25"
+ ],
+ "170": [
+  "pirati coreani: fumetto; poi il #171"
+ ],
+ "171": [
+  "pirati coreani: menu con 71 opzioni; dopo il #170"
+ ],
+ "190": [
+  "menu principale: menu con 9 opzioni; dopo il #45"
+ ],
+ "191": [
+  "classifica: fumetto; poi il #6"
+ ],
+ "196": [
+  "bancarotta: fumetto; poi il #114"
+ ],
+ "197": [
+  "fine per vecchiaia: fumetto"
+ ],
+ "199": [
+  "fine partita: finestra; dopo il #72"
+ ],
+ "200": [
+  "disco di platino: fumetto"
+ ],
+ "202": [
+  "cattive notizie: fumetto+pausa"
+ ],
+ "208": [
+  "il gioco riscrive un token: qui compare nome di una rock star"
+ ],
+ "209": [
+  "capricci in tour: fumetto; poi il #7",
+  "il gioco riscrive un token: qui compare nome di una rock star"
+ ],
+ "210": [
+  "capricci in tour: fumetto+pausa; dopo il #7; poi il #213"
+ ],
+ "211": [
+  "capricci in tour: fumetto; dopo il #213; poi il #7",
+  "il gioco riscrive un token: qui compare nome di una rock star"
+ ],
+ "212": [
+  "capricci in tour: fumetto+pausa; dopo il #7; poi il #37"
+ ],
+ "213": [
+  "capricci in tour: fumetto+pausa; dopo il #210; poi il #211",
+  "il gioco riscrive un token: qui compare nome di una rock star"
+ ],
+ "215": [
+  "sala proiezioni (scelta delle rock star): menu con 119 opzioni; dopo il #21; poi il #72"
+ ],
+ "216": [
+  "uscita dal gioco: fumetto; poi il #7"
+ ],
+ "217": [
+  "salva/carica: fumetto; poi il #218"
+ ],
+ "218": [
+  "salva/carica: menu con 120 opzioni; dopo il #217"
+ ]
+}

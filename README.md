@@ -22,6 +22,7 @@ Basato sugli strumenti della [Retro Porting Toolkit](https://retroportingtoolkit
 | `amigarecomp/recompiler` | AmigaRecomp: il ricompilatore (immagine Amiga → C) |
 | `amigarecomp/runner` | il runner Amiga: ABI del C generato, chip custom, CIA, video, SDL |
 | `game/` | Rock Star: `game.toml`, nomi delle funzioni, specifica, preparazione dell'immagine |
+| `traduzione/` | la traduzione: testi, patch, codice 68000 aggiunto, editor, versioni Amiga (ADF, WHDLoad) |
 | `external/` | sottomoduli del toolkit |
 | `tools/` | script di build e di prova |
 
@@ -89,20 +90,35 @@ originale). Il resto lo fa il programma: legge il disco (anche l'IPF, tracce
 MFM comprese), decomprime il gioco, lo porta sempre alla stessa versione
 (CRC verificato), applica la lingua e parte.
 
+### La traduzione su Amiga (vero o emulato)
+
+In Settings, sotto la lingua, **Create Italian Amiga disks (ADF + WHDLoad)**
+crea dal disco scelto, nella cartella `Amiga ITA` accanto al programma:
+
+- `RockStar_ITA_1MB.adf`: il floppy in italiano, avviabile, per ogni Amiga
+  con 1 MB (A500 512K+512K, A500/A600 con 1 MB di chip, A1200, 68040). Prima
+  di partire chiede quali trucchi attivare;
+- `RockStarAteMyHamster_v1.0_It.lha`: l'installazione WHDLoad (WHDLoad 17+,
+  F10 per uscire; i trucchi si scelgono nella finestra iniziale di WHDLoad).
+
+Senza finestra: `RockStarAteMyHamsterRecomp.exe --esporta-amiga <disco> [cartella]`.
+
 ## Compilare
 
 Servono clang (target mingw), CMake con Ninja, Python 3 con `unicorn`, e il
-pacchetto di sviluppo SDL2.
+pacchetto di sviluppo SDL2 (in `../sdl/SDL2-2.32.2`, o `-DROCKSTAR_SDL2_DIR`).
 
 ```
-python game/prepara_immagine.py --traduzione <cartella della traduzione>
+python traduzione/base_canonica.py "Rock Star Ate My Hamster (Europe).ipf" ../rockstar_base.bin
+python game/prepara_immagine.py
 cmake -S . -B build/cmake -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
 cmake --build build/cmake
 ```
 
-`prepara_immagine.py` parte dai file della traduzione (la base del gioco
-ricavata dal disco con `base_canonica.py`, l'immagine tradotta e le tabelle
-dei testi) e produce:
+La base del gioco (`rockstar_base.bin`, dal tuo disco) sta fuori dal
+repository, nella cartella che lo contiene (o in `RSAMH_DATI`): vedi
+`traduzione/percorsi.py` e `traduzione/LEGGIMI.txt`. `prepara_immagine.py`
+parte da lì e dalla traduzione (`traduzione/`) e produce:
 
 - `build/rockstar_chipram.bin`, l'immagine italiana della chip RAM: da qui
   nasce il C ricompilato;
@@ -110,7 +126,14 @@ dei testi) e produce:
 - `build/lingue_dati.h`, le differenze fra la base e le due immagini (solo
   dati nostri: traduzione, patch, codice aggiunto) e i CRC. L'eseguibile le
   applica alla base che ricava dal disco dell'utente (`amiga_disco.c`,
-  `amiga_lingue.c`).
+  `amiga_lingue.c`);
+- `build/amiga_kit.h`, quello che serve per le versioni Amiga (`amiga_esporta.c`):
+  la patch dell'immagine, l'eseguibile Amiga senza i dati compressi del gioco
+  (caricatore, decompressore S404 nostro, tabella estesa, accordo, trucchi),
+  i file di WHDLoad e i CRC che il risultato deve avere. Il programma
+  ricomprime l'immagine con lo stesso algoritmo di `s404_compress.py`.
+
+Per le versioni Amiga anche dalla pipeline Python: `traduzione/ricostruisci_tutto.ps1`.
 
 ## Provare senza finestra
 

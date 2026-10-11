@@ -28,6 +28,7 @@
 #include "amiga_ingressi.h"
 #include "amiga_disco.h"
 #include "amiga_lingue.h"
+#include "amiga_esporta.h"
 #include "amiga_menu.h"
 
 #if defined(RECOMP_LAUNCHER)
@@ -582,9 +583,34 @@ static int carica_gioco(const char *file, int lingua, char *err, size_t ne) {
     return 1;
 }
 
+/* le versioni Amiga in italiano (ADF e WHDLoad) dal disco scelto, in
+ * "Amiga ITA" accanto all'eseguibile; poi apre la cartella */
+static int esporta_amiga(const char *disco, char *msg, size_t n) {
+    char dove[1024];
+    char *qui = SDL_GetBasePath();
+    snprintf(dove, sizeof dove, "%sAmiga ITA", qui ? qui : "");
+    SDL_free(qui);
+    if (!amiga_esporta(disco, dove, msg, n)) return 0;
+    char url[1100];
+    snprintf(url, sizeof url, "file:///%s", dove);
+    for (char *c = url; *c; c++) if (*c == '\\') *c = '/';
+    SDL_OpenURL(url);
+    return 1;
+}
+
 int main(int argc, char **argv) {
     impostazioni_t imp;
     leggi_impostazioni(&imp);
+    /* --esporta-amiga [disco [cartella]]: senza finestra, per le prove */
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--esporta-amiga")) continue;
+        const char *d = i + 1 < argc ? argv[i + 1] : imp.disco;
+        const char *c = i + 2 < argc ? argv[i + 2] : "Amiga ITA";
+        char m[1200];
+        int ok = amiga_esporta(d, c, m, sizeof m);
+        printf("%s\n", m);
+        return ok ? 0 : 1;
+    }
     const char *file = argc > 1 && argv[1][0] != '-' ? argv[1]
                      : imp.disco[0] ? imp.disco : "rockstar_chipram.bin";
     if (getenv("AMIGA_LINGUA")) imp.lingua = !strcmp(getenv("AMIGA_LINGUA"), "en") ? LINGUA_INGLESE : LINGUA_ITALIANO;
@@ -637,6 +663,10 @@ int main(int argc, char **argv) {
         io.language_index = imp.lingua;
         gi.name = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         gi.mods = g_game_spec.mods ? g_game_spec.mods(NULL) : NULL;
+        gi.tool_label = "Create Italian Amiga disks (ADF + WHDLoad)";
+        gi.tool_note = "Builds the Italian floppy (ADF, any Amiga with 1 MB) and the WHDLoad install "
+                       "from the selected disk, in the \"Amiga ITA\" folder next to the program.";
+        gi.tool_run = esporta_amiga;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
