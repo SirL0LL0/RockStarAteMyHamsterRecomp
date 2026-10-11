@@ -14,6 +14,7 @@
 
 extern uint8_t *g_amiga_mem;          /* immagine della chip RAM (e oltre) */
 extern uint32_t g_amiga_mem_size;
+extern uint64_t g_amiga_letture_vhpos;
 
 /* registri e periferiche */
 uint8_t  amiga_hw_read8(uint32_t addr);

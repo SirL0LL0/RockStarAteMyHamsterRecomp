@@ -76,7 +76,32 @@ void m68k_write32(uint32_t a, uint32_t v) {
 
 /* ------------------------------------------------------------ pila e salti */
 
+/* profilo campionato (AMIGA_PROFILO_DA=quadro): conta gli indirizzi di ritorno
+ * delle chiamate, cioe' chi chiama cosa, e li stampa alla fine del test */
+static uint32_t *s_profilo;
+static uint64_t s_profilo_da = ~0ull;
+/* dove si trova il codice generato a ogni fine quadro (diagnostica) */
+static void *s_dove[4096];
+static int s_n_dove;
+
+/* traccia (AMIGA_TRACCIA=indirizzo di ritorno esadecimale): registri a ogni
+ * chiamata che tornera' li', nel file traccia.txt */
+static uint32_t s_traccia_rit = 0xFFFFFFFFu;
+static FILE *s_traccia;
+static int s_traccia_tutte;
+static uint64_t s_traccia_da, s_traccia_a;
+
 void recomp_push_return(uint32_t ret_addr) {
+    /* AMIGA_TRACCIA=tutte:DA:A  ogni chiamata fra i quadri DA e A */
+    if (s_traccia_tutte && s_traccia && s_quadri >= s_traccia_da && s_quadri <= s_traccia_a)
+        fprintf(s_traccia, "q%llu rit=%06X A7=%06X\n", (unsigned long long)s_quadri,
+                ret_addr & 0xFFFFFFu, g_cpu.A[7]);
+    if ((ret_addr & 0xFFFFFFu) == s_traccia_rit && s_traccia)
+        fprintf(s_traccia, "q%llu D0=%08X D4=%08X D5=%08X D6=%08X A0=%06X A3=%06X A7=%06X\n",
+                (unsigned long long)s_quadri, g_cpu.D[0], g_cpu.D[4], g_cpu.D[5], g_cpu.D[6],
+                g_cpu.A[0], g_cpu.A[3], g_cpu.A[7]);
+    if (s_profilo && s_quadri >= s_profilo_da && (ret_addr & 0xFFFFFFu) < 0x100000u)
+        s_profilo[(ret_addr & 0xFFFFFu) >> 1]++;
     g_cpu.A[7] -= 4;
     m68k_write32(g_cpu.A[7], ret_addr & 0xFFFFFFu);
 }
@@ -223,6 +248,22 @@ static void fine_quadro(void) {
             FILE *m = fopen("memoria_fine.bin", "wb");     /* stato per confronti */
             if (m) { fwrite(g_amiga_mem, 1, g_amiga_mem_size, m); fclose(m); }
             printf("quadri %llu, salvati quadro.bmp e memoria_fine.bin\n", (unsigned long long)s_quadri);
+            printf("istruzioni %llu, letture VHPOSR %llu\n", (unsigned long long)g_native_insn_count,
+                   (unsigned long long)g_amiga_letture_vhpos);
+            if (s_profilo) {
+                FILE *fd = fopen("dove.txt", "w");
+                if (fd) {
+                    for (int i = 0; i < s_n_dove; i++) fprintf(fd, "%lld\n", (long long)((char *)s_dove[i] - (char *)(void *)recomp_push_return));
+                    fclose(fd);
+                }
+                for (int k = 0; k < 15; k++) {
+                    uint32_t mi = 0, mv = 0;
+                    for (uint32_t i = 0; i < 0x80000u; i++) if (s_profilo[i] > mv) { mv = s_profilo[i]; mi = i; }
+                    if (!mv) break;
+                    printf("  ritorno $%06X  %u chiamate\n", mi << 1, mv);
+                    s_profilo[mi] = 0;
+                }
+            }
             exit(0);
         }
         return;
@@ -238,6 +279,8 @@ static void fine_quadro(void) {
 }
 
 void glue_check_vblank(void) {
+    if (s_profilo && s_quadri >= s_profilo_da && s_n_dove < 4096)
+        s_dove[s_n_dove++] = __builtin_return_address(0);
     while (g_cycle_accumulator >= g_vblank_threshold) {
         g_cycle_accumulator -= g_vblank_threshold;
         fine_quadro();
@@ -291,6 +334,21 @@ int main(int argc, char **argv) {
 
     s_senza_finestra = q != NULL;
     s_quadri_max = q ? atol(q) : 0;
+    if (getenv("AMIGA_TRACCIA")) {
+        const char *t = getenv("AMIGA_TRACCIA");
+        if (!strncmp(t, "tutte:", 6)) {
+            char *fine;
+            s_traccia_tutte = 1;
+            s_traccia_da = strtoull(t + 6, &fine, 10);
+            s_traccia_a = *fine == ':' ? strtoull(fine + 1, NULL, 10) : s_traccia_da;
+        } else
+            s_traccia_rit = (uint32_t)strtoul(t, NULL, 16);
+        s_traccia = fopen("traccia.txt", "w");
+    }
+    if (getenv("AMIGA_PROFILO_DA")) {
+        s_profilo = calloc(0x80000u, sizeof *s_profilo);
+        s_profilo_da = (uint64_t)atoll(getenv("AMIGA_PROFILO_DA"));
+    }
     if (getenv("AMIGA_INGRESSI")) snprintf(s_ingressi_test, sizeof s_ingressi_test, "%s", getenv("AMIGA_INGRESSI"));
 
     SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");   /* il primo clic arriva al gioco */

@@ -14,6 +14,7 @@
 
 uint8_t *g_amiga_mem;
 uint32_t g_amiga_mem_size;
+uint64_t g_amiga_letture_vhpos;     /* diagnostica: letture di VHPOSR */
 
 static uint16_t s_custom[0x100];
 static uint16_t s_dmacon, s_intena, s_intreq;
@@ -54,7 +55,7 @@ static uint16_t leggi_custom(uint32_t off) {
     switch (off) {
     case 0x002: return s_dmacon;
     case 0x004: return (uint16_t)((riga >> 8) & 1);
-    case 0x006: return (uint16_t)((riga & 0xFF) << 8 | (h & 0xFF));
+    case 0x006: g_amiga_letture_vhpos++; return (uint16_t)((riga & 0xFF) << 8 | (h & 0xFF));
     case 0x00A: return (uint16_t)((s_my & 0xFF) << 8 | (s_mx & 0xFF));
     case 0x00C: return joydat(s_su, s_giu, s_sx, s_dx);
     case 0x016: return (uint16_t)(0xFF00 & ~(s_destro ? 0x0400 : 0));   /* POTGOR: DATLY = destro porta 0 */
@@ -121,6 +122,8 @@ static uint32_t rgb(uint16_t c) {
 
 static void disegna(void) {
     uint32_t pc = (uint32_t)s_custom[0x80 / 2] << 16 | s_custom[0x82 / 2];
+    /* le righe fuori dalla finestra video restano nere (bordo) */
+    for (int i = 0; i < AMIGA_LARGHEZZA * AMIGA_ALTEZZA; i++) s_quadro[i] = 0xFF000000u;
     int attesa = -1, fermo = 0;
     uint32_t pt[6] = {0};
     for (int riga = 0; riga < (int)AMIGA_RIGHE_QUADRO; riga++) {
@@ -167,9 +170,46 @@ static void disegna(void) {
     }
 }
 
+/* Sprite hardware (8 canali, 16 pixel lowres, 3 colori + trasparente).
+ * Ogni canale legge da SPRxPT: due parole di controllo (POS, CTL), poi una
+ * coppia DATA/DATB per riga fino a VSTOP, poi altre parole di controllo
+ * (riuso dello stesso canale piu' in basso) finche' POS e CTL sono 0.
+ * Il puntatore del mouse dei giochi e' quasi sempre lo sprite 0. Gli sprite
+ * stanno davanti ai bitplane (priorita' di default). Gli sprite "attaccati"
+ * (15 colori) non sono ancora gestiti. */
+static void disegna_sprite(void) {
+    uint16_t diw = s_custom[0x8E / 2];
+    int v0 = diw >> 8, h0 = diw & 0xFF;
+    if (!(s_dmacon & 0x0200) || !(s_dmacon & 0x0020)) return;      /* DMAEN + SPREN */
+    for (int n = 7; n >= 0; n--) {                                 /* lo 0 sopra tutti */
+        uint32_t pt = (uint32_t)s_custom[(0x120 + n * 4) / 2] << 16 | s_custom[(0x122 + n * 4) / 2];
+        for (int giro = 0; giro < 16; giro++) {
+            uint16_t pos = leggi_mem16(pt), ctl = leggi_mem16(pt + 2);
+            pt += 4;
+            if (pos == 0 && ctl == 0) break;
+            int vstart = (pos >> 8) | ((ctl & 4) << 6);
+            int vstop  = (ctl >> 8) | ((ctl & 2) << 7);
+            int hstart = ((pos & 0xFF) << 1) | (ctl & 1);
+            int base_col = 17 + (n / 2) * 4;
+            for (int riga = vstart; riga < vstop; riga++, pt += 4) {
+                uint16_t a = leggi_mem16(pt), b = leggi_mem16(pt + 2);
+                int y = riga - v0;
+                if (y < 0 || y >= AMIGA_ALTEZZA) continue;
+                for (int i = 0; i < 16; i++) {
+                    int c = ((a >> (15 - i)) & 1) | (((b >> (15 - i)) & 1) << 1);
+                    int x = hstart + i - h0;
+                    if (c && x >= 0 && x < AMIGA_LARGHEZZA)
+                        s_quadro[y * AMIGA_LARGHEZZA + x] = rgb(s_custom[0x180 / 2 + base_col - 1 + c]);
+                }
+            }
+        }
+    }
+}
+
 void amiga_hw_fine_quadro(void) {
     s_quadri++;
     disegna();
+    disegna_sprite();
     if (s_n_tasti && (s_cia_icr_mask & 0x08)) {      /* un codice tastiera per quadro */
         uint8_t k = s_tasti[0];
         memmove(s_tasti, s_tasti + 1, (size_t)--s_n_tasti);
