@@ -96,6 +96,7 @@ typedef struct {
     int sensibilita_mouse, cattura_mouse, salta_launcher;
     int crt;                         /* modello di schermo: SCHERMO_* (amiga_video_gl.h) */
     int cpu;                         /* 0 A500 (68000), 1 A4000 (piu' fluido) */
+    int intera;                      /* scala intera (pixel perfetti), 1 di partenza */
     amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
     int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
     int lingua;                      /* LINGUA_ITALIANO / LINGUA_INGLESE */
@@ -114,6 +115,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
     amiga_ingressi_default(&s->ass);
     s->sorgente = 1;
     s->cpu = 1;
+    s->intera = 1;
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
     char riga[600]; int v, n;
@@ -140,6 +142,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
         else if (!strcmp(k, "crt")) s->crt = v >= 0 && v < AMIGA_SCHERMI ? v : 0;
         else if (!strcmp(k, "cpu")) s->cpu = v ? 1 : 0;
+        else if (!strcmp(k, "scala_intera")) s->intera = v ? 1 : 0;
         else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
         else if (!strcmp(k, "lingua")) s->lingua = v == LINGUA_INGLESE ? LINGUA_INGLESE : LINGUA_ITALIANO;
     }
@@ -155,6 +158,7 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
                "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
             s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
+    fprintf(f, "scala_intera=%d\n", s->intera);
     fprintf(f, "cpu=%d\nsorgente=%d\nlingua=%d\ndisco=%s\n", s->cpu, s->sorgente, s->lingua, s->disco);
     for (int i = 0; i < AZ_NUMERO; i++)
         fprintf(f, "tasto%d=%d\npad%d=%d\n", i, s->ass.tasto[i], i, s->ass.pad[i]);
@@ -531,6 +535,14 @@ static void a_cpu(int verso) {
     imposta_cpu(s_imp.cpu);
     scrivi_impostazioni(&s_imp);
 }
+static void v_intera(char *b, size_t n) { snprintf(b, n, "Scala intera: %s", s_imp.intera ? "si'" : "no"); }
+static void a_intera(int verso) {
+    (void)verso;
+    s_imp.intera = !s_imp.intera;
+    if (s_gl) amiga_video_gl_scala_intera(s_imp.intera);
+    else if (s_ren) SDL_RenderSetIntegerScale(s_ren, s_imp.intera ? SDL_TRUE : SDL_FALSE);
+    scrivi_impostazioni(&s_imp);
+}
 static void v_riprendi(char *b, size_t n) { snprintf(b, n, "Torna al gioco"); }
 static void a_riprendi(int verso) { (void)verso; amiga_menu_chiudi(); }
 static void v_esci(char *b, size_t n) { snprintf(b, n, "Esci"); }
@@ -539,6 +551,7 @@ static void a_esci(int verso) { if (verso == 0) exit(0); }
 static const amiga_voce_menu_t s_voci_runner[] = {
     { v_schermo, a_schermo, ok_schermo },
     { v_intero, a_intero, NULL },
+    { v_intera, a_intera, NULL },
     { v_volume, a_volume, NULL },
     { v_cpu, a_cpu, NULL },
     { v_riprendi, a_riprendi, NULL },
@@ -698,11 +711,13 @@ int main(int argc, char **argv) {
         amiga_ingressi_default(&def);
         io.player_src[0] = imp.sorgente;
         io.host_option[0] = imp.cpu;
+        io.integer_scale = imp.intera;
         predef = io;
         predef.player_src[0] = 1;
         predef.host_option[0] = 1;                   /* A4000 */
         predef.screen_kind = 0;
         predef.linear_filter = 0;
+        predef.integer_scale = 1;
         for (int i = 0; i < AZ_NUMERO; i++) {
             io.player_key_bind[0][i] = imp.ass.tasto[i];
             io.player_pad_bind[0][i] = imp.ass.pad[i];
@@ -756,6 +771,7 @@ int main(int argc, char **argv) {
         imp.cattura_mouse = io.pointer_capture;
         imp.crt = io.screen_kind >= 0 && io.screen_kind < AMIGA_SCHERMI ? io.screen_kind : 0;
         imp.cpu = io.host_option[0] ? 1 : 0;
+        imp.intera = io.integer_scale ? 1 : 0;
         imp.sorgente = io.player_src[0] == 2 ? 2 : 1;
         for (int i = 0; i < AZ_NUMERO; i++) {
             imp.ass.tasto[i] = io.player_key_bind[0][i];
@@ -825,10 +841,10 @@ int main(int argc, char **argv) {
         if (imp.cattura_mouse)
             SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
         s_gl = amiga_video_gl_init(s_win, imp.crt);  /* filtro CRT; senza OpenGL, renderer SDL */
-        if (s_gl) amiga_video_gl_filtro(lineare);
+        if (s_gl) { amiga_video_gl_filtro(lineare); amiga_video_gl_scala_intera(imp.intera); }
         if (!s_gl) {
             s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
-            SDL_RenderSetIntegerScale(s_ren, SDL_TRUE);         /* pixel perfetti anche qui */
+            SDL_RenderSetIntegerScale(s_ren, imp.intera ? SDL_TRUE : SDL_FALSE);   /* pixel perfetti anche qui */
             s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
                                       AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         }

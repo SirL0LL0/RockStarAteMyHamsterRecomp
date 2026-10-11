@@ -14,9 +14,10 @@
  *   Scanline   pixel netti con le righe vuote fra una riga e l'altra
  * Si mostrano solo le righe che il gioco usa (la finestra video,
  * amiga_hw_altezza_visibile: 200 su 256 per Rock Star), il piu' grandi
- * possibile con un fattore di scala intero: pixel quadrati per il nitido;
- * per i CRT la forma del pixel PAL su un 4:3 (AMIGA_PAR) e un fattore intero
- * in verticale, cosi' le scanline restano tutte uguali.
+ * possibile: pixel quadrati per il nitido, la forma del pixel PAL su un 4:3
+ * (AMIGA_PAR) per i CRT. Con la scala intera (predefinita) il fattore e'
+ * intero, in verticale per i CRT, cosi' pixel e scanline restano tutti
+ * uguali; senza, l'immagine riempie la finestra.
  * OpenGL 2.1 / GLSL 1.20: le funzioni degli shader si caricano con
  * SDL_GL_GetProcAddress, cosi' basta opengl32 senza altre librerie.
  * Se qualcosa non va, amiga_video_gl_init() restituisce 0 e il runner usa il
@@ -50,6 +51,9 @@ static GLuint s_tex, s_prog;
 static GLint u_modo, u_src, u_out;
 static int s_modo, s_lineare;
 static int s_righe = AMIGA_ALTEZZA;          /* righe della texture */
+static int s_intera = 1;
+
+void amiga_video_gl_scala_intera(int si) { s_intera = si != 0; }
 
 const char *amiga_video_gl_nome(int modo) {
     static const char *const nomi[AMIGA_SCHERMI] = { "nitido", "Commodore 1084S", "CRT Easymode",
@@ -247,16 +251,16 @@ void amiga_video_gl_filtro(int lineare) {
 int amiga_video_gl_modo_attuale(void) { return s_modo; }
 
 /* il rettangolo d'uscita per righe x 320 pixel in una finestra w x h */
-void amiga_video_gl_rettangolo(int modo, int righe, int w, int h, int *vw, int *vh) {
+void amiga_video_gl_rettangolo(int modo, int righe, int intera, int w, int h, int *vw, int *vh) {
     double par = modo != SCHERMO_NITIDO ? AMIGA_PAR : 1.0;     /* larghezza di un pixel / altezza */
     double rapporto = AMIGA_LARGHEZZA * par / righe;
-    int k = h / righe;                                          /* fattore intero in verticale */
+    int k = intera ? h / righe : 0;                             /* fattore intero in verticale */
     if (modo == SCHERMO_NITIDO && w / AMIGA_LARGHEZZA < k) k = w / AMIGA_LARGHEZZA;
     while (k >= 1 && (int)(righe * k * rapporto + 0.5) > w) k--;
     if (k >= 1) {
         *vh = righe * k;
         *vw = modo == SCHERMO_NITIDO ? AMIGA_LARGHEZZA * k : (int)(*vh * rapporto + 0.5);
-    } else {                                                    /* finestra piu' piccola del quadro */
+    } else {                                    /* senza scala intera, o finestra piu' piccola */
         *vw = w; *vh = (int)(w / rapporto);
         if (*vh > h) { *vh = h; *vw = (int)(h * rapporto); }
     }
@@ -266,7 +270,7 @@ void amiga_video_gl_presenta(const uint32_t *pixel) {
     int w, h, vw, vh;
     SDL_GL_GetDrawableSize(s_win, &w, &h);
     int righe = amiga_hw_altezza_visibile();
-    amiga_video_gl_rettangolo(s_modo, righe, w, h, &vw, &vh);
+    amiga_video_gl_rettangolo(s_modo, righe, s_intera, w, h, &vw, &vh);
     glViewport(0, 0, w, h);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);

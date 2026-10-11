@@ -100,6 +100,10 @@ Nelle impostazioni del launcher ci sono anche:
   Lanczos, fascio gaussiano, maschera leggera), *CRT Aperture* (griglia
   Trinitron), *Scanlines*. I CRT sono in 4:3. In gioco Shift+F12 passa al
   modello successivo;
+- **Integer scaling** (scala intera, attiva di partenza): pixel perfetti, il
+  fattore intero piu' grande che entra; spenta, l'immagine riempie lo schermo.
+  In tutti e due i casi si mostrano solo le righe che il gioco usa (320x200
+  delle 256 PAL), quindi niente fascia nera in basso;
 - **Amiga model**: *A4000* (il predefinito, piu' fluido) o *A500* (originale),
   come nel menu F1.
 
