@@ -569,6 +569,12 @@ void glue_yield_for_interrupt_poll(void) {
  * oppure da un'immagine gia' pronta (rockstar_chipram*.bin, per lo sviluppo).
  * 1 = fatto; 0 = errore spiegato in err */
 static int carica_gioco(const char *file, int lingua, char *err, size_t ne) {
+    if (!file[0]) {
+        snprintf(err, ne, "Nessun disco scelto: nel launcher, Sfoglia disco (Browse For DISK).\n"
+                 "Servono Rock Star Ate My Hamster (Europe).ipf oppure "
+                 "Rock Star Ate My Hamster (1989)(Codemasters).adf.");
+        return 0;
+    }
     FILE *f = fopen(file, "rb");
     if (!f) { snprintf(err, ne, "Non trovo %s.", file); return 0; }
     fseek(f, 0, SEEK_END);
@@ -633,8 +639,12 @@ int main(int argc, char **argv) {
         printf("%s\n", m);
         return ok ? 0 : 1;
     }
+    /* senza disco scelto: l'immagine di sviluppo, se c'e'; altrimenti nessun
+     * file (il launcher chiede il disco) */
+    FILE *sviluppo = fopen("rockstar_chipram.bin", "rb");
+    if (sviluppo) fclose(sviluppo);
     const char *file = argc > 1 && argv[1][0] != '-' ? argv[1]
-                     : imp.disco[0] ? imp.disco : "rockstar_chipram.bin";
+                     : imp.disco[0] ? imp.disco : sviluppo ? "rockstar_chipram.bin" : "";
     if (getenv("AMIGA_LINGUA")) imp.lingua = !strcmp(getenv("AMIGA_LINGUA"), "en") ? LINGUA_INGLESE : LINGUA_ITALIANO;
     const char *q = getenv("AMIGA_QUADRI");
     if (g_game_spec.on_post_reset) g_game_spec.on_post_reset();   /* preferenze del gioco (mods) */
