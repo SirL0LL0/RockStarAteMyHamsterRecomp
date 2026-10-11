@@ -26,19 +26,8 @@
 #include "amiga_paula.h"
 #include "amiga_video_gl.h"
 #include "amiga_ingressi.h"
-#if __has_include("immagine_crc.h")
-#include "immagine_crc.h"
-#endif
-
-/* CRC32 (polinomio zlib), per riconoscere l'immagine giusta */
-static uint32_t crc32_immagine(const uint8_t *p, size_t n) {
-    uint32_t c = 0xFFFFFFFFu;
-    while (n--) {
-        c ^= *p++;
-        for (int k = 0; k < 8; k++) c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u)));
-    }
-    return ~c;
-}
+#include "amiga_disco.h"
+#include "amiga_lingue.h"
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -94,6 +83,8 @@ typedef struct {
     int crt;                         /* 0 nitido, 1 Commodore 1084S */
     amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
     int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
+    int lingua;                      /* LINGUA_ITALIANO / LINGUA_INGLESE */
+    char disco[512];                 /* il disco scelto (IPF o ADF), "" = nessuno */
 } impostazioni_t;
 
 static impostazioni_t s_imp;
@@ -105,8 +96,18 @@ static void leggi_impostazioni(impostazioni_t *s) {
     s->sorgente = 1;
     FILE *f = fopen("impostazioni.ini", "r");
     if (!f) return;
-    char k[64]; int v, n;
-    while (fscanf(f, " %63[^=]=%d", k, &v) == 2) {
+    char riga[600]; int v, n;
+    while (fgets(riga, sizeof riga, f)) {
+        char *uguale = strchr(riga, '=');
+        if (!uguale) continue;
+        *uguale = 0;
+        const char *k = riga, *val = uguale + 1;
+        if (!strcmp(k, "disco")) {                  /* un percorso: fino a fine riga */
+            snprintf(s->disco, sizeof s->disco, "%s", val);
+            s->disco[strcspn(s->disco, "\r\n")] = 0;
+            continue;
+        }
+        v = atoi(val);
         if (sscanf(k, "tasto%d", &n) == 1 && n >= 0 && n < AZ_NUMERO) { s->ass.tasto[n] = v; continue; }
         if (sscanf(k, "pad%d", &n) == 1 && n >= 0 && n < AZ_NUMERO) { s->ass.pad[n] = v; continue; }
         if (!strcmp(k, "scala")) s->scala = v;
@@ -119,6 +120,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
         else if (!strcmp(k, "crt")) s->crt = v;
         else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
+        else if (!strcmp(k, "lingua")) s->lingua = v == LINGUA_INGLESE ? LINGUA_INGLESE : LINGUA_ITALIANO;
     }
     fclose(f);
     if (s->scala < 1) s->scala = 1;
@@ -132,7 +134,7 @@ static void scrivi_impostazioni(const impostazioni_t *s) {
                "sensibilita_mouse=%d\ncattura_mouse=%d\nsalta_launcher=%d\ncrt=%d\n",
             s->scala, s->schermo_intero, s->filtro, s->volume, s->audio,
             s->sensibilita_mouse, s->cattura_mouse, s->salta_launcher, s->crt);
-    fprintf(f, "sorgente=%d\n", s->sorgente);
+    fprintf(f, "sorgente=%d\nlingua=%d\ndisco=%s\n", s->sorgente, s->lingua, s->disco);
     for (int i = 0; i < AZ_NUMERO; i++)
         fprintf(f, "tasto%d=%d\npad%d=%d\n", i, s->ass.tasto[i], i, s->ass.pad[i]);
     fclose(f);
@@ -455,10 +457,52 @@ void glue_yield_for_interrupt_poll(void) {
 
 /* ------------------------------------------------------------ avvio */
 
+/* il gioco in memoria: dal disco dell'utente (IPF o ADF, nella lingua scelta)
+ * oppure da un'immagine gia' pronta (rockstar_chipram*.bin, per lo sviluppo).
+ * 1 = fatto; 0 = errore spiegato in err */
+static int carica_gioco(const char *file, int lingua, char *err, size_t ne) {
+    FILE *f = fopen(file, "rb");
+    if (!f) { snprintf(err, ne, "Non trovo %s.", file); return 0; }
+    fseek(f, 0, SEEK_END);
+    long n = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    uint8_t *d = malloc(n > 0 ? (size_t)n : 1);
+    int letto = n > 0 && fread(d, 1, (size_t)n, f) == (size_t)n;
+    fclose(f);
+    if (!letto) { free(d); snprintf(err, ne, "Non riesco a leggere %s.", file); return 0; }
+    uint32_t crc = amiga_crc32(d, (size_t)n);
+    g_amiga_mem = calloc(1, 0x100000 + 16);
+    g_amiga_mem_size = 0x100000;
+    if (amiga_disco_tipo(crc)) {
+        free(d);
+        size_t lb = amiga_lingue_lung_base();
+        uint8_t *base = malloc(lb);
+        int ok = amiga_disco_base(file, base, lb, amiga_lingue_crc_base(), err, ne) &&
+                 amiga_lingue_immagine(base, lingua, g_amiga_mem, 0x100000, err, ne);
+        free(base);
+        return ok;
+    }
+    /* il C generato ha dentro costanti prese dall'immagine (indirizzi delle
+     * tabelle, operandi patchati): con un'immagine diversa il gioco sbaglierebbe
+     * in silenzio, quindi solo quelle di questa versione */
+    if (n != 0x100000 || !amiga_lingue_crc_valido(crc)) {
+        free(d);
+        snprintf(err, ne, "%s non e' un disco supportato ne' un'immagine di questa versione (CRC %08X).\n"
+                 "Servono Rock Star Ate My Hamster (Europe).ipf oppure "
+                 "Rock Star Ate My Hamster (1989)(Codemasters).adf.", file, crc);
+        return 0;
+    }
+    memcpy(g_amiga_mem, d, 0x100000);
+    free(d);
+    return 1;
+}
+
 int main(int argc, char **argv) {
-    const char *file = argc > 1 && argv[1][0] != '-' ? argv[1] : "rockstar_chipram.bin";
     impostazioni_t imp;
     leggi_impostazioni(&imp);
+    const char *file = argc > 1 && argv[1][0] != '-' ? argv[1]
+                     : imp.disco[0] ? imp.disco : "rockstar_chipram.bin";
+    if (getenv("AMIGA_LINGUA")) imp.lingua = !strcmp(getenv("AMIGA_LINGUA"), "en") ? LINGUA_INGLESE : LINGUA_ITALIANO;
     const char *q = getenv("AMIGA_QUADRI");
     if (g_game_spec.on_post_reset) g_game_spec.on_post_reset();   /* preferenze del gioco (mods) */
 #if defined(RECOMP_LAUNCHER)
@@ -496,11 +540,23 @@ int main(int argc, char **argv) {
         memset(&gi, 0, sizeof gi);
         launcher_profile_apply("amiga", &gi);
         gi.default_settings = &predef;
+        /* i due dischi supportati, riconosciuti dal CRC del file */
+        static const uint32_t dischi[] = { 0x53EC7260u, 0xBB9DD80Bu };
+        gi.expected_crc = dischi[0];
+        gi.has_expected_crc = 1;
+        gi.accepted_crcs = dischi;
+        gi.num_accepted_crcs = 2;
+        static const char *const lingue[] = { "Italiano", "English" };
+        gi.language_labels = lingue;
+        gi.num_languages = 2;
+        io.language_index = imp.lingua;
         gi.name = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         gi.mods = g_game_spec.mods ? g_game_spec.mods(NULL) : NULL;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
+        if (file != imp.disco) snprintf(imp.disco, sizeof imp.disco, "%s", file);
+        imp.lingua = io.language_index == LINGUA_INGLESE ? LINGUA_INGLESE : LINGUA_ITALIANO;
         imp.scala = io.window_scale > 0 ? io.window_scale : 3;
         imp.schermo_intero = io.fullscreen;
         imp.filtro = io.linear_filter;
@@ -521,30 +577,14 @@ int main(int argc, char **argv) {
     s_imp = imp;
     int scala = imp.scala, schermo_intero = imp.schermo_intero, lineare = imp.filtro;
     s_sensibilita = imp.sensibilita_mouse;
-    FILE *f = fopen(file, "rb");
-    if (!f) { fprintf(stderr, "immagine non trovata: %s\n", file); return 1; }
-    fseek(f, 0, SEEK_END);
-    long n = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    g_amiga_mem = calloc(1, (size_t)n + 16);
-    if (!g_amiga_mem || fread(g_amiga_mem, 1, (size_t)n, f) != (size_t)n) { fprintf(stderr, "lettura fallita\n"); return 1; }
-    fclose(f);
-    g_amiga_mem_size = (uint32_t)n;
-#ifdef AMIGA_IMMAGINE_CRC
-    /* il C generato ha dentro costanti prese da quell'immagine (indirizzi delle
-     * tabelle, operandi patchati): con un'immagine diversa il gioco sbaglia in
-     * silenzio, quindi meglio non partire */
-    if (crc32_immagine(g_amiga_mem, (size_t)n) != AMIGA_IMMAGINE_CRC || (uint32_t)n != AMIGA_IMMAGINE_DIM) {
-        char m[600];
-        snprintf(m, sizeof m, "L'immagine %s non e' quella da cui e' stato compilato il gioco "
-                 "(CRC %08X, atteso %08X).\nRicompila (cmake --build) oppure copia accanto "
-                 "all'eseguibile la rockstar_chipram.bin giusta.",
-                 file, crc32_immagine(g_amiga_mem, (size_t)n), AMIGA_IMMAGINE_CRC);
-        fprintf(stderr, "%s\n", m);
-        if (!q) SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Immagine sbagliata", m, NULL);
-        return 1;
+    {
+        char m[700];
+        if (!carica_gioco(file, imp.lingua, m, sizeof m)) {
+            fprintf(stderr, "%s\n", m);
+            if (!q) SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Rock Star Ate My Hamster", m, NULL);
+            return 1;
+        }
     }
-#endif
 
     s_senza_finestra = q != NULL;
     s_quadri_max = q ? atol(q) : 0;

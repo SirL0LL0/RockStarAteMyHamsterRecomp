@@ -8,7 +8,8 @@ $dir = Join-Path $repo "build"
 $sdl = Join-Path $repo "..\sdl\SDL2-2.32.2\lib\x64\SDL2.dll"
 if (-not (Test-Path "$dir\SDL2.dll") -and (Test-Path $sdl)) { Copy-Item $sdl $dir }
 $env:AMIGA_QUADRI = "$quadri"; $env:AMIGA_INGRESSI = $ingressi
-$p = Start-Process -FilePath (Join-Path $repo $exe) -ArgumentList ("`"" + (Join-Path $repo $immagine) + "`"") -WorkingDirectory $dir `
+if (-not [IO.Path]::IsPathRooted($immagine)) { $immagine = Join-Path $repo $immagine }
+$p = Start-Process -FilePath (Join-Path $repo $exe) -ArgumentList ("`"" + $immagine + "`"") -WorkingDirectory $dir `
     -NoNewWindow -PassThru -RedirectStandardOutput "$dir\out.txt" -RedirectStandardError "$dir\err.txt"
 if (-not $p.WaitForExit(300000)) { $p.Kill(); "TIMEOUT (bloccato)" }
 $env:AMIGA_QUADRI = $null; $env:AMIGA_INGRESSI = $null

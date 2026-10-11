@@ -1,4 +1,4 @@
-﻿/* rockstar_mods.c - trucchi di Rock Star Ate My Hamster nel menu Mods del
+/* rockstar_mods.c - trucchi di Rock Star Ate My Hamster nel menu Mods del
  * launcher (recomp-ui), e il loro effetto sul gioco a ogni quadro.
  *
  * Soldi infiniti: i soldi sono 8 cifre decimali, una per byte, a $123CA

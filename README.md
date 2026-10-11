@@ -25,6 +25,22 @@ Basato sugli strumenti della [Retro Porting Toolkit](https://retroportingtoolkit
 | `external/` | sottomoduli del toolkit |
 | `tools/` | script di build e di prova |
 
+## Giocare
+
+Il programma vuole uno dei due dischi supportati, riconosciuti dal CRC32 del
+file (il nome non conta):
+
+| Disco | CRC32 |
+|---|---|
+| `Rock Star Ate My Hamster (Europe).ipf` (il disco originale) | `53EC7260` |
+| `Rock Star Ate My Hamster (1989)(Codemasters).adf` | `BB9DD80B` |
+
+Lo si sceglie nel launcher (Browse For DISK), e nel menu Localization si
+sceglie la lingua: **Italiano** (la traduzione) o **English** (il testo
+originale). Il resto lo fa il programma: legge il disco (anche l'IPF, tracce
+MFM comprese), decomprime il gioco, lo porta sempre alla stessa versione
+(CRC verificato), applica la lingua e parte.
+
 ## Compilare
 
 Servono clang (target mingw), CMake con Ninja, Python 3 con `unicorn`, e il
@@ -36,8 +52,17 @@ cmake -S . -B build/cmake -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER
 cmake --build build/cmake
 ```
 
-`prepara_immagine.py` costruisce la fotografia della chip RAM dai tuoi file
-(l'immagine del gioco decompressa e le tabelle dei testi della traduzione).
+`prepara_immagine.py` parte dai file della traduzione (la base del gioco
+ricavata dal disco con `base_canonica.py`, l'immagine tradotta e le tabelle
+dei testi) e produce:
+
+- `build/rockstar_chipram.bin`, l'immagine italiana della chip RAM: da qui
+  nasce il C ricompilato;
+- `build/rockstar_chipram_en.bin`, l'inglese: stesso codice, dati del disco;
+- `build/lingue_dati.h`, le differenze fra la base e le due immagini (solo
+  dati nostri: traduzione, patch, codice aggiunto) e i CRC. L'eseguibile le
+  applica alla base che ricava dal disco dell'utente (`amiga_disco.c`,
+  `amiga_lingue.c`).
 
 ## Provare senza finestra
 
@@ -50,8 +75,17 @@ finale. `AMIGA_INGRESSI="f:300,k44:500"` simula fuoco e tasti.
 
 ## Comandi
 
-Joystick in porta 2: frecce e Ctrl. Mouse: pulsante sinistro. Tastiera: i
-tasti vanno alla tastiera dell'Amiga.
+Il gioco si gioca col mouse: il pulsante sinistro sceglie e fa avanzare i
+fumetti. Il primo clic nella finestra cattura il puntatore (senza scegliere
+nulla); il pulsante centrale o F12 lo liberano.
+
+Tasti e joypad si associano nel launcher (Mouse & Keyboard → Keys and
+gamepad...). Predefiniti: frecce e Ctrl = joystick (su/giù nei menu, fuoco
+sceglie); Spazio tenuto premuto ferma lo scorrere dei testi; Invio, Backspace
+ed Esc servono a scrivere i nomi. Joypad: croce = joystick, A = fuoco,
+RB/B = clic sinistro/destro, X = Spazio, Y = Invio, LB = Backspace,
+Back = Esc; lo stick sinistro muove il puntatore. I tasti non associati vanno
+alla tastiera dell'Amiga.
 
 ## Licenze
 

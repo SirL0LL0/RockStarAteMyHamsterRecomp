@@ -62,6 +62,8 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_paula.c
     amigarecomp/runner/amiga_video_gl.c
     amigarecomp/runner/amiga_ingressi.c
+    amigarecomp/runner/amiga_disco.c
+    amigarecomp/runner/amiga_lingue.c
     game/rockstar_spec.c
     game/rockstar_debug.c
     game/rockstar_mods.c
@@ -73,6 +75,7 @@ target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
     game
     external/recomp-ui/src
     "${GEN_DIR}"
+    "${CMAKE_SOURCE_DIR}/build"            # lingue_dati.h da game/prepara_immagine.py
     "${ROCKSTAR_SDL2_DIR}/include")
 
 target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")
