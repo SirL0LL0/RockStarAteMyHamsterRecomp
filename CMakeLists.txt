@@ -43,6 +43,17 @@ add_custom_command(
     COMMENT "AmigaRecomp: 68000 -> C"
     VERBATIM)
 
+# CRC dell'immagine da cui nasce il C: l'eseguibile rifiuta un'immagine diversa
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_custom_command(
+    OUTPUT "${GEN_DIR}/immagine_crc.h"
+    COMMAND Python3::Interpreter "${CMAKE_SOURCE_DIR}/tools/crc_immagine.py"
+            "${ROCKSTAR_IMAGE}" "${GEN_DIR}/immagine_crc.h"
+    DEPENDS "${ROCKSTAR_IMAGE}" "${CMAKE_SOURCE_DIR}/tools/crc_immagine.py"
+    COMMENT "CRC dell'immagine"
+    VERBATIM)
+list(APPEND GEN_FILES "${GEN_DIR}/immagine_crc.h")
+
 # ---- runner + gioco ----------------------------------------------------------------
 add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_glue.c
@@ -84,3 +95,11 @@ add_custom_command(TARGET RockStarAteMyHamsterRecomp POST_BUILD
             "${ROCKSTAR_SDL2_DIR}/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${CMAKE_SOURCE_DIR}/game/rockstar_annotations.csv" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>")
+
+# L'eseguibile carica l'immagine che gli sta accanto: va tenuta allineata a
+# ogni build, anche quando cambiano solo i dati e il C generato no.
+add_custom_target(rockstar_immagine ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ROCKSTAR_IMAGE}" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>/rockstar_chipram.bin"
+    DEPENDS RockStarAteMyHamsterRecomp
+    COMMENT "immagine della chip RAM accanto all'eseguibile")

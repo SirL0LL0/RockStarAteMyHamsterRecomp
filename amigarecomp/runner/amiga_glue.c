@@ -25,6 +25,19 @@
 #include "amiga_debug.h"
 #include "amiga_paula.h"
 #include "amiga_video_gl.h"
+#if __has_include("immagine_crc.h")
+#include "immagine_crc.h"
+#endif
+
+/* CRC32 (polinomio zlib), per riconoscere l'immagine giusta */
+static uint32_t crc32_immagine(const uint8_t *p, size_t n) {
+    uint32_t c = 0xFFFFFFFFu;
+    while (n--) {
+        c ^= *p++;
+        for (int k = 0; k < 8; k++) c = (c >> 1) ^ (0xEDB88320u & (0u - (c & 1u)));
+    }
+    return ~c;
+}
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -276,16 +289,28 @@ static void ingressi_sdl(void) {
             }
         }
         if (ev.type == SDL_MOUSEBUTTONDOWN || ev.type == SDL_MOUSEBUTTONUP) {
-            int giu_ = ev.type == SDL_MOUSEBUTTONDOWN;
-            if (ev.button.button == SDL_BUTTON_LEFT) { mouse_sx = giu_; if (giu_) tieni_sx = 4; }
-            if (ev.button.button == SDL_BUTTON_RIGHT) { mouse_dx = giu_; if (giu_) tieni_dx = 4; }
+            /* mouse libero: il clic che lo riprende serve solo a catturarlo e non
+             * arriva al gioco (ne' la pressione ne' il rilascio), altrimenti
+             * sceglierebbe l'opzione sotto il puntatore */
+            static uint8_t ingoiato[8];
+            int giu_ = ev.type == SDL_MOUSEBUTTONDOWN, b = ev.button.button & 7;
             if (ev.button.button == SDL_BUTTON_MIDDLE) {   /* centrale: sgancia / riaggancia */
                 if (giu_) SDL_SetRelativeMouseMode(SDL_GetRelativeMouseMode() ? SDL_FALSE : SDL_TRUE);
-            } else if (giu_ && !SDL_GetRelativeMouseMode())
-                SDL_SetRelativeMouseMode(SDL_TRUE);         /* un clic nella finestra lo cattura */
+                continue;
+            }
+            if (giu_ && !SDL_GetRelativeMouseMode()) {
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+                ingoiato[b] = 1;
+                continue;
+            }
+            if (!giu_ && ingoiato[b]) { ingoiato[b] = 0; continue; }
+            if (ev.button.button == SDL_BUTTON_LEFT) { mouse_sx = giu_; if (giu_) tieni_sx = 4; }
+            if (ev.button.button == SDL_BUTTON_RIGHT) { mouse_dx = giu_; if (giu_) tieni_dx = 4; }
         }
-        if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
+        if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
             SDL_SetRelativeMouseMode(SDL_FALSE);            /* Alt+Tab: il mouse torna a Windows */
+            mouse_sx = mouse_dx = 0;                        /* niente tasti rimasti giu' */
+        }
         /* mouse catturato: il movimento in pixel della finestra diventa movimento
          * in pixel Amiga (diviso per la scala), il resto si porta avanti */
         if (ev.type == SDL_MOUSEMOTION && SDL_GetRelativeMouseMode()) {
@@ -471,6 +496,21 @@ int main(int argc, char **argv) {
     if (!g_amiga_mem || fread(g_amiga_mem, 1, (size_t)n, f) != (size_t)n) { fprintf(stderr, "lettura fallita\n"); return 1; }
     fclose(f);
     g_amiga_mem_size = (uint32_t)n;
+#ifdef AMIGA_IMMAGINE_CRC
+    /* il C generato ha dentro costanti prese da quell'immagine (indirizzi delle
+     * tabelle, operandi patchati): con un'immagine diversa il gioco sbaglia in
+     * silenzio, quindi meglio non partire */
+    if (crc32_immagine(g_amiga_mem, (size_t)n) != AMIGA_IMMAGINE_CRC || (uint32_t)n != AMIGA_IMMAGINE_DIM) {
+        char m[600];
+        snprintf(m, sizeof m, "L'immagine %s non e' quella da cui e' stato compilato il gioco "
+                 "(CRC %08X, atteso %08X).\nRicompila (cmake --build) oppure copia accanto "
+                 "all'eseguibile la rockstar_chipram.bin giusta.",
+                 file, crc32_immagine(g_amiga_mem, (size_t)n), AMIGA_IMMAGINE_CRC);
+        fprintf(stderr, "%s\n", m);
+        if (!q) SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Immagine sbagliata", m, NULL);
+        return 1;
+    }
+#endif
 
     s_senza_finestra = q != NULL;
     s_quadri_max = q ? atol(q) : 0;
