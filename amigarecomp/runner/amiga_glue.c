@@ -94,7 +94,7 @@ static int s_sensibilita = 100;      /* movimento del mouse, in percento */
 typedef struct {
     int scala, schermo_intero, filtro, volume, audio;
     int sensibilita_mouse, cattura_mouse, salta_launcher;
-    int crt;                         /* 0 nitido, 1 Commodore 1084S */
+    int crt;                         /* modello di schermo: SCHERMO_* (amiga_video_gl.h) */
     int cpu;                         /* 0 A500 (68000), 1 A4000 (piu' fluido) */
     amiga_associazioni_t ass;        /* tasti e joypad (tasto0..., pad0...) */
     int sorgente;                    /* pagina Controller: 1 tastiera, 2 joypad */
@@ -134,7 +134,7 @@ static void leggi_impostazioni(impostazioni_t *s) {
         else if (!strcmp(k, "sensibilita_mouse")) s->sensibilita_mouse = v;
         else if (!strcmp(k, "cattura_mouse")) s->cattura_mouse = v;
         else if (!strcmp(k, "salta_launcher")) s->salta_launcher = v;
-        else if (!strcmp(k, "crt")) s->crt = v;
+        else if (!strcmp(k, "crt")) s->crt = v >= 0 && v < AMIGA_SCHERMI ? v : 0;
         else if (!strcmp(k, "cpu")) s->cpu = v ? 1 : 0;
         else if (!strcmp(k, "sorgente")) s->sorgente = v == 2 ? 2 : 1;
         else if (!strcmp(k, "lingua")) s->lingua = v == LINGUA_INGLESE ? LINGUA_INGLESE : LINGUA_ITALIANO;
@@ -357,9 +357,9 @@ static void ingressi_sdl(void) {
             mdy += resto_y / div; resto_y %= div;
         }
         if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_F12 && !ev.key.repeat) {
-            if (ev.key.keysym.mod & KMOD_SHIFT) {          /* Shift+F12: nitido / 1084S */
+            if (ev.key.keysym.mod & KMOD_SHIFT) {          /* Shift+F12: il modello di schermo dopo */
                 if (s_gl) {
-                    s_imp.crt = !amiga_video_gl_modo_attuale();
+                    s_imp.crt = (amiga_video_gl_modo_attuale() + 1) % AMIGA_SCHERMI;
                     amiga_video_gl_modo(s_imp.crt);
                     scrivi_impostazioni(&s_imp);
                 }
@@ -471,11 +471,10 @@ static void fine_quadro(void) {
 /* ------------------------------------------------------------ menu in gioco */
 
 static void v_schermo(char *b, size_t n) {
-    snprintf(b, n, "Schermo: %s", s_imp.crt ? "Commodore 1084S" : "nitido");
+    snprintf(b, n, "Schermo: %s  < >", amiga_video_gl_nome(s_imp.crt));
 }
 static void a_schermo(int verso) {
-    (void)verso;
-    s_imp.crt = !s_imp.crt;
+    s_imp.crt = (s_imp.crt + (verso < 0 ? AMIGA_SCHERMI - 1 : 1)) % AMIGA_SCHERMI;
     amiga_video_gl_modo(s_imp.crt);
     scrivi_impostazioni(&s_imp);
 }
@@ -662,8 +661,12 @@ int main(int argc, char **argv) {
         amiga_associazioni_t def;
         amiga_ingressi_default(&def);
         io.player_src[0] = imp.sorgente;
+        io.host_option[0] = imp.cpu;
         predef = io;
         predef.player_src[0] = 1;
+        predef.host_option[0] = 1;                   /* A4000 */
+        predef.screen_kind = 0;
+        predef.linear_filter = 0;
         for (int i = 0; i < AZ_NUMERO; i++) {
             io.player_key_bind[0][i] = imp.ass.tasto[i];
             io.player_pad_bind[0][i] = imp.ass.pad[i];
@@ -690,6 +693,18 @@ int main(int argc, char **argv) {
         gi.tool_note = "Builds the Italian floppy (ADF, any Amiga with 1 MB) and the WHDLoad install "
                        "from the selected disk, in the \"Amiga ITA\" folder next to the program.";
         gi.tool_run = esporta_amiga;
+        /* il modello di Amiga (vedi imposta_cpu) */
+        static const char *const modelli[] = { "A500 (original)", "A4000 (smooth)" };
+        static const RecompLauncherCHostOption opzioni[] = { { "Amiga model", modelli, 2 } };
+        gi.host_options_title = "AMIGA";
+        gi.host_options = opzioni;
+        gi.num_host_options = 1;
+        /* i testi del launcher nella lingua scelta per il gioco */
+        static const char *const codici[] = { "it", "en" };
+        gi.ui_languages = codici;
+        /* la copertina, quando il disco e' riconosciuto */
+        gi.boxart_path = "assets/img/copertina.jpg";
+        gi.boxart_only_verified = 1;
         int rc = recomp_launcher_run_window(gi.name, &io, &gi, ".", file, scelto, sizeof scelto);
         if (rc != 0) return 0;
         if (scelto[0]) file = scelto;
@@ -703,7 +718,8 @@ int main(int argc, char **argv) {
         imp.salta_launcher = io.skip_launcher;
         imp.sensibilita_mouse = io.pointer_sensitivity > 0 ? io.pointer_sensitivity : 100;
         imp.cattura_mouse = io.pointer_capture;
-        imp.crt = io.screen_kind ? 1 : 0;
+        imp.crt = io.screen_kind >= 0 && io.screen_kind < AMIGA_SCHERMI ? io.screen_kind : 0;
+        imp.cpu = io.host_option[0] ? 1 : 0;
         imp.sorgente = io.player_src[0] == 2 ? 2 : 1;
         for (int i = 0; i < AZ_NUMERO; i++) {
             imp.ass.tasto[i] = io.player_key_bind[0][i];
@@ -773,6 +789,7 @@ int main(int argc, char **argv) {
         if (imp.cattura_mouse)
             SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
         s_gl = amiga_video_gl_init(s_win, imp.crt);  /* filtro CRT; senza OpenGL, renderer SDL */
+        if (s_gl) amiga_video_gl_filtro(lineare);
         if (!s_gl) {
             s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
             SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);

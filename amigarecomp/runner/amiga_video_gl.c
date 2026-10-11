@@ -1,10 +1,18 @@
-/* amiga_video_gl.c - presentazione in OpenGL con filtro CRT "Commodore 1084S".
+/* amiga_video_gl.c - presentazione in OpenGL: pixel netti o filtri CRT.
  *
- * Due modi, scelti a runtime con amiga_video_gl_modo():
- *   0 nitido   pixel netti, rapporto 5:4 del quadro 320x256
- *   1 1084S    il monitor dell'Amiga: leggera curvatura, scanline che si
+ * Modelli di schermo, scelti a runtime con amiga_video_gl_modo():
+ *   nitido     pixel netti, rapporto 5:4 del quadro 320x256; col filtro
+ *              lineare (amiga_video_gl_filtro) ammorbiditi
+ *   1084S      il monitor dell'Amiga: leggera curvatura, scanline che si
  *              allargano sui colori chiari (il fascio), maschera RGB dei
  *              fosfori, un po' di bagliore, vignettatura, rapporto 4:3
+ *   Easymode   CRT piatto alla maniera di crt-easymode: pixel ricostruiti in
+ *              orizzontale con un filtro di Lanczos, fascio gaussiano che si
+ *              allarga sui colori chiari, maschera a punti leggera, piu' luce
+ *   Aperture   tubo Trinitron: griglia di apertura (strisce RGB verticali)
+ *              piena, scanline sottili, bagliore
+ *   Scanline   pixel netti con le righe vuote fra una riga e l'altra
+ * I modelli CRT sono in 4:3, come l'immagine su un monitor vero.
  * OpenGL 2.1 / GLSL 1.20: le funzioni degli shader si caricano con
  * SDL_GL_GetProcAddress, cosi' basta opengl32 senza altre librerie.
  * Se qualcosa non va, amiga_video_gl_init() restituisce 0 e il runner usa il
@@ -36,7 +44,13 @@ static SDL_Window *s_win;
 static SDL_GLContext s_ctx;
 static GLuint s_tex, s_prog;
 static GLint u_modo, u_src, u_out;
-static int s_modo;
+static int s_modo, s_lineare;
+
+const char *amiga_video_gl_nome(int modo) {
+    static const char *const nomi[AMIGA_SCHERMI] = { "nitido", "Commodore 1084S", "CRT Easymode",
+                                                     "CRT Aperture", "Scanline" };
+    return modo >= 0 && modo < AMIGA_SCHERMI ? nomi[modo] : nomi[0];
+}
 
 static const char *VS =
     "#version 120\n"
@@ -59,8 +73,67 @@ static const char *FS =
     "         + lin(texture2D(tex, vec2(u.x - dx, y)).rgb) * 0.25\n"
     "         + lin(texture2D(tex, vec2(u.x + dx, y)).rgb) * 0.25;\n"
     "}\n"
+    /* Easymode: una riga (centro yc, in texel) ricostruita in x con Lanczos a 4 punti */
+    "float lanczos(float x) {\n"
+    "    x = abs(x);\n"
+    "    if (x < 0.0001) return 1.0;\n"
+    "    if (x >= 2.0) return 0.0;\n"
+    "    float p = 3.14159265 * x;\n"
+    "    return 2.0 * sin(p) * sin(p * 0.5) / (p * p);\n"
+    "}\n"
+    "vec3 riga_lanczos(float yc, float x) {\n"
+    "    float xc = floor(x - 0.5) + 0.5, f = x - xc;\n"
+    "    vec3 s = vec3(0.0); float w = 0.0;\n"
+    "    for (int k = -1; k <= 2; k++) {\n"
+    "        float wk = lanczos(f - float(k));\n"
+    "        s += wk * pow(texture2D(tex, vec2(xc + float(k), yc) / src).rgb, vec3(2.4));\n"
+    "        w += wk;\n"
+    "    }\n"
+    "    return max(s / w, vec3(0.0));\n"
+    "}\n"
+    "float fascio(float d, vec3 c, float stretto, float largo) {\n"   /* gaussiana, piu' larga sul chiaro */
+    "    float l = max(max(c.r, c.g), c.b);\n"
+    "    float s = mix(stretto, largo, l);\n"
+    "    return exp(-0.5 * d * d / (s * s));\n"
+    "}\n"
+    "vec3 maschera(float forza) {\n"                                 /* 3 pixel: R, G, B */
+    "    float m = mod(floor(gl_FragCoord.x), 3.0);\n"
+    "    vec3 k = vec3(1.0 - forza);\n"
+    "    if (m < 1.0) k.r = 1.0; else if (m < 2.0) k.g = 1.0; else k.b = 1.0;\n"
+    "    return k;\n"
+    "}\n"
     "void main() {\n"
     "    if (modo == 0) { gl_FragColor = texture2D(tex, uv); return; }\n"
+    "    vec2 p = uv * src;\n"
+    "    if (modo == 2 || modo == 3) {\n"
+    "        float y0 = floor(p.y - 0.5) + 0.5, fy = p.y - y0;\n"       /* fra la riga y0 e la successiva */
+    "        vec3 a, b;\n"
+    "        if (modo == 2) { a = riga_lanczos(y0, p.x); b = riga_lanczos(y0 + 1.0, p.x); }\n"
+    "        else {\n"
+    "            a = pow(texture2D(tex, vec2(p.x, y0) / src).rgb, vec3(2.4));\n"
+    "            b = pow(texture2D(tex, vec2(p.x, y0 + 1.0) / src).rgb, vec3(2.4));\n"
+    "        }\n"
+    "        vec3 col;\n"
+    "        if (modo == 2) {\n"
+    "            col = a * fascio(fy, a, 0.27, 0.40) + b * fascio(1.0 - fy, b, 0.27, 0.40);\n"
+    "            col *= maschera(0.30) * 1.40;\n"
+    "        } else {\n"
+    "            col = a * fascio(fy, a, 0.22, 0.32) + b * fascio(1.0 - fy, b, 0.22, 0.32);\n"
+    "            vec3 glow = pow(texture2D(tex, uv + vec2(2.0, 0.0) / src).rgb, vec3(2.4))\n"
+    "                      + pow(texture2D(tex, uv - vec2(2.0, 0.0) / src).rgb, vec3(2.4));\n"
+    "            col += glow * 0.05;\n"
+    "            col *= maschera(0.75) * 2.1;\n"
+    "        }\n"
+    "        gl_FragColor = vec4(pow(col, vec3(1.0 / 2.2)), 1.0);\n"
+    "        return;\n"
+    "    }\n"
+    "    if (modo == 4) {\n"                                       /* pixel netti, righe vuote in mezzo */
+    "        vec3 c = texture2D(tex, (floor(p) + 0.5) / src).rgb;\n"
+    "        float f = fract(p.y);\n"
+    "        float w = 1.0 - 0.6 * smoothstep(0.55, 0.9, f);\n"
+    "        gl_FragColor = vec4(c * w * 1.12, 1.0);\n"
+    "        return;\n"
+    "    }\n"
     "    vec2 c = uv * 2.0 - 1.0;\n"                         /* curvatura del tubo */
     "    c *= 1.0 + 0.035 * dot(c.yx, c.yx);\n"
     "    vec2 u = c * 0.5 + 0.5;\n"
@@ -147,12 +220,23 @@ int amiga_video_gl_init(SDL_Window *win, int modo) {
     return 1;
 }
 
-void amiga_video_gl_modo(int modo) {
-    s_modo = modo ? 1 : 0;
+/* i CRT campionano fra un texel e l'altro (lineare); il nitido solo se si
+ * vuole il filtro lineare */
+static void filtro_texture(void) {
     glBindTexture(GL_TEXTURE_2D, s_tex);
-    GLint f = s_modo ? GL_LINEAR : GL_NEAREST;   /* il 1084S filtra lui, il nitido no */
+    GLint f = (s_modo != SCHERMO_NITIDO || s_lineare) ? GL_LINEAR : GL_NEAREST;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, f);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, f);
+}
+
+void amiga_video_gl_modo(int modo) {
+    s_modo = modo >= 0 && modo < AMIGA_SCHERMI ? modo : SCHERMO_NITIDO;
+    filtro_texture();
+}
+
+void amiga_video_gl_filtro(int lineare) {
+    s_lineare = lineare != 0;
+    filtro_texture();
 }
 
 int amiga_video_gl_modo_attuale(void) { return s_modo; }
@@ -161,7 +245,7 @@ void amiga_video_gl_presenta(const uint32_t *pixel) {
     int w, h;
     SDL_GL_GetDrawableSize(s_win, &w, &h);
     /* rettangolo d'uscita: 4:3 per il monitor, 5:4 (pixel quadrati) per il nitido */
-    double rapporto = s_modo ? 4.0 / 3.0 : (double)AMIGA_LARGHEZZA / AMIGA_ALTEZZA;
+    double rapporto = s_modo != SCHERMO_NITIDO ? 4.0 / 3.0 : (double)AMIGA_LARGHEZZA / AMIGA_ALTEZZA;
     int vw = w, vh = (int)(w / rapporto);
     if (vh > h) { vh = h; vw = (int)(h * rapporto); }
     glViewport(0, 0, w, h);

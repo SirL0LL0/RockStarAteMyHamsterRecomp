@@ -86,9 +86,22 @@ file (il nome non conta):
 
 Lo si sceglie nel launcher (Browse For DISK), e nel menu Localization si
 sceglie la lingua: **Italiano** (la traduzione) o **English** (il testo
-originale). Il resto lo fa il programma: legge il disco (anche l'IPF, tracce
-MFM comprese), decomprime il gioco, lo porta sempre alla stessa versione
-(CRC verificato), applica la lingua e parte.
+originale); nella stessa lingua sono anche i testi del launcher. Quando il
+disco e' riconosciuto compare la copertina del gioco. Il resto lo fa il
+programma: legge il disco (anche l'IPF, tracce MFM comprese), decomprime il
+gioco, lo porta sempre alla stessa versione (CRC verificato), applica la
+lingua e parte.
+
+Nelle impostazioni del launcher ci sono anche:
+
+- **Screen model**: *Sharp* (pixel netti, 5:4; con *Linear filtering*
+  ammorbiditi), *Commodore 1084S* (il monitor dell'Amiga: curvatura, fascio,
+  fosfori RGB), *CRT Easymode* (CRT piatto alla maniera di crt-easymode:
+  Lanczos, fascio gaussiano, maschera leggera), *CRT Aperture* (griglia
+  Trinitron), *Scanlines*. I CRT sono in 4:3. In gioco Shift+F12 passa al
+  modello successivo;
+- **Amiga model**: *A4000* (il predefinito, piu' fluido) o *A500* (originale),
+  come nel menu F1.
 
 ### La traduzione su Amiga (vero o emulato)
 
@@ -167,7 +180,7 @@ alla tastiera dell'Amiga.
 
 **F1** (o Start del joypad) apre il menu in gioco e ferma la partita:
 salvataggio e caricamento in quattro slot (dal menu principale del gioco,
-dove salva anche il gioco stesso), trucchi, schermo nitido o Commodore 1084S,
+dove salva anche il gioco stesso), trucchi, modello di schermo,
 schermo intero, volume, Amiga, uscita. **Amiga: A4000** (il predefinito) fa
 girare la CPU come un 68040 a 25 MHz: finestre, testi e animazioni si
 disegnano piu' in fretta, come sugli Amiga veloci, mentre il ritmo del gioco e

@@ -57,7 +57,7 @@
 #define PACCHETTO         "rockstar-trucchi"
 
 typedef struct {
-    const char *id, *nome, *descrizione;
+    const char *id, *nome, *descrizione, *name, *description;   /* italiano, inglese */
     int scelto;      /* nel launcher, prima di PLAY */
     int attivo;      /* nella partita in corso */
 } trucco_t;
@@ -65,15 +65,26 @@ typedef struct {
 static trucco_t s_trucchi[] = {
     { "soldi_infiniti", "Soldi infiniti",
       "I soldi restano sempre a 999.999 sterline: ingaggi, concerti e dischi "
-      "senza mai finire in rosso.", 0, 0 },
+      "senza mai finire in rosso.",
+      "Infinite money",
+      "Your money always stays at 999,999 pounds: bookings, gigs and records "
+      "without ever going into the red.", 0, 0 },
     { "trucco_originale", "Trucco originale F7 F8 F9",
       "Sblocca il trucco nascosto nel gioco. In partita: F7 aggiunge 1.000.000 di "
       "sterline; F8 fa suonare la band al massimo (classifica, vendite dei dischi, "
       "occasioni di lavoro); F9 porta il pubblico al massimo. Senza questa mod il "
-      "trucco si attiva digitando C O L B O P S durante la partita, poi F7, F8 o F9.", 0, 0 },
+      "trucco si attiva digitando C O L B O P S durante la partita, poi F7, F8 o F9.",
+      "Original cheat F7 F8 F9",
+      "Unlocks the cheat hidden in the game. In play: F7 adds 1,000,000 pounds; F8 "
+      "makes the band play at its best (charts, record sales, job offers); F9 gives "
+      "the biggest audience. Without this mod the cheat is enabled by typing "
+      "C O L B O P S during the game, then F7, F8 or F9.", 0, 0 },
     { "primi_in_classifica", "Sempre primi in classifica",
       "Il singolo e l'album che pubblichi vanno subito al primo posto della "
-      "classifica e non scendono piu'.", 0, 0 },
+      "classifica e non scendono piu'.",
+      "Always number one",
+      "The singles and albums you release go straight to number one in the "
+      "charts and never drop.", 0, 0 },
 };
 #define N_TRUCCHI ((int)(sizeof s_trucchi / sizeof s_trucchi[0]))
 
@@ -149,6 +160,15 @@ void rockstar_mods_cambia(int i) {
 
 /* ------------------------------------------------------------ fornitore */
 
+/* i testi del launcher seguono la lingua scelta (recomp-ui, launcher_i18n) */
+#if defined(RECOMP_LAUNCHER)
+const char *launcher_i18n_language(void);
+static int inglese(void) { const char *l = launcher_i18n_language(); return l && !strncmp(l, "en", 2); }
+#else
+static int inglese(void) { return 0; }
+#endif
+#define T(it, en) (inglese() ? (en) : (it))
+
 static int package_count(void *ctx) { (void)ctx; return 1; }
 
 static int package_get(void *ctx, int i, RecompLauncherCModPackage *o) {
@@ -157,9 +177,10 @@ static int package_get(void *ctx, int i, RecompLauncherCModPackage *o) {
     memset(o, 0, sizeof *o);
     copia(o->id, sizeof o->id, PACCHETTO);
     copia(o->version, sizeof o->version, "1.2");
-    copia(o->name, sizeof o->name, "Trucchi");
+    copia(o->name, sizeof o->name, T("Trucchi", "Cheats"));
     copia(o->author, sizeof o->author, "Lollo");
-    copia(o->description, sizeof o->description, "Trucchi per Rock Star Ate My Hamster.");
+    copia(o->description, sizeof o->description, T("Trucchi per Rock Star Ate My Hamster.",
+                                                   "Cheats for Rock Star Ate My Hamster."));
     copia(o->license, sizeof o->license, "PolyForm-Noncommercial-1.0.0");
     o->enabled = 1;
     return 1;
@@ -174,11 +195,11 @@ static int feature_get(void *ctx, int i, RecompLauncherCModFeature *o) {
     copia(o->id, sizeof o->id, s_trucchi[i].id);
     copia(o->package_id, sizeof o->package_id, PACCHETTO);
     copia(o->package_version, sizeof o->package_version, "1.2");
-    copia(o->package_name, sizeof o->package_name, "Trucchi");
-    copia(o->name, sizeof o->name, s_trucchi[i].nome);
+    copia(o->package_name, sizeof o->package_name, T("Trucchi", "Cheats"));
+    copia(o->name, sizeof o->name, T(s_trucchi[i].nome, s_trucchi[i].name));
     copia(o->author, sizeof o->author, "Lollo");
-    copia(o->description, sizeof o->description, s_trucchi[i].descrizione);
-    copia(o->group, sizeof o->group, "Trucchi");
+    copia(o->description, sizeof o->description, T(s_trucchi[i].descrizione, s_trucchi[i].description));
+    copia(o->group, sizeof o->group, T("Trucchi", "Cheats"));
     o->enabled = s_trucchi[i].scelto;
     return 1;
 }
