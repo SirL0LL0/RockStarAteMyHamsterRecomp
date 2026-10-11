@@ -45,7 +45,8 @@ static char s_ingressi_test[1024];
 static SDL_Window *s_win;
 static SDL_Renderer *s_ren;
 static SDL_Texture *s_tex;
-static uint32_t s_t_quadro;
+static uint64_t s_prossimo_quadro;   /* contatore ad alta risoluzione */
+double g_amiga_fps;                  /* quadri al secondo misurati (debug) */
 static int s_scala = 3;
 static SDL_AudioDeviceID s_audio;
 static FILE *s_wav;                  /* AMIGA_WAV=file: registra l'audio (test) */
@@ -354,9 +355,22 @@ static void fine_quadro(void) {
     SDL_RenderCopy(s_ren, s_tex, NULL, NULL);
     SDL_RenderPresent(s_ren);
     ingressi_sdl();
-    uint32_t ora = SDL_GetTicks();
-    if (ora - s_t_quadro < 20) SDL_Delay(20 - (ora - s_t_quadro));
-    s_t_quadro = SDL_GetTicks();
+    /* 50 Hz PAL veri (un quadro = 142.102 cicli a 7,09 MHz = 20,03 ms), con un
+     * passo fisso che non si azzera: niente vsync, che a 60 Hz sommato alla
+     * pausa faceva durare molti quadri 33 ms e rallentava gioco e musica */
+    uint64_t freq = SDL_GetPerformanceFrequency();
+    uint64_t periodo = freq * AMIGA_CICLI_QUADRO / 7093790u;
+    uint64_t ora = SDL_GetPerformanceCounter();
+    if (!s_prossimo_quadro || ora > s_prossimo_quadro + 5 * periodo) s_prossimo_quadro = ora;  /* ripartenza */
+    s_prossimo_quadro += periodo;
+    if (s_prossimo_quadro > ora) {
+        uint64_t ms = (s_prossimo_quadro - ora) * 1000 / freq;
+        if (ms > 1) SDL_Delay((Uint32)(ms - 1));
+        while (SDL_GetPerformanceCounter() < s_prossimo_quadro) { }   /* l'ultimo millisecondo */
+    }
+    static uint64_t t0; static int n;
+    if (!t0) t0 = ora;
+    if (++n == 50) { g_amiga_fps = 50.0 * (double)freq / (double)(ora - t0); t0 = ora; n = 0; }
 }
 
 void glue_check_vblank(void) {
@@ -472,11 +486,10 @@ int main(int argc, char **argv) {
         SDL_RaiseWindow(s_win);                      /* dopo il launcher la finestra puo' nascere senza focus */
         if (imp.cattura_mouse)
             SDL_SetRelativeMouseMode(SDL_TRUE);      /* gioco a mouse: puntatore catturato */
-        s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_PRESENTVSYNC);
+        s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
         SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
                                   AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
-        s_t_quadro = SDL_GetTicks();
     }
     int debug = getenv("AMIGA_DEBUG") != NULL;
     for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--debug")) debug = 1;

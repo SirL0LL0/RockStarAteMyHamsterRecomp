@@ -155,8 +155,9 @@ static void disegna(void) {
     char b[256], d[96];
     for (int i = 0; i < DW * DH; i++) s_pix[i] = 0xFF101820;
     int y = 6, L = FONT_DEBUG_A + 1;
-    snprintf(b, sizeof b, "QUADRO %llu   chiamate %llu   scritture %llu   messaggi %llu   (Shift+F11: dump)",
-             (unsigned long long)s_quadro, (unsigned long long)s_n_ch,
+    extern double g_amiga_fps;
+    snprintf(b, sizeof b, "QUADRO %llu  %.2f fps   chiamate %llu   scritture %llu   messaggi %llu   (Shift+F11: dump)",
+             (unsigned long long)s_quadro, g_amiga_fps, (unsigned long long)s_n_ch,
              (unsigned long long)s_n_scr, (unsigned long long)s_n_msg);
     testo(8, y, GIALLO, b); y += L + 4;
 
