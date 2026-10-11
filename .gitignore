@@ -1,0 +1,23 @@
+# build e C generato: si rigenerano, non si versionano
+build/
+generated/
+*.exe
+*.dll
+*.obj
+*.o
+
+# file del gioco: mai nel repository
+*.adf
+*.bin
+*.lha
+*.slave
+rockstar
+rockstar_ita*
+
+# uscite dei test
+quadro.bmp
+quadro.png
+memoria_fine.bin
+dispatch_misses.toml
+dispatch_misses.prev.toml
+__pycache__/

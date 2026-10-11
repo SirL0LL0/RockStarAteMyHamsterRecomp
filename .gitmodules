@@ -1,0 +1,6 @@
+[submodule "external/m68k-recomp-core"]
+	path = external/m68k-recomp-core
+	url = https://github.com/mstan/m68k-recomp-core.git
+[submodule "external/recomp-ui"]
+	path = external/recomp-ui
+	url = https://github.com/mstan/recomp-ui.git

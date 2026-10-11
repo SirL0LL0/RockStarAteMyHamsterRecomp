@@ -1,0 +1,21 @@
+# game.toml - Rock Star Ate My Hamster (Amiga, Codemasters 1989), traduzione italiana
+# Immagine: chip RAM preparata da game/prepara_immagine.py (gioco a $8100,
+# blocco esteso della traduzione a $90000, vettori in testa).
+
+[game]
+output_prefix = "rockstar"
+annotations = "rockstar_annotations.csv"
+
+# [ram_layout] e' obbligatorio per il ricompilatore. I campi sono pensati per
+# il runner Genesis; il runner Amiga usa solo initial_ssp. Gli altri restano
+# a 0 finche' non servono.
+[ram_layout]
+game_mode      = 0x000000
+vint_runcount  = 0x000000
+vint_routine   = 0x000000
+plc_pending    = 0x000000
+initial_ssp    = 0x07F000
+vbla_stack     = 0x07F000
+intr_stack     = 0x07F000
+player_object  = 0x000000
+level_modes    = []

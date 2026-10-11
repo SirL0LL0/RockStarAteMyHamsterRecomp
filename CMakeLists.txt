@@ -1,0 +1,74 @@
+cmake_minimum_required(VERSION 3.16)
+project(RockStarAteMyHamsterRecomp C CXX)
+
+# Rock Star Ate My Hamster (Amiga, Codemasters 1989) - port nativo per
+# ricompilazione statica, traduzione italiana.
+#
+#   1. python game/prepara_immagine.py      (dai tuoi file: build/rockstar_chipram.bin)
+#   2. cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+#   3. cmake --build build
+#
+# Il C generato sta solo nella cartella di build e non si modifica a mano.
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+
+set(ROCKSTAR_IMAGE "${CMAKE_SOURCE_DIR}/build/rockstar_chipram.bin" CACHE FILEPATH
+    "Immagine della chip RAM preparata da game/prepara_immagine.py")
+set(ROCKSTAR_SDL2_DIR "${CMAKE_SOURCE_DIR}/../sdl/SDL2-2.32.2" CACHE PATH
+    "Pacchetto di sviluppo SDL2 (include/ e lib/x64/)")
+option(ROCKSTAR_LAUNCHER "Launcher recomp-ui all'avvio" ON)
+
+# ---- ricompilatore ---------------------------------------------------------------
+add_subdirectory(amigarecomp/recompiler)
+
+set(GEN_DIR "${CMAKE_BINARY_DIR}/generated")
+set(GEN_FILES "${GEN_DIR}/rockstar_decls.h" "${GEN_DIR}/rockstar_dispatch.c"
+              "${GEN_DIR}/rockstar_layout.c" "${GEN_DIR}/rockstar_cycles.c")
+foreach(i RANGE 0 31)
+    string(LENGTH "${i}" _n)
+    if(_n EQUAL 1)
+        set(i "0${i}")
+    endif()
+    list(APPEND GEN_FILES "${GEN_DIR}/rockstar_part${i}.c")
+endforeach()
+
+add_custom_command(
+    OUTPUT ${GEN_FILES}
+    COMMAND AmigaRecomp "${ROCKSTAR_IMAGE}" --game game.toml --output-dir "${GEN_DIR}"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/game"
+    DEPENDS AmigaRecomp "${ROCKSTAR_IMAGE}"
+            "${CMAKE_SOURCE_DIR}/game/game.toml"
+            "${CMAKE_SOURCE_DIR}/game/rockstar_annotations.csv"
+    COMMENT "AmigaRecomp: 68000 -> C"
+    VERBATIM)
+
+# ---- runner + gioco ----------------------------------------------------------------
+add_executable(RockStarAteMyHamsterRecomp
+    amigarecomp/runner/amiga_glue.c
+    amigarecomp/runner/amiga_hw.c
+    game/rockstar_spec.c
+    ${GEN_FILES})
+
+target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
+    amigarecomp/runner
+    amigarecomp/runner/include
+    "${GEN_DIR}"
+    "${ROCKSTAR_SDL2_DIR}/include")
+
+target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")
+target_link_libraries(RockStarAteMyHamsterRecomp PRIVATE SDL2)
+# il C generato e' grande e ripetitivo: niente avvisi da li'
+set_source_files_properties(${GEN_FILES} PROPERTIES COMPILE_OPTIONS "-w")
+
+if(ROCKSTAR_LAUNCHER)
+    set(RECOMP_UI_SDL3 OFF CACHE BOOL "" FORCE)
+    include("${CMAKE_SOURCE_DIR}/external/recomp-ui/recomp_ui.cmake")
+    recomp_target_launcher_ui(RockStarAteMyHamsterRecomp CONSOLE amiga)
+    target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
+        "${CMAKE_SOURCE_DIR}/external/recomp-ui/src")
+endif()
+
+add_custom_command(TARGET RockStarAteMyHamsterRecomp POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${ROCKSTAR_SDL2_DIR}/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>")
