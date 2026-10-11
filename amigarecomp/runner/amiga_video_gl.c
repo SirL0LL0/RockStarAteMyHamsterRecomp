@@ -12,7 +12,11 @@
  *   Aperture   tubo Trinitron: griglia di apertura (strisce RGB verticali)
  *              piena, scanline sottili, bagliore
  *   Scanline   pixel netti con le righe vuote fra una riga e l'altra
- * I modelli CRT sono in 4:3, come l'immagine su un monitor vero.
+ * Si mostrano solo le righe che il gioco usa (la finestra video,
+ * amiga_hw_altezza_visibile: 200 su 256 per Rock Star), il piu' grandi
+ * possibile con un fattore di scala intero: pixel quadrati per il nitido;
+ * per i CRT la forma del pixel PAL su un 4:3 (AMIGA_PAR) e un fattore intero
+ * in verticale, cosi' le scanline restano tutte uguali.
  * OpenGL 2.1 / GLSL 1.20: le funzioni degli shader si caricano con
  * SDL_GL_GetProcAddress, cosi' basta opengl32 senza altre librerie.
  * Se qualcosa non va, amiga_video_gl_init() restituisce 0 e il runner usa il
@@ -45,6 +49,7 @@ static SDL_GLContext s_ctx;
 static GLuint s_tex, s_prog;
 static GLint u_modo, u_src, u_out;
 static int s_modo, s_lineare;
+static int s_righe = AMIGA_ALTEZZA;          /* righe della texture */
 
 const char *amiga_video_gl_nome(int modo) {
     static const char *const nomi[AMIGA_SCHERMI] = { "nitido", "Commodore 1084S", "CRT Easymode",
@@ -241,23 +246,41 @@ void amiga_video_gl_filtro(int lineare) {
 
 int amiga_video_gl_modo_attuale(void) { return s_modo; }
 
+/* il rettangolo d'uscita per righe x 320 pixel in una finestra w x h */
+void amiga_video_gl_rettangolo(int modo, int righe, int w, int h, int *vw, int *vh) {
+    double par = modo != SCHERMO_NITIDO ? AMIGA_PAR : 1.0;     /* larghezza di un pixel / altezza */
+    double rapporto = AMIGA_LARGHEZZA * par / righe;
+    int k = h / righe;                                          /* fattore intero in verticale */
+    if (modo == SCHERMO_NITIDO && w / AMIGA_LARGHEZZA < k) k = w / AMIGA_LARGHEZZA;
+    while (k >= 1 && (int)(righe * k * rapporto + 0.5) > w) k--;
+    if (k >= 1) {
+        *vh = righe * k;
+        *vw = modo == SCHERMO_NITIDO ? AMIGA_LARGHEZZA * k : (int)(*vh * rapporto + 0.5);
+    } else {                                                    /* finestra piu' piccola del quadro */
+        *vw = w; *vh = (int)(w / rapporto);
+        if (*vh > h) { *vh = h; *vw = (int)(h * rapporto); }
+    }
+}
+
 void amiga_video_gl_presenta(const uint32_t *pixel) {
-    int w, h;
+    int w, h, vw, vh;
     SDL_GL_GetDrawableSize(s_win, &w, &h);
-    /* rettangolo d'uscita: 4:3 per il monitor, 5:4 (pixel quadrati) per il nitido */
-    double rapporto = s_modo != SCHERMO_NITIDO ? 4.0 / 3.0 : (double)AMIGA_LARGHEZZA / AMIGA_ALTEZZA;
-    int vw = w, vh = (int)(w / rapporto);
-    if (vh > h) { vh = h; vw = (int)(h * rapporto); }
+    int righe = amiga_hw_altezza_visibile();
+    amiga_video_gl_rettangolo(s_modo, righe, w, h, &vw, &vh);
     glViewport(0, 0, w, h);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glViewport((w - vw) / 2, (h - vh) / 2, vw, vh);
 
     glBindTexture(GL_TEXTURE_2D, s_tex);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, AMIGA_LARGHEZZA, AMIGA_ALTEZZA, GL_BGRA, GL_UNSIGNED_BYTE, pixel);
+    if (righe != s_righe) {                       /* la texture e' grande quanto le righe usate */
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, AMIGA_LARGHEZZA, righe, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+        s_righe = righe;
+    }
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, AMIGA_LARGHEZZA, righe, GL_BGRA, GL_UNSIGNED_BYTE, pixel);
     p_UseProgram(s_prog);
     p_Uniform1i(u_modo, s_modo);
-    p_Uniform2f(u_src, (float)AMIGA_LARGHEZZA, (float)AMIGA_ALTEZZA);
+    p_Uniform2f(u_src, (float)AMIGA_LARGHEZZA, (float)righe);
     p_Uniform2f(u_out, (float)vw, (float)vh);
     static const float quad[8] = { -1, -1, 1, -1, -1, 1, 1, 1 };
     p_VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, quad);

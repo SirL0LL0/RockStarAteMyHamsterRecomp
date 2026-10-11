@@ -104,9 +104,13 @@ typedef struct {
 
 static impostazioni_t s_imp;
 static int s_gl;                     /* presentazione OpenGL attiva */
+static void copia_sdl(void);
+static void adatta_finestra(void);
 
 static void leggi_impostazioni(impostazioni_t *s) {
-    *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0, 1 };
+    /* scala 3, in finestra, niente filtro lineare, volume 80, audio, mouse
+     * 100%, mouse catturato, launcher, schermo nitido (pixel perfetti) */
+    *s = (impostazioni_t){ 3, 0, 0, 80, 1, 100, 1, 0, SCHERMO_NITIDO };
     amiga_ingressi_default(&s->ass);
     s->sorgente = 1;
     s->cpu = 1;
@@ -361,6 +365,7 @@ static void ingressi_sdl(void) {
                 if (s_gl) {
                     s_imp.crt = (amiga_video_gl_modo_attuale() + 1) % AMIGA_SCHERMI;
                     amiga_video_gl_modo(s_imp.crt);
+                    adatta_finestra();
                     scrivi_impostazioni(&s_imp);
                 }
             } else SDL_SetRelativeMouseMode(SDL_FALSE);   /* F12 libera il mouse */
@@ -445,7 +450,7 @@ static void fine_quadro(void) {
     else {
     SDL_UpdateTexture(s_tex, NULL, amiga_hw_framebuffer(), AMIGA_LARGHEZZA * 4);
     SDL_RenderClear(s_ren);
-    SDL_RenderCopy(s_ren, s_tex, NULL, NULL);
+    copia_sdl();
     SDL_RenderPresent(s_ren);
     }
     ingressi_sdl();
@@ -468,6 +473,26 @@ static void fine_quadro(void) {
     if (++n == 50) { g_amiga_fps = 50.0 * (double)freq / (double)(ora - t0); t0 = ora; n = 0; }
 }
 
+/* larghezza della finestra per il modello di schermo: pixel quadrati per il
+ * nitido, pixel PAL (piu' larghi) per i CRT; alta AMIGA_ALTEZZA_GIOCO * scala */
+static int larghezza_finestra(int modo, int scala) {
+    return modo != SCHERMO_NITIDO ? (int)(AMIGA_LARGHEZZA * AMIGA_PAR * scala + 0.5) : AMIGA_LARGHEZZA * scala;
+}
+
+/* cambiato il modello: in finestra, la finestra prende le sue proporzioni */
+static void adatta_finestra(void) {
+    if (!s_win || (SDL_GetWindowFlags(s_win) & SDL_WINDOW_FULLSCREEN)) return;
+    SDL_SetWindowSize(s_win, larghezza_finestra(s_imp.crt, s_scala), AMIGA_ALTEZZA_GIOCO * s_scala);
+}
+
+/* renderer SDL (senza OpenGL): le righe usate, scala intera */
+static void copia_sdl(void) {
+    int righe = amiga_hw_altezza_visibile();
+    SDL_Rect r = { 0, 0, AMIGA_LARGHEZZA, righe };
+    SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, righe);
+    SDL_RenderCopy(s_ren, s_tex, &r, NULL);
+}
+
 /* ------------------------------------------------------------ menu in gioco */
 
 static void v_schermo(char *b, size_t n) {
@@ -476,6 +501,7 @@ static void v_schermo(char *b, size_t n) {
 static void a_schermo(int verso) {
     s_imp.crt = (s_imp.crt + (verso < 0 ? AMIGA_SCHERMI - 1 : 1)) % AMIGA_SCHERMI;
     amiga_video_gl_modo(s_imp.crt);
+    adatta_finestra();
     scrivi_impostazioni(&s_imp);
 }
 static int ok_schermo(void) { return s_gl; }
@@ -535,12 +561,12 @@ static void ciclo_menu(void) {
             amiga_menu_evento(&ev);
         }
         memcpy(copia, amiga_hw_framebuffer(), sizeof copia);
-        amiga_menu_disegna(copia, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+        amiga_menu_disegna(copia, AMIGA_LARGHEZZA, amiga_hw_altezza_visibile());   /* al centro di cio' che si vede */
         if (s_gl) amiga_video_gl_presenta(copia);
         else {
             SDL_UpdateTexture(s_tex, NULL, copia, AMIGA_LARGHEZZA * 4);
             SDL_RenderClear(s_ren);
-            SDL_RenderCopy(s_ren, s_tex, NULL, NULL);
+            copia_sdl();
             SDL_RenderPresent(s_ren);
         }
         SDL_Delay(16);
@@ -790,7 +816,7 @@ int main(int argc, char **argv) {
     if (!s_senza_finestra) {
         const char *titolo = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
         s_win = SDL_CreateWindow(titolo, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                 AMIGA_LARGHEZZA * scala, AMIGA_ALTEZZA * scala,
+                                 larghezza_finestra(imp.crt, scala), AMIGA_ALTEZZA_GIOCO * scala,
                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL |
                                  (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -802,7 +828,7 @@ int main(int argc, char **argv) {
         if (s_gl) amiga_video_gl_filtro(lineare);
         if (!s_gl) {
             s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_ACCELERATED);
-            SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
+            SDL_RenderSetIntegerScale(s_ren, SDL_TRUE);         /* pixel perfetti anche qui */
             s_tex = SDL_CreateTexture(s_ren, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
                                       AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         }

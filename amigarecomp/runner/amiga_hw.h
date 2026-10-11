@@ -11,6 +11,8 @@
 #define AMIGA_CICLI_QUADRO  (AMIGA_CICLI_RIGA * AMIGA_RIGHE_QUADRO)
 #define AMIGA_LARGHEZZA     320
 #define AMIGA_ALTEZZA       256
+#define AMIGA_ALTEZZA_GIOCO 200                  /* righe usate di solito (finestra video NTSC-safe) */
+#define AMIGA_PAR           (4.0 / 3.0 * 256.0 / 320.0)   /* forma del pixel lowres PAL su un 4:3 */
 
 extern uint8_t *g_amiga_mem;          /* immagine della chip RAM (e oltre) */
 extern uint32_t g_amiga_mem_size;
@@ -37,6 +39,9 @@ int      amiga_hw_livello_interrupt(void);
 /* fine quadro: copper + bitplane nel framebuffer, tastiera, VBlank */
 void     amiga_hw_fine_quadro(void);
 const uint32_t *amiga_hw_framebuffer(void);
+/* righe usate dal gioco, dall'alto del framebuffer: la finestra video
+ * (DIWSTOP - DIWSTRT); sotto e' sempre nero */
+int      amiga_hw_altezza_visibile(void);
 
 /* ingressi dall'host */
 void     amiga_hw_tasto(uint8_t codice_raw, int rilasciato);

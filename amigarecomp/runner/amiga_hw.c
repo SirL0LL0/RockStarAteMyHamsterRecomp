@@ -20,6 +20,7 @@ uint64_t g_amiga_letture_vhpos;     /* diagnostica: letture di VHPOSR */
 static uint16_t s_custom[0x100];
 static uint16_t s_dmacon, s_intena, s_intreq;
 static uint32_t s_quadro[AMIGA_LARGHEZZA * AMIGA_ALTEZZA];
+static int s_altezza_visibile = AMIGA_ALTEZZA_GIOCO;   /* righe della finestra video (DIWSTRT-DIWSTOP) */
 static unsigned long s_quadri;
 
 static uint8_t s_cia_icr_mask, s_cia_icr_dati, s_cia_sdr, s_cia_pra = 0xFF;
@@ -167,6 +168,7 @@ static void disegna(void) {
         }
         uint16_t diw = s_custom[0x8E / 2], diwstop = s_custom[0x90 / 2];
         int v0 = diw >> 8, v1 = (diwstop >> 8) | ((diwstop & 0x8000) ? 0 : 0x100);
+        if (v1 - v0 >= 64) s_altezza_visibile = v1 - v0 < AMIGA_ALTEZZA ? v1 - v0 : AMIGA_ALTEZZA;
         if (riga < v0 || riga >= v1) continue;
         int y = riga - v0;
         int piani = (s_custom[0x100 / 2] >> 12) & 7;
@@ -244,6 +246,7 @@ void amiga_hw_fine_quadro(void) {
 }
 
 const uint32_t *amiga_hw_framebuffer(void) { return s_quadro; }
+int amiga_hw_altezza_visibile(void) { return s_altezza_visibile; }
 
 void amiga_hw_tasto(uint8_t raw, int rilasciato) {
     if (s_n_tasti < (int)sizeof s_tasti) s_tasti[s_n_tasti++] = (uint8_t)(raw | (rilasciato ? 0x80 : 0));
