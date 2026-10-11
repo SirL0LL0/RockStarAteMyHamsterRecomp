@@ -1,4 +1,6 @@
-/* amiga_debug.c - registrazione sempre attiva e finestra di debug. */
+/* amiga_debug.c - registrazione e finestra di debug, solo con --debug o
+ * AMIGA_DEBUG (e nelle prove senza finestra). Gli agganci del gioco alle
+ * chiamate (g_debug_gioco.agganci) funzionano sempre. */
 #include "amiga_debug.h"
 #include "amiga_hw.h"
 #include "genesis_runtime.h"
@@ -27,6 +29,7 @@ static messaggio_t s_msg[N_MESSAGGI];
 static uint64_t s_n_ch, s_n_scr, s_n_msg, s_quadro;
 static uint32_t s_ultima_chiamata;
 static FILE *s_log_msg;
+static int s_attivo;
 
 /* ------------------------------------------------------------ nomi */
 
@@ -209,7 +212,9 @@ static void disegna(void) {
 
 /* ------------------------------------------------------------ interfaccia */
 
-void amiga_debug_init(int apri_finestra) {
+void amiga_debug_init(int attivo, int apri_finestra) {
+    s_attivo = attivo;
+    if (!attivo) return;
     carica_nomi(g_debug_gioco.annotazioni);
     for (int i = 0; i < g_debug_gioco.n_var; i++) {
         uint32_t a = g_debug_gioco.var[i].indirizzo, n = 1;
@@ -233,6 +238,7 @@ void amiga_debug_quadro(uint64_t quadro) {
 }
 
 int amiga_debug_evento(const SDL_Event *ev) {
+    if (!s_attivo) return 0;
     if (ev->type == SDL_KEYDOWN && ev->key.keysym.sym == SDLK_F11 && !ev->key.repeat) {
         if (ev->key.keysym.mod & KMOD_SHIFT) {
             amiga_debug_dump("debug_dump.txt");

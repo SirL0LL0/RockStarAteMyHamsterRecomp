@@ -782,7 +782,7 @@ int main(int argc, char **argv) {
     }
     int debug = getenv("AMIGA_DEBUG") != NULL;
     for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--debug")) debug = 1;
-    amiga_debug_init(debug && !s_senza_finestra);
+    amiga_debug_init(debug || s_senza_finestra, debug && !s_senza_finestra);
 
     g_cpu.A[7] = m68k_read32(0);                      /* SSP dalla tabella dei vettori */
     g_cpu.SR = 0;                                     /* il gioco parte da AmigaDOS: utente */

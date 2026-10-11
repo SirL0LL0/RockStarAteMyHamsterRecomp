@@ -41,7 +41,10 @@ typedef struct {
 
 extern const debug_gioco_t g_debug_gioco;
 
-void amiga_debug_init(int apri_finestra);
+/* attivo: F11 (finestra), Shift+F11 (dump), messaggi.log e le variabili
+ * osservate; altrimenti restano solo gli agganci del gioco. apri_finestra:
+ * la finestra subito */
+void amiga_debug_init(int attivo, int apri_finestra);
 void amiga_debug_chiamata(uint32_t ritorno, uint32_t a7);
 void amiga_debug_scrittura(uint32_t indirizzo, int taglia, uint32_t vecchio, uint32_t nuovo);
 void amiga_debug_messaggio(int numero, const char *testo);
