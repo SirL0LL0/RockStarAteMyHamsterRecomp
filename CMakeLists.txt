@@ -47,7 +47,9 @@ add_custom_command(
 add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_glue.c
     amigarecomp/runner/amiga_hw.c
+    amigarecomp/runner/amiga_debug.c
     game/rockstar_spec.c
+    game/rockstar_debug.c
     game/rockstar_mods.c
     ${GEN_FILES})
 
@@ -77,4 +79,6 @@ endif()
 
 add_custom_command(TARGET RockStarAteMyHamsterRecomp POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${ROCKSTAR_SDL2_DIR}/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>")
+            "${ROCKSTAR_SDL2_DIR}/lib/x64/SDL2.dll" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/game/rockstar_annotations.csv" "$<TARGET_FILE_DIR:RockStarAteMyHamsterRecomp>")

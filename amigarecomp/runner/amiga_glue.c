@@ -22,6 +22,7 @@
 #include "genesis_runtime.h"
 #include "game_spec.h"
 #include "amiga_hw.h"
+#include "amiga_debug.h"
 
 #if defined(RECOMP_LAUNCHER)
 #include "recomp_launcher.h"
@@ -100,11 +101,18 @@ uint32_t m68k_read32(uint32_t a) {
 }
 void m68k_write8(uint32_t a, uint8_t v) {
     a &= 0xFFFFFFu;
-    if (a < g_amiga_mem_size) g_amiga_mem[a] = v; else amiga_hw_write8(a, v);
+    if (a < g_amiga_mem_size) {
+        if (amiga_debug_osservato(a)) amiga_debug_scrittura(a, 1, g_amiga_mem[a], v);
+        g_amiga_mem[a] = v;
+    } else amiga_hw_write8(a, v);
 }
 void m68k_write16(uint32_t a, uint16_t v) {
     a &= 0xFFFFFFu;
-    if (a + 1 < g_amiga_mem_size) { g_amiga_mem[a] = (uint8_t)(v >> 8); g_amiga_mem[a + 1] = (uint8_t)v; }
+    if (a + 1 < g_amiga_mem_size) {
+        if (amiga_debug_osservato(a) || amiga_debug_osservato(a + 1))
+            amiga_debug_scrittura(a, 2, (uint32_t)(g_amiga_mem[a] << 8 | g_amiga_mem[a + 1]), v);
+        g_amiga_mem[a] = (uint8_t)(v >> 8); g_amiga_mem[a + 1] = (uint8_t)v;
+    }
     else amiga_hw_write16(a, v);
 }
 void m68k_write32(uint32_t a, uint32_t v) {
@@ -130,6 +138,7 @@ static int s_traccia_tutte;
 static uint64_t s_traccia_da, s_traccia_a;
 
 void recomp_push_return(uint32_t ret_addr) {
+    amiga_debug_chiamata(ret_addr & 0xFFFFFFu, g_cpu.A[7]);
     /* AMIGA_TRACCIA=tutte:DA:A  ogni chiamata fra i quadri DA e A */
     if (s_traccia_tutte && s_traccia && s_quadri >= s_traccia_da && s_quadri <= s_traccia_a)
         fprintf(s_traccia, "q%llu rit=%06X A7=%06X\n", (unsigned long long)s_quadri,
@@ -211,6 +220,8 @@ static void ingressi_sdl(void) {
     SDL_Event ev;
     while (SDL_PollEvent(&ev)) {
         if (ev.type == SDL_QUIT) exit(0);
+        if (amiga_debug_evento(&ev)) continue;              /* F11, finestra di debug */
+        if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_CLOSE) exit(0);
         if (ev.type == SDL_KEYDOWN || ev.type == SDL_KEYUP) {
             int giu_ = ev.type == SDL_KEYDOWN;
             switch (ev.key.keysym.sym) {     /* joystick in porta 2: frecce + Ctrl */
@@ -285,6 +296,7 @@ static void salva_bmp(const char *nome) {
 static void fine_quadro(void) {
     s_quadri++;
     if (g_game_spec.on_frame_post) g_game_spec.on_frame_post(s_quadri);
+    amiga_debug_quadro(s_quadri);
     amiga_hw_fine_quadro();
     if (s_senza_finestra) {
         ingressi_test();
@@ -430,6 +442,9 @@ int main(int argc, char **argv) {
                                   AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
         s_t_quadro = SDL_GetTicks();
     }
+    int debug = getenv("AMIGA_DEBUG") != NULL;
+    for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--debug")) debug = 1;
+    amiga_debug_init(debug && !s_senza_finestra);
 
     g_cpu.A[7] = m68k_read32(0);                      /* SSP dalla tabella dei vettori */
     g_cpu.SR = 0;                                     /* il gioco parte da AmigaDOS: utente */
