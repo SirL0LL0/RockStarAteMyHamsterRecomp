@@ -140,6 +140,9 @@ static int codice_amiga(SDL_Keycode k) {
 
 static void ingressi_sdl(void) {
     static int su, giu, sx, dx, fuoco, mouse_sx, mouse_dx, resto_x, resto_y;
+    /* un clic deve durare almeno qualche quadro: se pressione e rilascio
+     * arrivano fra due letture, il gioco vedrebbe solo il tasto su */
+    static int tieni_sx, tieni_dx;
     int mdx = 0, mdy = 0;
     SDL_Event ev;
     while (SDL_PollEvent(&ev)) {
@@ -161,8 +164,8 @@ static void ingressi_sdl(void) {
         }
         if (ev.type == SDL_MOUSEBUTTONDOWN || ev.type == SDL_MOUSEBUTTONUP) {
             int giu_ = ev.type == SDL_MOUSEBUTTONDOWN;
-            if (ev.button.button == SDL_BUTTON_LEFT) mouse_sx = giu_;
-            if (ev.button.button == SDL_BUTTON_RIGHT) mouse_dx = giu_;
+            if (ev.button.button == SDL_BUTTON_LEFT) { mouse_sx = giu_; if (giu_) tieni_sx = 4; }
+            if (ev.button.button == SDL_BUTTON_RIGHT) { mouse_dx = giu_; if (giu_) tieni_dx = 4; }
             if (giu_ && !SDL_GetRelativeMouseMode()) SDL_SetRelativeMouseMode(SDL_TRUE);
         }
         /* mouse catturato: il movimento in pixel della finestra diventa movimento
@@ -176,12 +179,14 @@ static void ingressi_sdl(void) {
             SDL_SetRelativeMouseMode(SDL_FALSE);
     }
     amiga_hw_joystick(su, giu, sx, dx, fuoco);
-    amiga_hw_mouse(mdx, mdy, mouse_sx, mouse_dx);
+    amiga_hw_mouse(mdx, mdy, mouse_sx || tieni_sx > 0, mouse_dx || tieni_dx > 0);
+    if (tieni_sx > 0) tieni_sx--;
+    if (tieni_dx > 0) tieni_dx--;
 }
 
 static void ingressi_test(void) {
     const char *p = s_ingressi_test;
-    int fuoco = 0;
+    int fuoco = 0, sinistro = 0;
     long q = (long)s_quadri;
     while (*p) {
         char tipo = *p++;
@@ -190,11 +195,13 @@ static void ingressi_test(void) {
         long quando = 0;
         if (*p == ':') quando = strtol(p + 1, (char **)&p, 10);
         if (tipo == 'f' && q >= quando && q < quando + 5) fuoco = 1;
+        if (tipo == 'm' && q >= quando && q < quando + 5) sinistro = 1;   /* clic sinistro */
         if (tipo == 'k' && q == quando) amiga_hw_tasto((uint8_t)codice, 0);
         if (tipo == 'k' && q == quando + 3) amiga_hw_tasto((uint8_t)codice, 1);
         while (*p == ',') p++;
     }
     amiga_hw_joystick(0, 0, 0, 0, fuoco);
+    amiga_hw_mouse(0, 0, sinistro, 0);
 }
 
 static void salva_bmp(const char *nome) {
@@ -286,6 +293,7 @@ int main(int argc, char **argv) {
     s_quadri_max = q ? atol(q) : 0;
     if (getenv("AMIGA_INGRESSI")) snprintf(s_ingressi_test, sizeof s_ingressi_test, "%s", getenv("AMIGA_INGRESSI"));
 
+    SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");   /* il primo clic arriva al gioco */
     SDL_Init(s_senza_finestra ? 0 : SDL_INIT_VIDEO);
     if (!s_senza_finestra) {
         const char *titolo = g_game_spec.display_name ? g_game_spec.display_name : "Amiga";
@@ -294,6 +302,7 @@ int main(int argc, char **argv) {
                                  SDL_WINDOW_RESIZABLE | (schermo_intero ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0));
         if (lineare) SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
         s_scala = scala;
+        SDL_RaiseWindow(s_win);                      /* dopo il launcher la finestra puo' nascere senza focus */
         SDL_SetRelativeMouseMode(SDL_TRUE);          /* gioco a mouse: puntatore catturato */
         s_ren = SDL_CreateRenderer(s_win, -1, SDL_RENDERER_PRESENTVSYNC);
         SDL_RenderSetLogicalSize(s_ren, AMIGA_LARGHEZZA, AMIGA_ALTEZZA);
