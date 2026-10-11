@@ -7,7 +7,24 @@
  * si azzera $128BD, il flag "saldo negativo" che il gioco alza quando i soldi
  * scendono sotto zero.
  *
- * La scelta si ricorda in mods.ini accanto all'eseguibile.
+ * Trucco originale: il gestore della tastiera del gioco (irq_livello2, $BA7A)
+ * confronta i tasti premuti con la sequenza a $BB86 (codici tasto Amiga
+ * $33 $18 $28 $35 $18 $19 $21: C O L B O P S) e conta quelli giusti in $BB8D;
+ * un tasto sbagliato azzera il conto. A 7, F7 mette 1 nella cifra dei milioni
+ * dei soldi ($123CB, +1.000.000), F8 porta $128CE a 255, F9 porta $128CD a
+ * 255. La mod tiene il conto a 7, cioe' il trucco sempre sbloccato.
+ *
+ * $128CE: media del byte 20 dei record delle 4 star (2-30) piu' $1285C
+ * ($8B5C-$8B7C). Decide la posizione in classifica (10 soglie a $121D7,
+ * $B252), entra nei ricavi delle vendite (*256, $9850), sceglie la fascia
+ * delle occasioni nel menu (<$46 <$6E <$A0 <$FA, $8F88) e a 200 o piu' fa
+ * scattare l'evento dei dischi piratati ($D264, messaggio #170).
+ * $128CD: media del byte 22 dei record delle 4 star (1-15, $8B46-$8B5A);
+ * deve superare $3B per le occasioni del menu ($8F88). Il gioco non lo
+ * mostra mai a schermo, quindi non ne conosciamo il nome.
+ * (Record delle star: 30 byte a $1147E, nome nei primi 20.)
+ *
+ * Le scelte si ricordano in mods.ini accanto all'eseguibile.
  */
 #include <stdio.h>
 #include <string.h>
@@ -18,40 +35,75 @@
 
 #define SOLDI_ADDR        0x123CAu
 #define SALDO_NEG_ADDR    0x128BDu
+#define CONTO_TRUCCO_ADDR 0x0BB8Du
 #define FILE_MODS         "mods.ini"
+#define PACCHETTO         "rockstar-trucchi"
 
-static int s_soldi_infiniti;          /* attivo nella partita in corso */
-static int s_soldi_infiniti_scelto;   /* scelta nel launcher, prima di PLAY */
+typedef struct {
+    const char *id, *nome, *descrizione;
+    int scelto;      /* nel launcher, prima di PLAY */
+    int attivo;      /* nella partita in corso */
+} trucco_t;
+
+static trucco_t s_trucchi[] = {
+    { "soldi_infiniti", "Soldi infiniti",
+      "I soldi restano sempre a 999.999 sterline: ingaggi, concerti e dischi "
+      "senza mai finire in rosso.", 0, 0 },
+    { "trucco_originale", "Trucco originale (F7 / F8 / F9)",
+      "Sblocca il trucco nascosto nel gioco. In partita: F7 aggiunge 1.000.000 di "
+      "sterline; F8 porta al massimo il successo della band (classifica, vendite "
+      "dei dischi, occasioni di lavoro); F9 porta al massimo il secondo requisito "
+      "per le occasioni. Senza questa mod il trucco si attiva digitando "
+      "C O L B O P S durante la partita, poi F7, F8 o F9.", 0, 0 },
+};
+#define N_TRUCCHI ((int)(sizeof s_trucchi / sizeof s_trucchi[0]))
+
 static char s_errore[128];
 
 static void copia(char *dst, size_t n, const char *src) { snprintf(dst, n, "%s", src); }
 
+static trucco_t *trova(const char *id) {
+    for (int i = 0; i < N_TRUCCHI; i++)
+        if (!strcmp(s_trucchi[i].id, id)) return &s_trucchi[i];
+    return NULL;
+}
+
 void rockstar_mods_carica(void) {
     FILE *f = fopen(FILE_MODS, "r");
     char riga[128];
-    s_soldi_infiniti = 0;
+    for (int i = 0; i < N_TRUCCHI; i++) s_trucchi[i].attivo = 0;
     if (f) {
-        while (fgets(riga, sizeof riga, f))
-            if (!strncmp(riga, "soldi_infiniti=", 15)) s_soldi_infiniti = riga[15] == '1';
+        while (fgets(riga, sizeof riga, f)) {
+            char *uguale = strchr(riga, '=');
+            if (!uguale) continue;
+            *uguale = 0;
+            trucco_t *t = trova(riga);
+            if (t) t->attivo = uguale[1] == '1';
+        }
         fclose(f);
     }
-    s_soldi_infiniti_scelto = s_soldi_infiniti;
+    for (int i = 0; i < N_TRUCCHI; i++) s_trucchi[i].scelto = s_trucchi[i].attivo;
 }
 
 static int salva(void) {
     FILE *f = fopen(FILE_MODS, "w");
     if (!f) { copia(s_errore, sizeof s_errore, "non riesco a scrivere mods.ini"); return 0; }
-    fprintf(f, "soldi_infiniti=%d\n", s_soldi_infiniti_scelto);
+    for (int i = 0; i < N_TRUCCHI; i++) {
+        fprintf(f, "%s=%d\n", s_trucchi[i].id, s_trucchi[i].scelto);
+        s_trucchi[i].attivo = s_trucchi[i].scelto;
+    }
     fclose(f);
-    s_soldi_infiniti = s_soldi_infiniti_scelto;
     return 1;
 }
 
 void rockstar_mods_quadro(void) {
-    if (!s_soldi_infiniti) return;
-    static const uint8_t pieno[8] = { 0, 0, 9, 9, 9, 9, 9, 9 };      /* 999.999 */
-    for (uint32_t i = 0; i < 8; i++) m68k_write8(SOLDI_ADDR + i, pieno[i]);
-    m68k_write8(SALDO_NEG_ADDR, 0);
+    if (s_trucchi[0].attivo) {                                     /* soldi infiniti */
+        static const uint8_t pieno[8] = { 0, 0, 9, 9, 9, 9, 9, 9 };  /* 999.999 */
+        for (uint32_t i = 0; i < 8; i++) m68k_write8(SOLDI_ADDR + i, pieno[i]);
+        m68k_write8(SALDO_NEG_ADDR, 0);
+    }
+    if (s_trucchi[1].attivo)                                       /* trucco originale */
+        m68k_write8(CONTO_TRUCCO_ADDR, 7);
 }
 
 /* ------------------------------------------------------------ fornitore */
@@ -62,8 +114,8 @@ static int package_get(void *ctx, int i, RecompLauncherCModPackage *o) {
     (void)ctx;
     if (i != 0) return 0;
     memset(o, 0, sizeof *o);
-    copia(o->id, sizeof o->id, "rockstar-trucchi");
-    copia(o->version, sizeof o->version, "1.0");
+    copia(o->id, sizeof o->id, PACCHETTO);
+    copia(o->version, sizeof o->version, "1.1");
     copia(o->name, sizeof o->name, "Trucchi");
     copia(o->author, sizeof o->author, "Lollo");
     copia(o->description, sizeof o->description, "Trucchi per Rock Star Ate My Hamster.");
@@ -72,23 +124,21 @@ static int package_get(void *ctx, int i, RecompLauncherCModPackage *o) {
     return 1;
 }
 
-static int feature_count(void *ctx) { (void)ctx; return 1; }
+static int feature_count(void *ctx) { (void)ctx; return N_TRUCCHI; }
 
 static int feature_get(void *ctx, int i, RecompLauncherCModFeature *o) {
     (void)ctx;
-    if (i != 0) return 0;
+    if (i < 0 || i >= N_TRUCCHI) return 0;
     memset(o, 0, sizeof *o);
-    copia(o->id, sizeof o->id, "soldi_infiniti");
-    copia(o->package_id, sizeof o->package_id, "rockstar-trucchi");
-    copia(o->package_version, sizeof o->package_version, "1.0");
+    copia(o->id, sizeof o->id, s_trucchi[i].id);
+    copia(o->package_id, sizeof o->package_id, PACCHETTO);
+    copia(o->package_version, sizeof o->package_version, "1.1");
     copia(o->package_name, sizeof o->package_name, "Trucchi");
-    copia(o->name, sizeof o->name, "Soldi infiniti");
+    copia(o->name, sizeof o->name, s_trucchi[i].nome);
     copia(o->author, sizeof o->author, "Lollo");
-    copia(o->description, sizeof o->description,
-          "I soldi restano sempre a 999.999 sterline: ingaggi, concerti e "
-          "dischi senza mai finire in rosso.");
+    copia(o->description, sizeof o->description, s_trucchi[i].descrizione);
     copia(o->group, sizeof o->group, "Trucchi");
-    o->enabled = s_soldi_infiniti_scelto;
+    o->enabled = s_trucchi[i].scelto;
     return 1;
 }
 
@@ -99,8 +149,9 @@ static int feature_option_get(void *ctx, const char *p, const char *f, int i, Re
 
 static int feature_enable(void *ctx, const char *p, const char *f, int on) {
     (void)ctx; (void)p;
-    if (strcmp(f, "soldi_infiniti")) { copia(s_errore, sizeof s_errore, "trucco sconosciuto"); return 0; }
-    s_soldi_infiniti_scelto = on != 0;
+    trucco_t *t = trova(f);
+    if (!t) { copia(s_errore, sizeof s_errore, "trucco sconosciuto"); return 0; }
+    t->scelto = on != 0;
     return 1;
 }
 

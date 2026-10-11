@@ -196,7 +196,8 @@ static int codice_amiga(SDL_Keycode k) {
     case SDLK_SPACE: return 0x40; case SDLK_BACKSPACE: return 0x41; case SDLK_RETURN: return 0x44;
     case SDLK_ESCAPE: return 0x45; case SDLK_DELETE: return 0x46;
     case SDLK_F1: return 0x50; case SDLK_F2: return 0x51; case SDLK_F3: return 0x52;
-    case SDLK_F4: return 0x53; case SDLK_F5: return 0x54; case SDLK_F10: return 0x59;
+    case SDLK_F4: return 0x53; case SDLK_F5: return 0x54; case SDLK_F6: return 0x55;
+    case SDLK_F7: return 0x56; case SDLK_F8: return 0x57; case SDLK_F9: return 0x58; case SDLK_F10: return 0x59;
     }
     return -1;
 }
@@ -229,8 +230,13 @@ static void ingressi_sdl(void) {
             int giu_ = ev.type == SDL_MOUSEBUTTONDOWN;
             if (ev.button.button == SDL_BUTTON_LEFT) { mouse_sx = giu_; if (giu_) tieni_sx = 4; }
             if (ev.button.button == SDL_BUTTON_RIGHT) { mouse_dx = giu_; if (giu_) tieni_dx = 4; }
-            if (giu_ && !SDL_GetRelativeMouseMode()) SDL_SetRelativeMouseMode(SDL_TRUE);
+            if (ev.button.button == SDL_BUTTON_MIDDLE) {   /* centrale: sgancia / riaggancia */
+                if (giu_) SDL_SetRelativeMouseMode(SDL_GetRelativeMouseMode() ? SDL_FALSE : SDL_TRUE);
+            } else if (giu_ && !SDL_GetRelativeMouseMode())
+                SDL_SetRelativeMouseMode(SDL_TRUE);         /* un clic nella finestra lo cattura */
         }
+        if (ev.type == SDL_WINDOWEVENT && ev.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
+            SDL_SetRelativeMouseMode(SDL_FALSE);            /* Alt+Tab: il mouse torna a Windows */
         /* mouse catturato: il movimento in pixel della finestra diventa movimento
          * in pixel Amiga (diviso per la scala), il resto si porta avanti */
         if (ev.type == SDL_MOUSEMOTION && SDL_GetRelativeMouseMode()) {
