@@ -51,10 +51,10 @@
    "DA URLO ",
    "FOLLE ",
    "PAZZO ",
-   "STREPITOSO ",
+   "SPAZIALE ",
    "FORTE ",
    "ALLUCINANTE ",
-   "INCREDIBILE ",
+   "PAZZESCO ",
    "GENIALE "
   ]
  },
@@ -132,7 +132,7 @@
   "count": 3,
   "items": [
    "LA CAMPAGNA PER ESECUZIONI PUBBLICHE ",
-   "CAMPAGNA PER ESPERIMENTI SCHIFOSI SUGLI ANIMALI ",
+   "CAMPAGNA PER ESPERIMENTI SUGLI ANIMALI ",
    "LA LEGA ATOMIZZA LA NONNA "
   ]
  },
@@ -1322,11 +1322,11 @@
   "type": "GROUP",
   "count": 5,
   "items": [
-   "FIGLIO",
-   "CRICETO",
-   "BOLIDE",
-   "CERVELLO",
-   "NONNO"
+   "LA FIGLIA",
+   "IL CRICETO",
+   "LA VOLVO",
+   "IL CERVELLO",
+   "IL MARITO"
   ]
  },
  {
@@ -1802,7 +1802,7 @@
   "count": 4,
   "items": [
    "GENIALE ",
-   "FANTASTICO ",
+   "MAGNIFICO ",
    "SPLENDIDO ",
    "STUPENDO "
   ]
@@ -2905,7 +2905,7 @@
  {
   "offset": 35867,
   "type": "STR",
-  "text": "RUBA IL "
+  "text": "RUBA "
  },
  {
   "offset": 35876,

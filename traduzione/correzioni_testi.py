@@ -135,12 +135,21 @@ CORREZIONI_COMPATTA = {
     (119, 2): ('BARRETTA', 'GELATO'),
     (123, 0): ('MOGLIE', 'MARITO'),
     (123, 3): ('CASA', 'GIARDINO'),
-    # giornale #135 "ALIENI RUBA IL FIGLIA": un alieno, "RUBA IL" + maschili
-    # (0 0 +1 -1); #142 "ROCK STAR AGGREDITO": la rock star e' femminile
+    # giornale #135 "ALIENI RUBA IL FIGLIA": "ALIENO RUBA" e l'articolo dentro
+    # ogni voce (LA FIGLIA, LA VOLVO...): +15 byte ai gruppi, ripresi da
+    # SCHIFOSI (riempitivo, l'estesa non ce l'ha) e tre aggettivi piu' corti
     (('S', 273), None): ('ALIENI ', 'ALIENO '),
-    (118, 0): ('FIGLIA', 'FIGLIO'),
-    (118, 2): ('VOLVO', 'BOLIDE'),
-    (118, 4): ('MARITO', 'NONNO'),
+    (('S', 272), None): ('RUBA IL ', 'RUBA '),
+    (118, 0): ('FIGLIO', 'LA FIGLIA'),
+    (118, 1): ('CRICETO', 'IL CRICETO'),
+    (118, 2): ('BOLIDE', 'LA VOLVO'),
+    (118, 3): ('CERVELLO', 'IL CERVELLO'),
+    (118, 4): ('NONNO', 'IL MARITO'),
+    (11, 1): ('CAMPAGNA PER ESPERIMENTI SCHIFOSI SUGLI ANIMALI ', 'CAMPAGNA PER ESPERIMENTI SUGLI ANIMALI '),
+    (4, 6): ('INCREDIBILE ', 'PAZZESCO '),
+    (4, 3): ('STREPITOSO ', 'SPAZIALE '),
+    (163, 1): ('FANTASTICO ', 'MAGNIFICO '),
+    # #142 "ROCK STAR AGGREDITO": la rock star e' femminile
     (('S', 281), None): ('AGGREDITO ', 'AGGREDITA '),
 }
 
