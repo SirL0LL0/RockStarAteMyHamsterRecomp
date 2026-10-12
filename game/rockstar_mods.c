@@ -37,6 +37,21 @@
  * L'album fa lo stesso con $128C5 e la top 10 a $12438 ($B2A8). La mod, se un
  * disco e' uscito, lo tiene al primo posto e in salita.
  *
+ * Star sempre contente: ogni star ha un byte di contentezza ($129B7, 4 byte;
+ * 0 e $FF = posto vuoto). Prima di ogni serata di un tour ($0A630) il gioco
+ * prende la piu' scontenta ($0A8A6): se e' a 9 o piu' la serata va liscia e
+ * tutte perdono 1 punto; sotto 9 partono le richieste (go-go girls, Porsche)
+ * o, con 2-3 dischi d'argento ($128AE, $128AF), la star se ne va. I regali
+ * le alzano tutte (auto +12 ... cibo +8). La mod le tiene a 20.
+ *
+ * Stadio pieno a ogni prezzo: i biglietti venduti sono il minore fra
+ * la capienza ($12175) e 10 x fattore del prezzo ($12161: 9 6 4 2 1 per
+ * 2 5 10 15 20 sterline) x $128CE ($09832). Con $128CE al massimo (255) a 15
+ * e 20 sterline non si va oltre 5.100 e 2.550 biglietti: lo stadio (10.000)
+ * non si riempie mai. La mod mette i fattori 9 8 6 5 4: una band al top
+ * riempie lo stadio a ogni prezzo (a 20 sterline con $128CE da 250), una
+ * mediocre continua a non farcela. Spenta, la tabella torna quella originale.
+ *
  * Le scelte si ricordano in mods.ini accanto all'eseguibile.
  */
 #include <stdio.h>
@@ -53,6 +68,8 @@
 #define ALBUM_POS_ADDR    0x128C5u
 #define SINGOLO_SETT_ADDR 0x128C6u
 #define SINGOLO_MAX_ADDR  0x1289Cu
+#define CONTENTEZZA_ADDR  0x129B7u
+#define FATTORI_ADDR      0x12161u
 #define FILE_MODS         "mods.ini"
 #define PACCHETTO         "rockstar-trucchi"
 
@@ -85,6 +102,20 @@ static trucco_t s_trucchi[] = {
       "Always number one",
       "The singles and albums you release go straight to number one in the "
       "charts and never drop.", 0, 0 },
+    { "star_contente", "Star sempre contente",
+      "Le rock star restano sempre contente: niente go-go girls, niente ricatti della "
+      "Porsche, nessuno se ne va durante i tour. Gli altri imprevisti restano.",
+      "Always happy stars",
+      "Your rock stars stay happy: no go-go girls, no Porsche blackmail, nobody quits "
+      "during tours. Other surprises still happen.", 0, 0 },
+    { "stadio_pieno", "Stadio pieno a ogni prezzo",
+      "Nel gioco originale a 15 e 20 sterline lo stadio non si riempie mai, nemmeno con "
+      "la band al massimo. Con questa mod una band al top lo riempie a ogni prezzo; "
+      "una band mediocre no.",
+      "Stadiums sell out at any price",
+      "In the original game a stadium never sells out at 15 or 20 pounds, not even with "
+      "the band at its best. With this mod a top band fills it at any price; an average "
+      "band still can't.", 0, 0 },
 };
 #define N_TRUCCHI ((int)(sizeof s_trucchi / sizeof s_trucchi[0]))
 
@@ -141,6 +172,18 @@ void rockstar_mods_quadro(void) {
             m68k_write8(SINGOLO_SETT_ADDR, 5);                     /* sempre in salita */
         }
         if (m68k_read8(ALBUM_POS_ADDR)) m68k_write8(ALBUM_POS_ADDR, 1);
+    }
+    if (s_trucchi[3].attivo) {                                     /* star contente */
+        for (uint32_t i = 0; i < 4; i++) {
+            uint8_t v = m68k_read8(CONTENTEZZA_ADDR + i);
+            if (v != 0 && v != 0xFF && v < 20) m68k_write8(CONTENTEZZA_ADDR + i, 20);
+        }
+    }
+    {                                                              /* fattori del prezzo */
+        static const uint8_t originali[5] = { 9, 6, 4, 2, 1 }, nuovi[5] = { 9, 8, 6, 5, 4 };
+        const uint8_t *f = s_trucchi[4].attivo ? nuovi : originali;
+        for (uint32_t i = 0; i < 5; i++)
+            if (m68k_read8(FATTORI_ADDR + i) != f[i]) m68k_write8(FATTORI_ADDR + i, f[i]);
     }
 }
 

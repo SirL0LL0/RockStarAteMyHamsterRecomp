@@ -69,6 +69,24 @@ soldi (in questa versione un milione di sterline, le guide dicono 100.000),
 F8 fa suonare la band al massimo, F9 porta il pubblico al massimo. Si attiva
 anche dal menu Mods del launcher o dal menu in gioco.
 
+**Perche' le star se ne vanno.** Ogni star ha una contentezza nascosta. Prima
+di ogni serata di un tour il gioco guarda la piu' scontenta: se e' a 9 o piu'
+la serata va liscia e tutte perdono un punto; sotto 9 partono le richieste
+(go-go girls, poi il ricatto della Porsche: se rifiuti, licenziata) e, con 2
+dischi d'argento (sotto 4) o 3 (sotto 9), la star se ne va senza chiedere
+niente. Ogni partenza dimezza la qualita' della band; senza star e' game over.
+I regali alzano tutte (auto +12, gioielli +11, vestiti +10, bevute +9, cibo +8).
+
+**Biglietti.** I biglietti venduti sono il minore fra la capienza e
+10 x fattore del prezzo x qualita' della band (1-255), con fattori 9, 6, 4, 2,
+1 per 2, 5, 10, 15, 20 sterline: a 15 e 20 lo stadio non si riempie mai,
+nemmeno con la band al massimo (5.100 e 2.550 biglietti). Allo stadio il
+prezzo migliore e' 10 sterline.
+
+Fra le mod (launcher e menu F1), oltre ai trucchi: **Star sempre contente**
+(nessuno se ne va, niente ricatti) e **Stadio pieno a ogni prezzo** (fattori
+9, 8, 6, 5, 4: una band al top riempie lo stadio anche a 20 sterline).
+
 Fonti: il manuale originale, il manuale su
 [Games Database](https://www.gamesdatabase.org/Media/SYSTEM/Commodore_Amiga//Manual/formated/Rock_Star_Ate_my_Hamster_-_1989_-_Codemasters.htm),
 [The Codemasters Archive](https://thecodemastersarchive.co.uk/games/rock-star-ate-my-hamster/),

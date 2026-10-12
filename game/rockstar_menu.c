@@ -280,9 +280,13 @@ static void v_trucco(int i, char *b, size_t n) {
 static void v_t0(char *b, size_t n) { v_trucco(0, b, n); }
 static void v_t1(char *b, size_t n) { v_trucco(1, b, n); }
 static void v_t2(char *b, size_t n) { v_trucco(2, b, n); }
+static void v_t3(char *b, size_t n) { v_trucco(3, b, n); }
+static void v_t4(char *b, size_t n) { v_trucco(4, b, n); }
 static void a_t0(int v) { (void)v; rockstar_mods_cambia(0); }
 static void a_t1(int v) { (void)v; rockstar_mods_cambia(1); }
 static void a_t2(int v) { (void)v; rockstar_mods_cambia(2); }
+static void a_t3(int v) { (void)v; rockstar_mods_cambia(3); }
+static void a_t4(int v) { (void)v; rockstar_mods_cambia(4); }
 
 static const amiga_voce_menu_t s_voci[] = {
     { v_slot, a_slot, NULL },
@@ -291,6 +295,8 @@ static const amiga_voce_menu_t s_voci[] = {
     { v_t0, a_t0, NULL },
     { v_t1, a_t1, NULL },
     { v_t2, a_t2, NULL },
+    { v_t3, a_t3, NULL },
+    { v_t4, a_t4, NULL },
 };
 
 void rockstar_menu_registra(void) {
