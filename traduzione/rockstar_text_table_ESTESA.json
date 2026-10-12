@@ -1334,9 +1334,9 @@
   "type": "GROUP",
   "count": 3,
   "items": [
-   "IL PESCE ROSSO",
-   "LA SALSICCIA",
-   "LA BARRETTA"
+   "IL MIO PESCE ROSSO",
+   "LA MIA SALSICCIA",
+   "LA MIA BARRETTA"
   ]
  },
  {
@@ -1374,10 +1374,10 @@
   "type": "GROUP",
   "count": 4,
   "items": [
-   "LA MOGLIE",
-   "IL CANE",
-   "IL CRICETO",
-   "LA CASA"
+   "MIA MOGLIE",
+   "IL MIO CANE",
+   "IL MIO CRICETO",
+   "LA MIA CASA"
   ]
  },
  {
@@ -2930,7 +2930,7 @@
  {
   "offset": 35897,
   "type": "STR",
-  "text": "MI HA MANGIATO "
+  "text": "MANGIA "
  },
  {
   "offset": 35904,

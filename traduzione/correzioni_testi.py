@@ -98,6 +98,17 @@ CORREZIONI = [
     (('S', 394), None, 'IN FUGA ', 'SUL PIEDE DI PARTENZA ', 'estesa'),
     # menu principale: l'originale e' SAVE/LOAD; finestra larga 10 colonne
     (('S', 429), None, 'DISCO      ESCI', 'SALVATAGGI ESCI'),
+    # giornale (#136 nel testo, finestra $2E da 10x6; #140 nel titolo): "MI HA
+    # MANGIATO IL PESCE ROSSO! VEDI PAG 9!" faceva 7 righe, la finestra si
+    # cancellava e restava solo "9!". Titolo al presente, col possessivo.
+    (('S', 277), None, 'MI HA MANGIATO ', 'MANGIA ', 'estesa'),
+    (119, 0, 'IL PESCE ROSSO', 'IL MIO PESCE ROSSO', 'estesa'),
+    (119, 1, 'LA SALSICCIA', 'LA MIA SALSICCIA', 'estesa'),
+    (119, 2, 'LA BARRETTA', 'LA MIA BARRETTA', 'estesa'),
+    (123, 0, 'LA MOGLIE', 'MIA MOGLIE', 'estesa'),
+    (123, 1, 'IL CANE', 'IL MIO CANE', 'estesa'),
+    (123, 2, 'IL CRICETO', 'IL MIO CRICETO', 'estesa'),
+    (123, 3, 'LA CASA', 'LA MIA CASA', 'estesa'),
 ]
 
 # solo compatta: dove l'item differisce dall'estesa, o per bilanciare i byte
@@ -118,6 +129,19 @@ CORREZIONI_COMPATTA = {
     (47, 2): ('PORTATO A CASA', 'IN SCATOLA'),
     (69, 1): ('MORTALI ', 'LETALI '),
     (('S', 451), None): ('ENTRARE NEL ', 'PORTAMI '),
+    # giornale: "MANGIA IL" + nomi maschili (prima IL SALSICCIA, IL MOGLIE...);
+    # -2 -2 0 +4: il blocco dei gruppi resta della stessa lunghezza
+    (119, 1): ('SALSICCIA', 'WURSTEL'),
+    (119, 2): ('BARRETTA', 'GELATO'),
+    (123, 0): ('MOGLIE', 'MARITO'),
+    (123, 3): ('CASA', 'GIARDINO'),
+    # giornale #135 "ALIENI RUBA IL FIGLIA": un alieno, "RUBA IL" + maschili
+    # (0 0 +1 -1); #142 "ROCK STAR AGGREDITO": la rock star e' femminile
+    (('S', 273), None): ('ALIENI ', 'ALIENO '),
+    (118, 0): ('FIGLIA', 'FIGLIO'),
+    (118, 2): ('VOLVO', 'BOLIDE'),
+    (118, 4): ('MARITO', 'NONNO'),
+    (('S', 281), None): ('AGGREDITO ', 'AGGREDITA '),
 }
 
 

@@ -1322,11 +1322,11 @@
   "type": "GROUP",
   "count": 5,
   "items": [
-   "FIGLIA",
+   "FIGLIO",
    "CRICETO",
-   "VOLVO",
+   "BOLIDE",
    "CERVELLO",
-   "MARITO"
+   "NONNO"
   ]
  },
  {
@@ -1335,8 +1335,8 @@
   "count": 3,
   "items": [
    "PESCE ROSSO",
-   "SALSICCIA",
-   "BARRETTA"
+   "WURSTEL",
+   "GELATO"
   ]
  },
  {
@@ -1374,10 +1374,10 @@
   "type": "GROUP",
   "count": 4,
   "items": [
-   "MOGLIE",
+   "MARITO",
    "CANE",
    "CRICETO",
-   "CASA"
+   "GIARDINO"
   ]
  },
  {
@@ -2910,7 +2910,7 @@
  {
   "offset": 35876,
   "type": "STR",
-  "text": "ALIENI "
+  "text": "ALIENO "
  },
  {
   "offset": 35883,
@@ -2950,7 +2950,7 @@
  {
   "offset": 35924,
   "type": "STR",
-  "text": "AGGREDITO "
+  "text": "AGGREDITA "
  },
  {
   "offset": 35933,
