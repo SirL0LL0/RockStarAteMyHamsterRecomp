@@ -1,5 +1,5 @@
 # crea_release.ps1 - lo zip della release: eseguibile, SDL2.dll, assets del
-# launcher (font, logo Amiga, copertina) e LEGGIMI. Niente file del gioco.
+# launcher (font, logo Amiga, copertina), LEGGIMI e README. Niente file del gioco.
 #   tools\crea_release.ps1 -versione 1.1.0 [-leggimi ..\release\LEGGIMI.txt] [-uscita ..\release]
 param([Parameter(Mandatory)][string]$versione,
       [string]$leggimi = "", [string]$uscita = "")
@@ -15,6 +15,9 @@ New-Item -ItemType Directory -Force $d | Out-Null
 
 # libc++ e libunwind sono dentro l'eseguibile (CMakeLists.txt)
 Copy-Item (Join-Path $build "RockStarAteMyHamsterRecomp.exe"), (Join-Path $build "SDL2.dll"), $leggimi $d
+# il LEGGIMI in inglese, accanto a quello italiano
+$readme = Join-Path (Split-Path $leggimi) "README.txt"
+if (Test-Path $readme) { Copy-Item $readme $d }
 Copy-Item -Recurse (Join-Path $build "assets") $d
 # del launcher bastano i font Lato, il logo Amiga, il joypad e la copertina:
 # emoji e bandiere (chat del netplay), verdetti dei dischi PSX e logo
