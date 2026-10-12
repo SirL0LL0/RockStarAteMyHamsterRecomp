@@ -83,7 +83,7 @@ def file_dati(imm, est_voci, comp_voci, generi=None, info=None):
     return bytes(imm), ext
 
 
-CUSTOM_GET = [0x88000007, 0x88000008, 0x88000009]   # WHDLTAG_CUSTOM1..3_GET
+CUSTOM_GET = [0x88000007, 0x88000008, 0x88000009, 0x8800000A, 0x8800000B]   # WHDLTAG_CUSTOM1..5_GET
 R_CONTROL = 0x34
 
 
@@ -127,7 +127,7 @@ def slave(flag_trucchi):
     a.b(b'\x33\xFC\x4E\xB9').dato32(TASTIERA)     # move.w #$4eb9,TASTIERA
     a.b(b'\x41\xFA'); a.da_fare.append((a.pos(), 'tastiera', 'w', a.pos())); a.b(b'\x00\x00')  # lea tastiera(pc),a0
     a.b(b'\x23\xC8').dato32(TASTIERA + 2)         # move.l a0,TASTIERA+2
-    # trucchi scelti nella finestra di WHDLoad (CUSTOM1-3) -> flag nel blocco esteso
+    # trucchi scelti nella finestra di WHDLoad (CUSTOM1-5) -> flag nel blocco esteso
     a.b(b'\x41\xFA'); a.da_fare.append((a.pos(), 'tag', 'w', a.pos())); a.b(b'\x00\x00')     # lea tag(pc),a0
     a.b(b'\x4E\xAC').b(struct.pack('>h', R_CONTROL))   # jsr resload_Control(a4)
     a.b(b'\x22\x7A'); a.da_fare.append((a.pos(), 'expmem', 'w', a.pos())); a.b(b'\x00\x00')  # movea.l expmem(pc),a1
@@ -206,7 +206,8 @@ ITALIANO
     veloci faceva scorrere i testi troppo in fretta)
   - F10 per tornare al Workbench
   - trucchi nella finestra iniziale di WHDLoad, prima di premere Start:
-    soldi infiniti, trucco originale (F7 F8 F9), sempre primi in classifica
+    soldi infiniti, trucco originale (F7 F8 F9), sempre primi in classifica,
+    star sempre contente, stadio pieno a ogni prezzo
   - richiede WHDLoad 17+ e 1MB di memoria, di cui 512K chip
 
 ENGLISH
