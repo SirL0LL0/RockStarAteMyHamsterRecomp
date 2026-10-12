@@ -120,7 +120,8 @@ Nelle impostazioni del launcher ci sono anche:
   alla maniera di crt-easymode: Lanczos, fascio gaussiano, maschera leggera),
   *Scanlines*. In gioco Shift+F12 passa al modello successivo;
 - **Aspect ratio**: *PAL (4:3)* (il predefinito: i pixel larghi come su un
-  monitor PAL) o *Square pixels*;
+  monitor PAL), *NTSC (4:3)* (pixel piu' stretti: le 200 righe riempiono lo
+  schermo 4:3, come su un monitor NTSC) o *Square pixels*;
 - **Integer scaling** (scala intera, attiva di partenza): pixel perfetti, il
   fattore intero piu' grande che entra; spenta, l'immagine riempie lo schermo.
   In tutti e due i casi si mostrano solo le righe che il gioco usa (320x200

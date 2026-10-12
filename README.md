@@ -118,7 +118,8 @@ The launcher settings also have:
   of crt-easymode: Lanczos, gaussian beam, light mask), *Scanlines*. In game
   Shift+F12 switches to the next model;
 - **Aspect ratio**: *PAL (4:3)* (the default: wide pixels as on a PAL
-  monitor) or *Square pixels*;
+  monitor), *NTSC (4:3)* (narrower pixels: the 200 lines fill the 4:3 screen,
+  as on an NTSC monitor) or *Square pixels*;
 - **Integer scaling** (on by default): pixel perfect, the largest whole
   factor that fits; off, the picture fills the screen. Either way only the
   lines the game uses are shown (320x200 out of the 256 PAL lines), so there

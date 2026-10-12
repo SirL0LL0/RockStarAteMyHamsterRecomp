@@ -13,6 +13,7 @@
 #define AMIGA_ALTEZZA       256
 #define AMIGA_ALTEZZA_GIOCO 200                  /* righe usate di solito (finestra video NTSC-safe) */
 #define AMIGA_PAR           (4.0 / 3.0 * 256.0 / 320.0)   /* forma del pixel lowres PAL su un 4:3 */
+#define AMIGA_PAR_NTSC      (4.0 / 3.0 * 200.0 / 320.0)   /* e NTSC: 200 righe riempiono il 4:3 */
 
 extern uint8_t *g_amiga_mem;          /* immagine della chip RAM (e oltre) */
 extern uint32_t g_amiga_mem_size;

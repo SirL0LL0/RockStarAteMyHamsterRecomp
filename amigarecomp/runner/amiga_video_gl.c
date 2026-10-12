@@ -12,8 +12,9 @@
  *   Scanline   pixel netti con le righe vuote fra una riga e l'altra
  * Si mostrano solo le righe che il gioco usa (la finestra video,
  * amiga_hw_altezza_visibile: 200 su 256 per Rock Star), il piu' grandi
- * possibile, con la forma del pixel scelta (amiga_video_gl_aspetto): PAL,
- * cioe' come su un monitor 4:3 (AMIGA_PAR), o quadrata. Con la scala intera
+ * possibile, con la forma del pixel scelta (amiga_video_gl_aspetto): PAL o
+ * NTSC, cioe' come su un monitor 4:3 (AMIGA_PAR, AMIGA_PAR_NTSC: in NTSC le
+ * 200 righe riempiono lo schermo), o quadrata. Con la scala intera
  * (predefinita) il fattore verticale e' intero, cosi' pixel e scanline
  * restano tutti uguali; senza, l'immagine riempie la finestra.
  * OpenGL 2.1 / GLSL 1.20: le funzioni degli shader si caricano con
@@ -49,10 +50,13 @@ static GLuint s_tex, s_prog;
 static GLint u_modo, u_src, u_out;
 static int s_modo, s_lineare;
 static int s_righe = AMIGA_ALTEZZA;          /* righe della texture */
-static int s_intera = 1, s_pal = 1;
+static int s_intera = 1, s_aspetto = ASPETTO_PAL;
 
 void amiga_video_gl_scala_intera(int si) { s_intera = si != 0; }
-void amiga_video_gl_aspetto(int pal) { s_pal = pal != 0; }
+void amiga_video_gl_aspetto(int aspetto) { s_aspetto = aspetto >= 0 && aspetto < AMIGA_ASPETTI ? aspetto : ASPETTO_PAL; }
+double amiga_video_gl_par(int aspetto) {
+    return aspetto == ASPETTO_QUADRATI ? 1.0 : aspetto == ASPETTO_NTSC ? AMIGA_PAR_NTSC : AMIGA_PAR;
+}
 
 const char *amiga_video_gl_nome(int modo) {
     static const char *const nomi[AMIGA_SCHERMI] = { "nitido", "Commodore 1084S", "CRT Easymode",
@@ -229,8 +233,9 @@ void amiga_video_gl_filtro(int lineare) {
 int amiga_video_gl_modo_attuale(void) { return s_modo; }
 
 /* il rettangolo d'uscita per righe x 320 pixel in una finestra w x h */
-void amiga_video_gl_rettangolo(int modo, int righe, int intera, int pal, int w, int h, int *vw, int *vh) {
-    double par = pal ? AMIGA_PAR : 1.0;                         /* larghezza di un pixel / altezza */
+void amiga_video_gl_rettangolo(int modo, int righe, int intera, int aspetto, int w, int h, int *vw, int *vh) {
+    double par = amiga_video_gl_par(aspetto);                   /* larghezza di un pixel / altezza */
+    int pal = aspetto != ASPETTO_QUADRATI;                      /* pixel non quadrati */
     (void)modo;
     double rapporto = AMIGA_LARGHEZZA * par / righe;
     int k = intera ? h / righe : 0;                             /* fattore intero in verticale */
@@ -249,7 +254,7 @@ void amiga_video_gl_presenta(const uint32_t *pixel) {
     int w, h, vw, vh;
     SDL_GL_GetDrawableSize(s_win, &w, &h);
     int righe = amiga_hw_altezza_visibile();
-    amiga_video_gl_rettangolo(s_modo, righe, s_intera, s_pal, w, h, &vw, &vh);
+    amiga_video_gl_rettangolo(s_modo, righe, s_intera, s_aspetto, w, h, &vw, &vh);
     glViewport(0, 0, w, h);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
