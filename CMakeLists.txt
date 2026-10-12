@@ -66,6 +66,7 @@ add_executable(RockStarAteMyHamsterRecomp
     amigarecomp/runner/amiga_disco.c
     amigarecomp/runner/amiga_lingue.c
     amigarecomp/runner/amiga_esporta.c
+    amigarecomp/runner/amiga_console.c
     amigarecomp/runner/amiga_menu.c
     game/rockstar_menu.c
     game/rockstar_spec.c
@@ -84,6 +85,11 @@ target_include_directories(RockStarAteMyHamsterRecomp PRIVATE
 
 target_link_directories(RockStarAteMyHamsterRecomp PRIVATE "${ROCKSTAR_SDL2_DIR}/lib/x64")
 target_link_libraries(RockStarAteMyHamsterRecomp PRIVATE SDL2 opengl32)
+# applicazione grafica: niente finestra della shell (la apre --debug,
+# amiga_console.c)
+if(WIN32)
+    target_link_options(RockStarAteMyHamsterRecomp PRIVATE -mwindows)
+endif()
 # libc++ e libunwind dentro l'eseguibile: niente DLL del compilatore da
 # distribuire (resta solo SDL2.dll)
 if(MINGW OR CMAKE_CXX_COMPILER_TARGET MATCHES "mingw" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")

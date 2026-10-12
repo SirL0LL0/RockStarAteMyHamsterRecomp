@@ -180,7 +180,8 @@ tools/prova_quadri.ps1 -quadri 3500 -exe build/cmake/RockStarAteMyHamsterRecomp.
 Gira 3500 quadri (70 secondi di gioco), salva `build/quadro.png` e la memoria
 finale. `AMIGA_INGRESSI="f:300,k44:500"` simula fuoco e tasti.
 
-Con `--debug` (o `AMIGA_DEBUG=1`) si accendono gli strumenti di debug: F11
+Con `--debug` (o `AMIGA_DEBUG=1`) si apre anche la console (altrimenti si vedono
+solo il launcher e il gioco) e si accendono gli strumenti di debug: F11
 apre la finestra (variabili, messaggi, scritture, chiamate), Shift+F11 scrive
 `debug_dump.txt` e `debug_memoria.bin`, e i messaggi del gioco finiscono in
 `messaggi.log`. Senza, il programma non scrive nulla di suo.

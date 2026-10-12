@@ -29,6 +29,7 @@
 #include "amiga_disco.h"
 #include "amiga_lingue.h"
 #include "amiga_esporta.h"
+#include "amiga_console.h"
 #include "amiga_menu.h"
 
 #if defined(RECOMP_LAUNCHER)
@@ -683,6 +684,11 @@ static int esporta_amiga(const char *disco, char *msg, size_t n) {
 }
 
 int main(int argc, char **argv) {
+    {                                       /* la shell solo in debug */
+        int dbg = getenv("AMIGA_DEBUG") != NULL;
+        for (int i = 1; i < argc; i++) if (!strcmp(argv[i], "--debug")) dbg = 1;
+        amiga_console_prepara(dbg);
+    }
     impostazioni_t imp;
     leggi_impostazioni(&imp);
     /* --esporta-amiga [disco [cartella]]: senza finestra, per le prove */
