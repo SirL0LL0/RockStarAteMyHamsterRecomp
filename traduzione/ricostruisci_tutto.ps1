@@ -12,7 +12,11 @@ Set-Location $qui
 $uscite = python -c "import percorsi; percorsi.base(); print(percorsi.USCITE)"
 if ($LASTEXITCODE) { throw "manca la base del gioco (vedi sopra)" }
 New-Item -ItemType Directory -Force $uscite | Out-Null
-$exe = Join-Path $uscite "rockstar_ita_ram.bin"
+# l'eseguibile Amiga e' un passaggio intermedio: va dentro l'ADF come
+# "rockstar" (da li' si estrae, se serve), quindi sta nella cartella temporanea
+$tmp = Join-Path $env:TEMP "rsamh_adf"
+New-Item -ItemType Directory -Force $tmp | Out-Null
+$exe = Join-Path $tmp "rockstar"
 $py = @"
 import percorsi, build_ram as br
 e, n = br.costruisci_exe(percorsi.immagine_ita(), br.carica('rockstar_text_table_ESTESA.json'),
@@ -24,12 +28,11 @@ $py | python -
 if ($LASTEXITCODE) { throw "build_ram" }
 
 $adf = Join-Path $uscite "RockStar_ITA_1MB.adf"
-$tmp = Join-Path $env:TEMP "rsamh_adf"
-New-Item -ItemType Directory -Force $tmp | Out-Null
 [IO.File]::WriteAllText("$tmp\startup-sequence", "rockstar`n")   # a capo Amiga: solo LF
 if (Test-Path $adf) { Move-Item $adf "$tmp\RockStar_ITA_1MB.adf.vecchio" -Force }
 python -m amitools.tools.xdftool $adf create + format "RockStar ITA" ofs + boot install + makedir s + write "$tmp\startup-sequence" s/startup-sequence + write $exe rockstar | Out-Null
 if ($LASTEXITCODE) { throw "xdftool" }
+Remove-Item -LiteralPath $exe
 "ADF: $adf"
 
 python build_whdload.py | Select-Object -Last 1

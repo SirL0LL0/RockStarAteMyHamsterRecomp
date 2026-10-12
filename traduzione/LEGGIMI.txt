@@ -14,8 +14,8 @@ RIFARE TUTTO dopo una modifica ai testi o alle patch:
     .\ricostruisci_tutto.ps1            (anche il port: il gioco non deve essere aperto)
     .\ricostruisci_tutto.ps1 -senza_port
     Le versioni Amiga vanno in uscite\ nella cartella dei dati:
-        RockStar_ITA_1MB.adf     floppy avviabile (1 MB, ogni Amiga)
-        rockstar_ita_ram.bin     l'eseguibile dentro l'ADF
+        RockStar_ITA_1MB.adf     floppy avviabile (1 MB, ogni Amiga); dentro,
+                                 l'eseguibile "rockstar" (xdftool ... read)
         WHDLoad_RockStar\        installazione WHDLoad e il suo .lha
     Serve amitools (pip install amitools) per l'ADF; unicorn e capstone per
     le prove. Il port fa le stesse versioni Amiga da solo (amiga_esporta.c).
